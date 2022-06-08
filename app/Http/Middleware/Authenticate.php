@@ -14,6 +14,11 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
+        $backend = env('FOLDER_ADMIN');
+        if (!$request->expectsJson() && \Str::is($backend.'*', request()->path())) {
+            return route('admin.login');
+        }
+
         if (! $request->expectsJson()) {
             return route('login');
         }
