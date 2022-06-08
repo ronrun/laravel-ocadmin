@@ -1,3 +1,4 @@
+#laravel default
 /node_modules
 /public/hot
 /public/storage
@@ -12,3 +13,14 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+#laravel default end
+
+*.code-workspace
+php.bat
+composer.bat
+*.bak 
+*.bak.php 
+*_bak.php 
+*.old 
+*.old.php 
+*_old.php
