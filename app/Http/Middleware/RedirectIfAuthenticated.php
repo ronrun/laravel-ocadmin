@@ -19,11 +19,30 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, ...$guards)
     {
+        /*
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 return redirect(RouteServiceProvider::HOME);
+            }
+        }
+
+        return $next($request);
+        */
+
+        $backend = env('FOLDER_ADMIN');
+
+        //default backend segment is 1, if locale exists,2
+        if($request->segment(1) == $backend || $request->segment(2) == $backend){
+            if(Auth::guard('admin')->check()){
+                return redirect(route('admin.dashboard'));
+            }
+        }
+
+        if($request->segment(1) != $backend && $request->segment(2) != $backend){
+            if(Auth::guard('web')->check()){
+                return redirect(route('home'));
             }
         }
 
