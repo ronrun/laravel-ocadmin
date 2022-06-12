@@ -17,16 +17,23 @@ Route::get('refresh-token', function(){
     return csrf_token();
 });
 
-Route::get('/', function () {
-    return view('default.welcome');
-});
+Route::group(  
+    [  
+    'prefix' => LaravelLocalization::setLocale(),  
+    'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ],  
+    ], function()  
+{  
+	Route::get('/', function () {
+		return view('default.welcome');
+	});
 
-Route::group(['namespace' => 'App\Domains\Frontend\Http\Controllers'], function () {
-	// Route::get('/logout', [App\Domains\Frontend\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
-	// Route::post('/logout', [App\Domains\Frontend\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout.post');
-	// Route::get('/login', [App\Domains\Frontend\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-	// Route::post('/login', [App\Domains\Frontend\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
-    Auth::routes();
-});
+	Route::group(['namespace' => 'App\Domains\Frontend\Http\Controllers'], function () {
+		Auth::routes();
+	});
 
-Route::get('/home', [App\Domains\Frontend\Http\Controllers\HomeController::class, 'index'])->name('home');
+	Route::get('/home', [App\Domains\Frontend\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+});	
+
+
+
