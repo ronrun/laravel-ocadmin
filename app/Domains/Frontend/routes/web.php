@@ -20,7 +20,8 @@ Route::get('refresh-token', function(){
 Route::group(  
     [  
     'prefix' => LaravelLocalization::setLocale(),  
-    'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ],  
+    'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ],
+    'as' => 'lang.'
     ], function()  
 {  
 	Route::get('/', function () {

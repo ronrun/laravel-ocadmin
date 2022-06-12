@@ -53,7 +53,7 @@ class LoginController extends Controller
      */ 
     protected function authenticated(Request $request, $user)
     {
-        return redirect(route('admin.dashboard'));
+        return redirect(route('lang.admin.dashboard'));
     }
     
     /** 
@@ -82,6 +82,6 @@ class LoginController extends Controller
         if (!Auth::guard('web')->check() && !Auth::guard('admin')->check()){ 
             $request->session()->invalidate(); 
         } 
-        return redirect(route('admin.login')); 
+        return redirect(route('lang.admin.login')); 
     }
 }

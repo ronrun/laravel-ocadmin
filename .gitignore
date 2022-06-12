@@ -23,6 +23,7 @@ yarn-error.log
 *.old.php
 *.old.blade.php
 *.bak.blade.php
+*copy.php
 
 ### Others ###
 /public/tests/*

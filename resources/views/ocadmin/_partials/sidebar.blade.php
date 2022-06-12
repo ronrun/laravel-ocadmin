@@ -2,7 +2,7 @@
             <div id="navigation"><span class="fas fa-bars"></span> Navigation</div>
             <ul id="menu">
                <li id="menu-dashboard">
-                  <a href="{{ route('admin.dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
+                  <a href="{{ route('lang.admin.dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
                </li>
                <li id="menu-levels">
                   <a href="#collapse-7" data-bs-toggle="collapse" class="parent collapsed"><i class="fas fa-cog"></i> Level 1</a>

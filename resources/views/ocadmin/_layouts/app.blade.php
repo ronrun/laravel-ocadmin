@@ -21,7 +21,7 @@
         {{-- 全站opencart預設 --}}
         <script type="text/javascript" src="{{ asset('oc-asset/javascript/common.js') }}"></script>
 
-        {{-- 自訂 --}}
+        {{-- 自訂 --}}-
         @yield('customJsCss')
     </head> 
     <body>
@@ -29,7 +29,7 @@
             <div id="alert" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
             <header id="header" class="navbar navbar-expand navbar-light bg-light">
                 <div class="container-fluid">
-                    <a href="{{ route('admin.dashboard') }}" class="navbar-brand d-none d-lg-block"><img src="{{ asset('oc-asset/image/logo.png') }}" alt="OpenCart" title="OpenCart"/></a>
+                    <a href="{{ route('lang.admin.dashboard') }}" class="navbar-brand d-none d-lg-block"><img src="{{ asset('oc-asset/image/logo.png') }}" alt="OpenCart" title="OpenCart"/></a>
 @if (Auth::guard('admin')->check())
 <button type="button" id="button-menu" class="btn btn-link d-inline-block d-lg-none"><i class="fas fa-bars"></i></button>
                     <ul class="nav navbar-nav">
@@ -62,10 +62,10 @@
                             </ul>
                         </li>
                         <li id="header-logout" class="nav-item">
-                        <?php /* <a href="{{ route('admin.logout') }}" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span class="d-none d-md-inline">Logout</span></a> */ ?>
-                        <a href="{{ route('admin.logout') }}" class="nav-link" 
+                        <?php /* <a href="{{ route('lang.admin.logout') }}" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span class="d-none d-md-inline">Logout</span></a> */ ?>
+                        <a href="{{ route('lang.admin.logout') }}" class="nav-link" 
                             onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> <span class="d-none d-md-inline">{{ __('Logout') }}</span></a> 
-                            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
+                            <form id="logout-form" action="{{ route('lang.admin.logout') }}" method="POST" class="d-none">
                                                      @csrf
                                                 </form>
                         

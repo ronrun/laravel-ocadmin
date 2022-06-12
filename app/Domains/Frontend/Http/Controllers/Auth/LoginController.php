@@ -52,7 +52,7 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        return redirect(route('home'));
+        return redirect(route('lang.home'));
     }
 
     public function showLoginForm()
@@ -71,6 +71,6 @@ class LoginController extends Controller
             $request->session()->invalidate();
         }
 
-        return redirect(route('login'));
+        return redirect(route('lang.login'));
     }
 }

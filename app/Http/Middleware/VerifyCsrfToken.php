@@ -35,13 +35,13 @@ class VerifyCsrfToken extends Middleware
         //throw new TokenMismatchException('CSRF token mismatch.');
 
         //logout
-        if($request->route()->named('logout')) {
-            $this->except[] = route('logout');
+        if($request->route()->named('lang.logout')) {
+            $this->except[] = route('lang.logout');
             return parent::handle($request, $next);
         }
         
-        if($request->route()->named('admin.logout')) {
-            $this->except[] = route('admin.logout');
+        if($request->route()->named('lang.admin.logout')) {
+            $this->except[] = route('lang.admin.logout');
             return parent::handle($request, $next);
         }
 
