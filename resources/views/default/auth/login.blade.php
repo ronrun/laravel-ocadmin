@@ -71,3 +71,29 @@
     </div>
 </div>
 @endsection
+
+@section('buttom')
+<script type="text/javascript"> 
+$(document).ready(function(){
+    $('form').submit(function(e) {  
+        e.preventDefault(); 
+        e.returnValue = false; 
+        var $form = $(this); 
+        $.ajax({ 
+            method: "get", 
+            url: '/refresh-token', 
+            context: $form, 
+            success: function (response) { 
+                $('meta[name="csrf-token"]').attr('content', response); 
+                $('input[name="_token"]').val(response); 
+                this.off('submit'); 
+                this.submit(); 
+            }, 
+            error: function (thrownError) { 
+                console.log(thrownError); 
+            } 
+        }); 
+    }); 
+}); 
+</script> 
+@endsection

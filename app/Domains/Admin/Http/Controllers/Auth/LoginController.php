@@ -68,8 +68,9 @@ class LoginController extends Controller
      * Overwrite 
      */ 
     public function showLoginForm() 
-    { 
-        return view('admin.login'); 
+    {
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        return view('ocadmin.login', $data); 
     }
 
     /** 

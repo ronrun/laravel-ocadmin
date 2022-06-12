@@ -24,6 +24,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard');
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        return view('ocadmin.dashboard', $data);
     }
 }

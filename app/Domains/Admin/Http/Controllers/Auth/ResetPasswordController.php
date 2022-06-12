@@ -32,7 +32,7 @@ class ResetPasswordController extends Controller
     {
         $token = $request->route()->parameter('token');
 
-        return view('admin.auth.passwords.reset')->with(
+        return view('ocadmin.auth.passwords.reset')->with(
             ['token' => $token, 'email' => $request->email]
         );
     }
