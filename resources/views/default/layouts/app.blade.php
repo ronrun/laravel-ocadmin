@@ -41,13 +41,13 @@
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
                         @guest
-                            @if (Route::has('login'))
+                            @if (Route::has('lang.login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('lang.login') }}">{{ __('Login') }}</a>
                                 </li>
                             @endif
 
-                            @if (Route::has('register'))
+                            @if (Route::has('lang.register'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('lang.register') }}">{{ __('Register') }}</a>
                                 </li>

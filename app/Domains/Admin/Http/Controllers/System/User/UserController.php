@@ -3,10 +3,14 @@
 namespace App\Domains\Admin\Http\Controllers\System\User;
 
 use App\Http\Controllers\Controller;
+//use App\Domains\Admin\Http\Controllers\AdminController;
+use App\Domains\Admin\Traits\MenuTrait;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    use MenuTrait;
+
     /**
      * Create a new controller instance.
      *
@@ -15,6 +19,8 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:admin');
+
+        //parent::__construct();
     }
 
     /**
@@ -24,7 +30,9 @@ class UserController extends Controller
      */
     public function index()
     {
+        $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        
         return view('ocadmin.system.user.user_list', $data);
     }
 }

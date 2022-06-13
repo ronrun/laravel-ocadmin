@@ -1,35 +1,44 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-$backend = env('FOLDER_ADMIN');
+//use App\Domains\Admin\Http\Controllers\System\User\UserController;
 
-//Language
 Route::group(  
     [  
     'prefix' => LaravelLocalization::setLocale(),  
     'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ],
     'as' => 'lang.'
-    ], function() use($backend)
+    ], function()
 {
-    //Backend(Admin) prefix
-    Route::group(['prefix' => $backend], function () use($backend) {
-        Route::redirect('', $backend.'/dashboard');
-    
-        Route::group(['middleware' => 'auth:admin'], function () {
-            Route::get('dashboard', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('admin.dashboard');
-            Route::get('user/users', [App\Domains\Admin\Http\Controllers\System\User\UserController::class, 'index'])->name('admin.system.user');
-        });
-    
-        Route::group([
-            'namespace' => 'App\Domains\Admin\Http\Controllers',
-            'as' => 'admin.',
-        ], function () {
-            Auth::routes();
-        });
+    $locale = LaravelLocalization::setLocale();
+    $backend = env('FOLDER_ADMIN');
+    $dir_backend = '/' . $locale . '/' . $backend;
+
+    //login logou register... as lang. admin. is needed in advanced
+    //No auth middleware in group rules. If needed, do in controller
+    Route::group([
+        'namespace' => 'App\Domains\Admin\Http\Controllers',
+        'prefix' => $backend,
+        'as' => 'admin.',
+    ], function () use($backend)
+    {
+        Auth::routes();
+
+        Route::group(['middleware' => ['auth:admin'],], function () use($backend){
+            Route::get('', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+
+            Route::group(['prefix' => 'system', 'as' => 'system.'], function () use($backend) {
+                
+                Route::resource('settings', System\SettingController::class);
+
+                Route::group(['prefix' => 'user', 'as' => 'user.'], function () use($backend) {
+                    Route::resource('users', System\User\UserController::class);
+                    Route::resource('roles', System\User\UserController::class);
+                });
+            });
+        }); 
     });
 
 });
-
-
 
 ?>

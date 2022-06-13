@@ -1,9 +1,52 @@
 <nav id="column-left">
             <div id="navigation"><span class="fas fa-bars"></span> Navigation</div>
             <ul id="menu">
-               <li id="menu-dashboard">
-                  <a href="{{ route('lang.admin.dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
-               </li>
+                @foreach( $menus as $i => $menu )
+                <li id="{{ $menu['id'] }}">
+                    @if($menu['href'])
+                        <a href="{{ $menu['href'] }}"><i class="{{ $menu['icon'] }}"></i> {{ $menu['name'] }}</a>
+                    @else
+                        <a href="#collapse-{{ $i }}" data-bs-toggle="collapse" class="parent collapsed"><i class="{{ $menu['icon'] }}"></i> {{ $menu['name'] }}</a>
+                    @endif
+
+                    @if($menu['children'])
+                    <ul id="collapse-{{ $i }}" class="collapse">
+                        @foreach( $menu['children'] as $j => $children_1 )
+                            <li>
+                                @if($children_1['href'])
+                                    <a href="{{ $children_1['href'] }}"><i class="{{ $children_1['icon'] }}"></i> {{ $children_1['name'] }}</a>
+                                @else
+                                    <a href="#collapse-{{ $i }}-{{ $j }}" data-bs-toggle="collapse" class="parent collapsed"><i class="{{ $children_1['icon'] }}"></i> {{ $children_1['name'] }}</a>
+                                @endif
+
+                                @if($children_1['children'])
+                                    <ul id="collapse-{{ $i }}-{{ $j }}" class="collapse">
+                                        @foreach( $children_1['children'] as $j => $children_2 )
+                                            <li>
+                                                @if($children_2['href'])
+                                                    <a href="{{ $children_2['href'] }}"><i class="{{ $children_2['icon'] }}"></i> {{ $children_2['name'] }}</a>
+                                                @else
+                                                    <a href="#collapse-{{ $i }}-{{ $j }}-{{ $j }}" data-bs-toggle="collapse" class="parent collapsed"><i class="{{ $children_2['icon'] }}"></i> {{ $children_1['name'] }}</a>
+                                                @endif 
+
+                                                @if($children_2['children'])
+                                                <ul>
+                                                    @foreach( $children_2['children'] as $j => $children_3 )
+                                                        <li><a href="{{ $children_3['href'] }}">{{ $children_3['name'] }}</a></li>
+                                                    @endforeach
+                                                </ul>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                    @endif
+                </li>
+                @endforeach
+               <?php /* 
                <li id="menu-levels">
                   <a href="#collapse-7" data-bs-toggle="collapse" class="parent collapsed"><i class="fas fa-cog"></i> Level 1</a>
                   <ul id="collapse-7" class="collapse">
@@ -26,7 +69,11 @@
                      </li>
                   </ul>
                </li>
+               */ ?>
             </ul>
+
+
+
             <div id="stats">
                <ul>
                   <li>

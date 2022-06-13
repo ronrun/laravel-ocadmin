@@ -8,7 +8,7 @@
 @endsection
 
 @section('sidebar')
-  @include('ocadmin._partials.sidebar')
+  @include('ocadmin._partials.column_left')
 @endsection
 
 @section('content')

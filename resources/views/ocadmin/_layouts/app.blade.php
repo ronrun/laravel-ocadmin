@@ -21,7 +21,7 @@
         {{-- 全站opencart預設 --}}
         <script type="text/javascript" src="{{ asset('oc-asset/javascript/common.js') }}"></script>
 
-        {{-- 自訂 --}}-
+        {{-- 自訂 --}}
         @yield('customJsCss')
     </head> 
     <body>
