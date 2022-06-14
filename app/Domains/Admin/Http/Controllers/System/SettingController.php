@@ -27,8 +27,9 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
-        $data['menus'] = $this->getMenus();
-        return view('ocadmin.system.user.user_list', $data);
+        echo "<pre>", print_r('SettingController', 1), "</pre>";
+        // $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        // $data['menus'] = $this->getMenus();
+        // return view('ocadmin.system.user.user_list', $data);
     }
 }

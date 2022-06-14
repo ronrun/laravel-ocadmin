@@ -1,8 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
-//use App\Domains\Admin\Http\Controllers\System\User\UserController;
-
 Route::group(  
     [  
     'prefix' => LaravelLocalization::setLocale(),  
@@ -15,7 +13,7 @@ Route::group(
     $dir_backend = '/' . $locale . '/' . $backend;
 
     //login logou register... as lang. admin. is needed in advanced
-    //No auth middleware in group rules. If needed, do in controller
+    //No need to use auth middleware in group rules, for login route in auth::routes().
     Route::group([
         'namespace' => 'App\Domains\Admin\Http\Controllers',
         'prefix' => $backend,
@@ -25,12 +23,17 @@ Route::group(
         Auth::routes();
 
         Route::group(['middleware' => ['auth:admin'],], function () use($backend){
-            Route::get('', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+            //下面兩行無法使用
+            //Route::get('', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+            //Route::get('', [DashboardController::class, 'index'])->name('dashboard');
+            Route::get('', 'DashboardController@index')->name('dashboard');
+
+            Route::group(['prefix' => 'sales', 'as' => 'sales.'], function () use($backend) {
+                Route::resource('orders', Sales\OrderController::class);
+            });
 
             Route::group(['prefix' => 'system', 'as' => 'system.'], function () use($backend) {
-                
                 Route::resource('settings', System\SettingController::class);
-
                 Route::group(['prefix' => 'user', 'as' => 'user.'], function () use($backend) {
                     Route::resource('users', System\User\UserController::class);
                     Route::resource('roles', System\User\UserController::class);

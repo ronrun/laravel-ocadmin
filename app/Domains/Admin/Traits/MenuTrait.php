@@ -16,6 +16,30 @@ trait MenuTrait {
             'children' => []
         ];
 
+        // Sales
+        $sales = [];
+
+        // Sales / Orders
+        if (1) {
+            $sales[] = [
+                'name'	   => 'Orders',
+                'icon'	   => '',
+                'href'     => route('lang.admin.sales.orders.index'),
+                'children' => []
+            ];
+        }
+
+        // add to Menus
+        if ($sales) {
+            $menus[] = [
+                'id'       => 'menu-sales',
+                'icon'	   => 'fas fa-tag',
+                'name'	   => 'Sales',
+                'href'     => '',
+                'children' => $sales
+            ];
+        }
+
         // System
         $system = [];
 
@@ -23,7 +47,7 @@ trait MenuTrait {
         if (1) {
             $system[] = [
                 'name'	   => 'Setting',
-                'icon'	   => ' ',
+                'icon'	   => '',
                 'href'     => route('lang.admin.system.settings.index'),
                 'children' => []
             ];
