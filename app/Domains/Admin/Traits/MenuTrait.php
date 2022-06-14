@@ -40,16 +40,27 @@ trait MenuTrait {
             ];
         }
 
-        // System
-        $system = [];
+        // Tools
+        $tools = [];
 
-        // System / Setting
+        // Tools / Setting
         if (1) {
-            $system[] = [
-                'name'	   => 'Setting',
+            $tools[] = [
+                'name'	   => 'Translations',
                 'icon'	   => '',
-                'href'     => route('lang.admin.system.settings.index'),
+                'href'     => route('lang.admin.tools.trans_from_opencart'),
                 'children' => []
+            ];
+        }
+
+        // add to Menus
+        if ($tools) {
+            $menus[] = [
+                'id'       => 'menu-tools',
+                'icon'	   => 'fas fa-tag',
+                'name'	   => 'Tools',
+                'href'     => '',
+                'children' => $tools
             ];
         }
 

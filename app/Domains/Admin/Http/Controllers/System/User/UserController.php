@@ -2,10 +2,11 @@
 
 namespace App\Domains\Admin\Http\Controllers\System\User;
 
-use App\Http\Controllers\Controller;
-//use App\Domains\Admin\Http\Controllers\AdminController;
-use App\Domains\Admin\Traits\MenuTrait;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Domains\Admin\Traits\MenuTrait;
+use App\Domains\Admin\Services\UserService;
+
 
 class UserController extends Controller
 {
@@ -16,11 +17,21 @@ class UserController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Request $request, UserService $UserService)
     {
-        $this->middleware('auth:admin');
+        $this->userService = $UserService;
 
         //parent::__construct();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return $this->getList();
     }
 
     /**
@@ -28,7 +39,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function getList()
     {
         $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');

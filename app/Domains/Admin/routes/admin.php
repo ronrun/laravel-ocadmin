@@ -23,8 +23,9 @@ Route::group(
         Auth::routes();
 
         Route::group(['middleware' => ['auth:admin'],], function () use($backend){
-            //下面兩行無法使用
+            //下面可以使用但很長
             //Route::get('', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+            //下面用陣列型式無法使用
             //Route::get('', [DashboardController::class, 'index'])->name('dashboard');
             Route::get('', 'DashboardController@index')->name('dashboard');
 
@@ -32,6 +33,11 @@ Route::group(
                 Route::resource('orders', Sales\OrderController::class);
             });
 
+            Route::group(['prefix' => 'tools', 'as' => 'tools.'], function () use($backend) {
+                Route::get('trans-from-opencart', 'Tools\TransFromOpencartController@getForm')->name('trans_from_opencart');
+                Route::post('trans-from-opencart', 'Tools\TransFromOpencartController@update');
+            });
+            
             Route::group(['prefix' => 'system', 'as' => 'system.'], function () use($backend) {
                 Route::resource('settings', System\SettingController::class);
                 Route::group(['prefix' => 'user', 'as' => 'user.'], function () use($backend) {
