@@ -40,6 +40,30 @@ trait MenuTrait {
             ];
         }
 
+        // Members
+        $members = [];
+
+        // Sales / Orders
+        if (1) {
+            $member[] = [
+                'name'	   => 'Members',
+                'icon'	   => '',
+                'href'     => route('lang.admin.member.members.index'),
+                'children' => []
+            ];
+        }
+
+        // add to Menus
+        if ($member) {
+            $menus[] = [
+                'id'       => 'menu-sales',
+                'icon'	   => 'fas fa-tag',
+                'name'	   => 'Members',
+                'href'     => '',
+                'children' => $member
+            ];
+        }
+
         // Tools
         $tools = [];
 

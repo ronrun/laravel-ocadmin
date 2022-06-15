@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Domains\Admin\Traits\MenuTrait;
 use App\Domains\Admin\Services\UserService;
 
-
 class UserController extends Controller
 {
     use MenuTrait;
@@ -35,7 +34,7 @@ class UserController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the list table.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */

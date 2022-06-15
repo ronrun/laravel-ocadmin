@@ -25,12 +25,16 @@ Route::group(
         Route::group(['middleware' => ['auth:admin'],], function () use($backend){
             //下面可以使用但很長
             //Route::get('', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-            //下面用陣列型式無法使用
+            //下面用陣列型式無法單獨使用，必須在檔案開頭加上 use。
             //Route::get('', [DashboardController::class, 'index'])->name('dashboard');
             Route::get('', 'DashboardController@index')->name('dashboard');
 
             Route::group(['prefix' => 'sales', 'as' => 'sales.'], function () use($backend) {
                 Route::resource('orders', Sales\OrderController::class);
+            });
+
+            Route::group(['prefix' => 'member', 'as' => 'member.'], function () use($backend) {
+                Route::resource('members', Member\MemberController::class);
             });
 
             Route::group(['prefix' => 'tools', 'as' => 'tools.'], function () use($backend) {

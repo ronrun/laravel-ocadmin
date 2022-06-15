@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Domains\Admin\Http\Controllers\Sales;
+namespace App\Domains\Admin\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Domains\Admin\Traits\MenuTrait;
 
-class OrderController extends Controller
+class MemberController extends Controller
 {
     use MenuTrait;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -86,16 +86,11 @@ class OrderController extends Controller
         //
     }
     
-    /**
-     * Show the list table.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function getList()
     {
         $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
         
-        return view('ocadmin.sale.order_list', $data);
+        return view('ocadmin.member.member_list', $data);
     }
 }
