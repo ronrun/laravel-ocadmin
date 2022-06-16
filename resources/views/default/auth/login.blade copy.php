@@ -1,4 +1,4 @@
-@extends('admin._layouts.app')
+@extends('default.layouts.app')
 
 @section('content')
 <div class="container">
@@ -6,18 +6,18 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('Login') }}</div>
-    
+
                 <div class="card-body">
-                    <form method="POST" action="{{ route('admin.login') }}">
+                    <form method="POST" action="{{ route('login') }}" onsubmit="return checkForm(this);"">
                         @csrf
 
                         <div class="row mb-3">
-                            <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('Username') }}</label>
+                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
 
                             <div class="col-md-6">
-                                <input id="username" type="username" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
-                                @error('username')
+                                @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -70,29 +70,43 @@
         </div>
     </div>
 </div>
-
 <script type="text/javascript">
-$(document).ready(function(){
-    $('form').submit(function(e) { 
-        e.preventDefault();
-        e.returnValue = false;
-
-        var $form = $(this);
-        $.ajax({
-            method: "get",
-            url: '/refresh-token',
-            context: $form,
-            success: function (response) {
-                $('meta[name="csrf-token"]').attr('content', response);
-                $('input[name="_token"]').val(response);
-                this.off('submit');
-                this.submit();
-            },
-            error: function (thrownError) {
-                console.log(thrownError);
-            }
-        });
+  $.ajax({
+    type: "GET",
+    url: '/refresh-token',
+    dataType: "json",
+    success: function (response) {
+      alert(333);
+    },
+    error: function (thrownError) {
+      console.log(thrownError);
+    }
+  });
+function checkForm(){
+    alert(1);
+    $.ajax({
+        url: "{{url('refresh-token')}}",
+        type: 'get',
+        dataType: 'json',
+        success: function (result) {
+            alert(3);return;
+            // alert(result.token) return; 
+            // $('meta[name="csrf-token"]').attr('content', result.token);
+            // $('meta[name="_token"]').attr('content', result.token);
+            // $('input[name="csrf-token"]').val(result.token);
+            // $.ajaxSetup({
+            //     headers: {
+            //         'X-CSRF-TOKEN': result.token
+            //     }
+            // });
+        },
+        error: function (xhr, status, error) {
+            console.log(xhr);
+        }
     });
-});
+}
+
+
+
 </script>
 @endsection
