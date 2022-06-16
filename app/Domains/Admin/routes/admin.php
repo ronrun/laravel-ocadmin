@@ -26,6 +26,27 @@ Route::group(
         Route::group(['middleware' => ['auth:admin'],], function () use($backend){
             Route::get('', 'DashboardController@index')->name('dashboard');
 
+            Route::group(['prefix' => 'sales', 'as' => 'sales.'], function () use($backend) {
+                Route::resource('orders', Sales\OrderController::class);
+            });
+
+            Route::group(['prefix' => 'member', 'as' => 'member.'], function () use($backend) {
+                Route::resource('members', Member\MemberController::class);
+            });
+
+            Route::group(['prefix' => 'tools', 'as' => 'tools.'], function () use($backend) {
+                Route::get('trans-from-opencart', 'Tools\TransFromOpencartController@getForm')->name('trans_from_opencart');
+                Route::post('trans-from-opencart', 'Tools\TransFromOpencartController@update');
+            });
+            
+            Route::group(['prefix' => 'system', 'as' => 'system.'], function () use($backend) {
+                Route::resource('settings', System\SettingController::class);
+                Route::group(['prefix' => 'user', 'as' => 'user.'], function () use($backend) {
+                    Route::resource('users', System\User\UserController::class);
+                    Route::resource('roles', System\User\UserController::class);
+                });
+            });
+
         });
     });
 });

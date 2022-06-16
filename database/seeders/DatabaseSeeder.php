@@ -21,13 +21,8 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        User::truncate();
-        User::create([
-            'username' => 'admin',
-            'email' => 'admin@example.org',
-            'password' => bcrypt('123456'),
-            'name' => 'Administrator',
-            'is_active' => 1,
-            ]);
+        $this->call([
+            UserSeeder::class,
+        ]);
     }
 }

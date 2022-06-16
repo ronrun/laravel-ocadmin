@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domains\Admin\Http\Controllers;
+namespace App\Domains\Admin\Http\Controllers\System;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Domains\Admin\Traits\MenuTrait;
 
-class DashboardController extends Controller
+class SettingController extends Controller
 {
     use MenuTrait;
 
@@ -27,8 +27,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
-        $data['menus'] = $this->getMenus();
-        return view('ocadmin.dashboard', $data);
+        echo "<pre>", print_r('SettingController', 1), "</pre>";
+        // $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        // $data['menus'] = $this->getMenus();
+        // return view('ocadmin.system.user.user_list', $data);
     }
 }

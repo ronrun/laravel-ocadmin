@@ -2,7 +2,7 @@
 
 namespace App\Domains\Admin\Http\Controllers\Auth;
 
-use App\Domains\Admin\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 

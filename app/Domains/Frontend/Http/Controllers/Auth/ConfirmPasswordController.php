@@ -2,7 +2,7 @@
 
 namespace App\Domains\Frontend\Http\Controllers\Auth;
 
-use App\Domains\Frontend\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ConfirmsPasswords;
 

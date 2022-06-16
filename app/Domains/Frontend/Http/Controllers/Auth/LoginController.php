@@ -2,7 +2,7 @@
 
 namespace App\Domains\Frontend\Http\Controllers\Auth;
 
-use App\Domains\Frontend\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -61,7 +61,8 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('default.auth.login');
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        return view('ocadmin.login', $data); 
     }
 
     /**
