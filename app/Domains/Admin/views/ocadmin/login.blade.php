@@ -48,7 +48,7 @@ $(document).ready(function(){
         var $form = $(this); 
         $.ajax({ 
             method: "get", 
-            url: 'refresh-token', 
+            url: '/refresh-token', 
             context: $form, 
             success: function (response) { 
                 $('meta[name="csrf-token"]').attr('content', response); 
