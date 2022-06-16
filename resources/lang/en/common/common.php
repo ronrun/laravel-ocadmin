@@ -8,7 +8,7 @@
 'date_format_long'                      => 'l jS F Y',
 'time_format'                           => 'h:i:s A',
 'datetime_format'                       => 'd/m/Y H:i:s',
-'decimal_point'                         => '.',a
+'decimal_point'                         => '.',
 'thousand_point'                        => ',',
 // Text
 'text_yes'                              => 'Yes',
@@ -355,4 +355,4 @@
 //$_['datepicker']                  = 'zh-cn';
 //$_['datepicker']                  = 'zh-hk';
 //$_['datepicker']                  = 'zh-tw';
-]
+];
