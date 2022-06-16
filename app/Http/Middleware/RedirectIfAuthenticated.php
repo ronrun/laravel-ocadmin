@@ -36,13 +36,13 @@ class RedirectIfAuthenticated
         //default backend segment is 1, if locale exists,2
         if($request->segment(1) == $backend || $request->segment(2) == $backend){
             if(Auth::guard('admin')->check()){
-                return redirect(route('admin.dashboard'));
+                return redirect(route('lang.admin.dashboard'));
             }
         }
 
         if($request->segment(1) != $backend && $request->segment(2) != $backend){
             if(Auth::guard('web')->check()){
-                return redirect(route('home'));
+                return redirect(route('lang.home'));
             }
         }
 

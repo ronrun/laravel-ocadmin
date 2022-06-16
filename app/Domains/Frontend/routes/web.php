@@ -17,12 +17,23 @@ Route::get('refresh-token', function(){
     return csrf_token();
 });
 
-Route::get('/', function () {
-    return view('default.welcome');
-});
+Route::group(  
+    [  
+    'prefix' => LaravelLocalization::setLocale(),  
+    'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ],
+    'as' => 'lang.'
+    ], function()  
+{
+    Route::get('/', function () {
+        return view('default.welcome');
+    });
+    
+    Route::group(['namespace' => 'App\Domains\Frontend\Http\Controllers'], function () {
+        Auth::routes();
+    });
 
+    Route::get('/home', [App\Domains\Frontend\Http\Controllers\HomeController::class, 'index'])->name('home');
+    
 
-Route::group(['namespace' => 'App\Domains\Frontend\Http\Controllers'], function () {
-	Auth::routes();
-});
-Route::get('/home', [App\Domains\Frontend\Http\Controllers\HomeController::class, 'index'])->name('home');
+}); 
+
