@@ -61,7 +61,8 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('admin.login');
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        return view('admin.login', $data); 
     }
 
     /**
