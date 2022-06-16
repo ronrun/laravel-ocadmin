@@ -36,6 +36,21 @@ class UserController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $queries = $this->request->query();
+        $this->form_method = 'put';
+        $this->form_action = route('lang.admin.system.user.users.update', array_merge([$id], $queries));
+
+        return $this->getForm($id);
+    }
+
+    /**
      * Show the list table.
      *
      * @return \Illuminate\Contracts\Support\Renderable
@@ -44,17 +59,16 @@ class UserController extends Controller
     {
 
         //Language
+        $langs = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $arr[$key] = $value;
+            $langs->$key = $value;
         }
 
         foreach (Lang::get('user/user') as $key => $value) {
-            $arr[$key] = $value;
+            $langs->$key = $value;
         }
-        
-        $langs = (object)$arr;
 
-        $data['langs'] = (object)$arr;
+        $data['langs'] = $langs;
 
         //Breadcomb
         $data['breadcumbs'][] = array(
@@ -111,14 +125,44 @@ class UserController extends Controller
         return view('ocadmin.system.user.user_list', $data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function getForm($id = null)
     {
-        //
+        //Language
+        $langs = (object)[];
+        foreach (Lang::get('common/common') as $key => $value) {
+            $langs->$key = $value;
+        }
+
+        foreach (Lang::get('user/user') as $key => $value) {
+            $langs->$key = $value;
+        }
+
+        $data['langs'] = $langs;
+  
+        //Breadcomb
+        $data['breadcumbs'][] = array(
+            'text' => $langs->text_home,
+            'href' => route('lang.home'),
+        );
+        
+        $data['breadcumbs'][] = array(
+            'text' => $langs->heading_title,
+            'href' => null,
+        );
+
+        $data['menus'] = $this->getMenus();
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+  
+        $user = $this->userService->findIdOrNew($id);
+        $data['user'] = $user;
+
+        //$data['breadcumbs'] = $this->breadcumbs;
+        $data['text_form'] = !isset($id) ? '新增會員' : '編輯會員';
+        //$data['previous_url'] = $this->previous_url;
+
+        $data['form_action'] = $this->form_action;
+        $data['form_method'] = $this->form_method;
+
+        return view('ocadmin.system.user.user_form', $data);
     }
 }

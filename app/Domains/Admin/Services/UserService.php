@@ -120,6 +120,20 @@ class UserService
         return $rows;
     }
 
+    public function findIdOrNew($id = null)
+    {
+        if(empty($id)){
+            $row = new $this->modelName;
+        }else{
+            $row = $this->model->find($id);
+        }
+
+        if (is_subclass_of($row, 'Illuminate\Database\Eloquent\Model')) {
+            return $row;
+        }
+        return false;      
+    }
+
     public function checkSqlExecution($status, $object)
     {
         if($status){
