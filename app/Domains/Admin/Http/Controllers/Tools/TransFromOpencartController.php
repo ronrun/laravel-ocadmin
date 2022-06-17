@@ -34,7 +34,7 @@ class TransFromOpencartController extends Controller
             foreach ($transText as $value) {
                 $value = trim($value);
                 if(strstr($value, '//')){
-                    $new[] = $value;
+                    $new[] = "    " . $value;
                 }else if(strstr($value, '$_')){
                     // https://www.phpliveregex.com/
                     preg_match('"\\$_\\[\\\'(.*)\\\'\\]\\s+\\=\\s*\\\'(.*)\\\'"', $value, $matches);
@@ -45,10 +45,12 @@ class TransFromOpencartController extends Controller
                     for ($i=0; $i < $c; $i++) {
                         $spaces .= ' ';
                     }
-                    $new[] = $new_str . $spaces . "=> '".$matches[2]."',";
+                    $new[] = "    " . $new_str . $spaces . "=> '".$matches[2]."',";
+                }else if(empty($value)){
+                    $new[] = "";
                 }
             }
-            $transText = implode("\n", $new) . "\n]";
+            $transText = implode("\n", $new) . "\n];";
             $data['transText'] = $transText;
         }
         $data['menus'] = $this->getMenus();

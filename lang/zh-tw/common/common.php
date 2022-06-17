@@ -242,4 +242,4 @@
 // Datepicker
 //$_['datepicker']                  = 'en-gb';
 'datepicker'                            => 'zh-tw',
-]
+ ];

@@ -42,6 +42,7 @@ Route::group(
             Route::group(['prefix' => 'system', 'as' => 'system.'], function () use($backend) {
                 Route::resource('settings', System\SettingController::class);
                 Route::group(['prefix' => 'user', 'as' => 'user.'], function () use($backend) {
+                    Route::get('users/list', 'System\User\UserController@list')->name('users.list');
                     Route::resource('users', System\User\UserController::class);
                     Route::resource('roles', System\User\UserController::class);
                 });

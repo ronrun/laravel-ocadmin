@@ -15,9 +15,11 @@ yarn-error.log
 /.vscode
 #laravel default end
 
+/public/tests
 *.code-workspace
 php.bat
 composer.bat
+phpinfo.php
 
 *.bak 
 *.bak.php 

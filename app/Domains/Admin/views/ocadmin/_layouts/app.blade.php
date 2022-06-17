@@ -40,7 +40,7 @@
                             </div>
                         </li>
                         <li id="header-profile" class="nav-item dropdown">
-                            <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle"><img src="/oc-asset/image/profile.png" alt="Ron Lee" title="admin" class="rounded-circle"/><span class="d-none d-md-inline d-lg-inline">&nbsp;&nbsp;&nbsp;Ron Lee <i class="fas fa-caret-down fa-fw"></i></span></a>
+                            <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle"><img src="/oc-asset/image/profile.png" alt="資訊部" title="admin" class="rounded-circle"/><span class="d-none d-md-inline d-lg-inline">&nbsp;&nbsp;&nbsp;Ron Lee <i class="fas fa-caret-down fa-fw"></i></span></a>
                             <ul class="dropdown-menu drofpdown-menu-right">
                                 <li><a href="http://opencart4x.test/backend/index.php?route=user/profile&amp;user_token=a04539592e4472b5201c41a7e23a6e75" class="dropdown-item"><i class="fa fa-user-circle fa-fw"></i> Your Profile</a></li>
                                 <li>
@@ -79,7 +79,7 @@
 
             @yield('content')
             
-            <footer id="footer"><a href="https://www.opencart.com">Ron Lee</a> &copy; 2009-2022 All Rights Reserved.<br />Version 0.4.0</footer>
+            <footer id="footer"><a href="https://www.opencart.com">Ron Lee</a> &copy; 2009-2022 All Rights Reserved.<br />Version 1.9.4.1</footer>
         </div>
         <script src="{{ asset('oc-asset/javascript/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>
         @yield('buttom')

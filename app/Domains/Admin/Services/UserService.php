@@ -33,20 +33,6 @@ class UserService
         return $this->checkSqlExecution($row->save(), $row);
     }
 
-    public function updateById($data, $id)
-    {
-        $row = $this->model->find($id);
-
-        if(!empty($data['password'])){
-            $row->password = bcrypt($data['password']);
-        }
-        $row->name = $data['name'] ?? '';
-        $row->email = $data['email'] ?? '';
-        $row->mobilephone = $data['mobilephone'] ?? '';
-
-        return $this->checkSqlExecution($row->save(), $row);
-    }
-
     public function getRows($data = array(), $debug = 0)
     {
         $query = $this->newModel()->query();
@@ -132,6 +118,33 @@ class UserService
             return $row;
         }
         return false;      
+    }
+
+    public function updateById($data, $id)
+    {
+        $row = $this->model->find($id);
+
+        if(!empty($data['password'])){
+            $row->password = bcrypt($data['password']);
+        }
+        $row->name = $data['name'] ?? '';
+        $row->email = $data['email'] ?? '';
+        $row->mobilephone = $data['mobilephone'] ?? '';
+
+        return $this->checkSqlExecution($row->save(), $row);
+    }
+
+    public function updateByKey($key, $value, $data)
+    {
+        $row = $this->model->where($key, $value)->first();
+
+        $row->name = $data['name'] ?? null;
+        $row->username  = $data['username'];
+        $row->email = $data['email'] ?? null;
+        $row->password = !empty($data['password']) ? bcrypt($data['password']) : $row->password;
+        $row->status = $data['status'] ?? null;
+  
+        return $this->checkSqlExecution($row->save(), $row);
     }
 
     public function checkSqlExecution($status, $object)

@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => bcrypt('123456'),
             'name' => 'Administrator',
-            'is_active' => 1,
+            'status' => 1,
             ]);
 
         User::factory()

@@ -32,7 +32,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        return $this->getList();
+        $data['list'] = $this->getList();
+
+        $data['menus'] = $this->getMenus();
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+
+        return view('ocadmin.system.user.user', $data);
     }
 
     /**
@@ -51,11 +56,13 @@ class UserController extends Controller
     }
 
     /**
-     * Show the list table.
+     * Update the specified resource in storage.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function getList()
+    public function update(Request $request, $id)
     {
 
         //Language
@@ -64,13 +71,64 @@ class UserController extends Controller
             $langs->$key = $value;
         }
 
-        foreach (Lang::get('user/user') as $key => $value) {
+        foreach (Lang::get('system/user/user') as $key => $value) {
             $langs->$key = $value;
         }
 
         $data['langs'] = $langs;
+        //end Language
 
-        //Breadcomb
+
+        $data = $this->request->post();
+
+        $this->userService->updateByKey('id', $id, $data);
+ 
+        return response()->json([
+            'success' => $langs->text_success,
+        ]);
+    }
+
+    public function list()
+    {
+        // Language
+        $langs = (object)[];
+        foreach (Lang::get('common/common') as $key => $value) {
+            $langs->$key = $value;
+        }
+
+        foreach (Lang::get('system/user/user') as $key => $value) {
+            $langs->$key = $value;
+        }
+
+        $data['langs'] = $langs;
+        //end Language
+        
+        $data['form_action'] = route('lang.admin.system.user.users.list');
+
+        return $this->getList();
+    }
+
+    /**
+     * Show the list table.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getList()
+    {
+        // Language
+        $langs = (object)[];
+        foreach (Lang::get('common/common') as $key => $value) {
+            $langs->$key = $value;
+        }
+
+        foreach (Lang::get('system/user/user') as $key => $value) {
+            $langs->$key = $value;
+        }
+
+        $data['langs'] = $langs;
+        // End Language
+
+        // Breadcomb
         $data['breadcumbs'][] = array(
             'text' => $langs->text_home,
             'href' => route('lang.home'),
@@ -109,18 +167,18 @@ class UserController extends Controller
         $data['sort_name'] = "/$locale/$backend/system/user/users?sort=name&order=$order&$strFilters";
         $data['sort_username'] = "/$locale/$backend/system/user/users?sort=username&order=$order&$strFilters";
         $data['sort_email'] = "/$locale/$backend/system/user/users?sort=email&order=$order&$strFilters";
-        
-        
 
         $requestData = $this->request->query();
         $requestData['url'] = $this->request->url();
         $requestData['limit'] = $this->request->query('limit');
 
         $users = $this->userService->getRows($requestData);
+        $users->withPath(route('lang.admin.system.user.users.list'));
         $data['users'] = $users;
 
-        $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+        $data['menus'] = $this->getMenus();
+        $data['form_action'] = route('lang.admin.system.user.users.list');
 
         return view('ocadmin.system.user.user_list', $data);
     }
@@ -133,7 +191,7 @@ class UserController extends Controller
             $langs->$key = $value;
         }
 
-        foreach (Lang::get('user/user') as $key => $value) {
+        foreach (Lang::get('system/user/user') as $key => $value) {
             $langs->$key = $value;
         }
 
@@ -162,7 +220,7 @@ class UserController extends Controller
 
         $data['form_action'] = $this->form_action;
         $data['form_method'] = $this->form_method;
-
+        
         return view('ocadmin.system.user.user_form', $data);
     }
 }
