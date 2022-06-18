@@ -12,17 +12,11 @@ class UserController extends Controller
 {
     use MenuTrait;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct(Request $request, UserService $userService)
     {
+        //parent::__construct();
         $this->request = $request;
         $this->userService = $userService;
-
-        //parent::__construct();
     }
 
     /**
@@ -33,7 +27,6 @@ class UserController extends Controller
     public function index()
     {
         $data['list'] = $this->getList();
-
         $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
 
@@ -64,7 +57,6 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         //Language
         $langs = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
@@ -76,12 +68,26 @@ class UserController extends Controller
         }
 
         $data['langs'] = $langs;
-        //end Language
 
+        $update_data = [];
 
-        $data = $this->request->post();
+        if($this->request->input('name')){
+            $update_data['name'] = $this->request->input('name');
+        }
 
-        $this->userService->updateByKey('id', $id, $data);
+        if($this->request->input('email')){
+            $update_data['email'] = $this->request->input('email');
+        }
+
+        if($this->request->input('password')){
+            $update_data['password'] = bcrypt($this->request->input('password'));
+        }
+
+        if($this->request->input('status')){
+            $update_data['status'] = $this->request->input('status');
+        }
+
+        $this->userService->updateByKey('id', $id, $update_data);
  
         return response()->json([
             'success' => $langs->text_success,
@@ -139,7 +145,7 @@ class UserController extends Controller
             'href' => null,
         );
 
-        //準備資料列排序連結的參數
+        //準備資料表格欄位排序的連結
         $queries = [];
         $strFilters = '';
         foreach($this->request->query() as $key => $value) {
@@ -213,7 +219,7 @@ class UserController extends Controller
   
         $user = $this->userService->findIdOrNew($id);
         $data['user'] = $user;
-
+        
         //$data['breadcumbs'] = $this->breadcumbs;
         $data['text_form'] = !isset($id) ? '新增會員' : '編輯會員';
         //$data['previous_url'] = $this->previous_url;

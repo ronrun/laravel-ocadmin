@@ -12,6 +12,8 @@
 
     // Column
     'column_username'                       => 'Username',
+    'column_name'                           => 'Name',
+    'column_email'                          => 'E-mail',
     'column_status'                         => 'Status',
     'column_date_added'                     => 'Date Added',
     'column_action'                         => 'Action',

@@ -11,7 +11,9 @@
     'text_edit'                             => '編輯管理員帳號',
 
     // Column
-    'column_username'                       => '管理員帳號',
+    'column_username'                       => '帳號',
+    'column_name'                           => '名稱',
+    'column_email'                          => 'E-mail',
     'column_status'                         => '狀態',
     'column_date_added'                     => '新增日期',
     'column_action'                         => '管理',

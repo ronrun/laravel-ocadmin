@@ -4,10 +4,12 @@ namespace App\Domains\Admin\Services;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Tiptop\TTGEM;
+use App\Domains\Admin\Traits\DataTrait;
 
 class UserService
 {
+    use DataTrait;
+
     public function __construct(Request $request)
     {
         $this->request = $request;
@@ -113,11 +115,7 @@ class UserService
         }else{
             $row = $this->model->find($id);
         }
-
-        if (is_subclass_of($row, 'Illuminate\Database\Eloquent\Model')) {
-            return $row;
-        }
-        return false;      
+        return $row;      
     }
 
     public function updateById($data, $id)
@@ -134,6 +132,7 @@ class UserService
         return $this->checkSqlExecution($row->save(), $row);
     }
 
+    /*
     public function updateByKey($key, $value, $data)
     {
         $row = $this->model->where($key, $value)->first();
@@ -146,6 +145,7 @@ class UserService
   
         return $this->checkSqlExecution($row->save(), $row);
     }
+    */
 
     public function checkSqlExecution($status, $object)
     {

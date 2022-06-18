@@ -31,6 +31,10 @@ Route::group(
             });
 
             Route::group(['prefix' => 'member', 'as' => 'member.'], function () use($backend) {
+                Route::get('members/autocomplete', 'Member\MemberController@autocomplete')->name('members.autocomplete');
+                Route::get('members/ip/{member_id}', 'Member\MemberController@ip')->name('members.ip');
+
+                Route::get('members/list', 'Member\MemberController@list')->name('members.list');
                 Route::resource('members', Member\MemberController::class);
             });
 
