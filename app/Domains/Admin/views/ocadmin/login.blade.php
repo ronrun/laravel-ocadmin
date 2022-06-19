@@ -25,7 +25,7 @@
                                     <div class="input-group-text"><i class="fas fa-lock"></i></div>
                                     <input type="password" name="password" value="" placeholder="{{ $langs->entry_password }}" id="input-password" class="form-control"/>
                                 </div>
-                                <div class="mb-3"><a href="{{ route('lang.admin.password.request') }}">{{ $langs->text_forgotten }}</a></div>
+                                <?php /*<div class="mb-3"><a href="{{ route('lang.admin.password.request') }}">{{ $langs->text_forgotten }}</a></div>*/ ?>
                             </div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> {{ $langs->button_login }}</button>

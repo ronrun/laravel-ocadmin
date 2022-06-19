@@ -35,6 +35,11 @@ class MemberService
         return $result;
     }
 
+    public function getMemberByEmail()
+    {
+        
+    }
+
 	public function getIps(int $member_id, int $start = 0, int $limit = 10): object 
     {
 		if ($start < 0) {

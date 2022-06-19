@@ -27,7 +27,7 @@
         @endforeach
       @else
         <tr>
-          <td class="text-center" colspan="5">{{ $langs->text_no_results }}</td>
+          <td class="text-center" colspan="3">{{ $langs->text_no_results }}</td>
         </tr>
       @endif
     </tbody>

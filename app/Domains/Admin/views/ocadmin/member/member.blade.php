@@ -91,12 +91,13 @@ $('#button-filter').on('click', function() {
     if (filter_email) {
         url += '&filter_email=' + encodeURIComponent(filter_email);
     }
-
+    <?php /*
     var filter_customer_group_id = $('#input-customer-group').val();
 
     if (filter_customer_group_id !== '') {
         url += '&filter_customer_group_id=' + filter_customer_group_id;
     }
+    */ ?>
 
     var filter_status = $('#input-status').val();
 

@@ -22,6 +22,13 @@ trait DataTrait
         return false;      
     }
 
+    public function findByKey($key, $value)
+    {
+        $model = new $this->modelName;
+        $row = $model->where($key, $value)->first();
+        return $row;
+    }
+
     public function getRows($data = array(), $debug = 0)
     {
         $query = $this->newModel()->query();
@@ -95,12 +102,6 @@ trait DataTrait
             $rows = $query->paginate(10);
         }
 
-        if(!empty($data['edit_route_name'])){
-            foreach ($rows as $row) {
-                $row->url_edit = route($data['edit_route_name'], $row->id);
-            }
-        }
-
         return $rows;
     }
 
@@ -112,13 +113,6 @@ trait DataTrait
             $row->$field = $data[$field];
         }
   
-        return $this->checkSqlExecution($row->save(), $row);
-    }
-
-    public function findByKey($key, $value)
-    {
-        $row = $this->model->where($key, $value)->first();
-
         return $this->checkSqlExecution($row->save(), $row);
     }
 

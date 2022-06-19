@@ -125,6 +125,13 @@ class MemberController extends Controller
 
         $data['langs'] = $langs;
 
+        // Check Email
+		$member_info = $this->memberService->findByKey('email', $request->input('email'));
+
+        if ($member_info && ($id != $member_info->id)) {
+            $json['error']['warning'] = $langs->error_exists;
+        }
+
         $update_data = [];
         
         if($this->request->input('name')){
@@ -151,11 +158,17 @@ class MemberController extends Controller
             $update_data['status'] = $this->request->input('status');
         }
 
-        $this->memberService->updateByKey('id', $id, $update_data);
+		if (!$json) {
+			if (!$id) {
+				//$json['member_id'] = $this->model_customer_customer->addCustomer($this->request->all());
+			} else {
+				$this->memberService->updateByKey('id', $id, $update_data);
+			}
+
+			$json['success'] = $this->language->get('text_success');
+		}
  
-        return response()->json([
-            'success' => $langs->text_success,
-        ]);
+        return response()->json($json);
     }
 
     /**
@@ -240,11 +253,20 @@ class MemberController extends Controller
         $requestData = $this->request->query();
         $requestData['url'] = $this->request->url();
         $requestData['limit'] = $this->request->query('limit');
-        $requestData['edit_route_name'] = 'lang.admin.member.members.edit';
         if(!empty($this->request->query('filter_ip'))){
             $requestData['filter_ip'] = $this->request->query('filter_ip');
         }
+
+        // Rows
         $members = $this->memberService->getRows($requestData);
+
+        if(!empty($members)){
+            foreach ($members as $row) {
+                $row->url_edit = route('lang.admin.member.members.edit', $row->id);
+                $row->status = ($row->status) ? $langs->text_enabled : $langs->text_disabled;
+            }
+        }
+
         $members->withPath(route('lang.admin.member.members.list'));
         $data['members'] = $members;
 
@@ -266,19 +288,23 @@ class MemberController extends Controller
         foreach (Lang::get('member/member') as $key => $value) {
             $langs->$key = $value;
         }
+        
+        $langs->text_form = ($action == 'create') ? $langs->text_add : $langs->text_edit;
+
 
         $data['langs'] = $langs;
   
-        //Breadcomb
-        $data['breadcumbs'][] = array(
+        // Breadcomb
+        $breadcumbs[] = (object)array(
             'text' => $langs->text_home,
-            'href' => route('lang.home'),
+            'href' => route('lang.admin.dashboard'),
         );
         
-        $data['breadcumbs'][] = array(
+        $breadcumbs[] = (object)array(
             'text' => $langs->heading_title,
             'href' => null,
         );
+        $data['breadcumbs'] = (object)$breadcumbs;
 
         $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
@@ -321,7 +347,6 @@ class MemberController extends Controller
             'filter_name'   => $this->request->filter_name,
             'filter_email'   => $this->request->filter_email,
             'filter_status'   => 'Y',
-            'edit_route_name'    => 'lang.admin.member.members.edit',
         );
 
         if (!empty($this->request->sort)) {

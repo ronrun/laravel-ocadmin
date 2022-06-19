@@ -21,25 +21,26 @@
 
 				<a href="http://opencart4x.test/backend/index.php?route=member/member&amp;user_token=5bb02794973e438e69f86e04c7730815" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fas fa-reply"></i></a>
 			</div>
-			<h1>Members</h1>
+			<h1>{{ $langs->heading_title }}</h1>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="http://opencart4x.test/backend/index.php?route=common/dashboard&amp;user_token=5bb02794973e438e69f86e04c7730815">Home</a></li>
-				<li class="breadcrumb-item"><a href="http://opencart4x.test/backend/index.php?route=member/member&amp;user_token=5bb02794973e438e69f86e04c7730815">Members</a></li>
+				@foreach($breadcumbs as $breadcumb)
+					<li class="breadcrumb-item"><a href="{{ $breadcumb->href }}">{{ $breadcumb->text }}</a></li>
+				@endforeach
 			</ol>
 		</div>
 	</div>
-	<div class="container-fluid">
-		<div class="card">
-			<div class="card-header"><i class="fas fa-pencil-alt"></i> Edit Member</div>
-			<div class="card-body">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ $langs->text_form }}</div>
+            <div class="card-body">
 
-				<ul class="nav nav-tabs">
-					<li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">General</a></li>
-					<li class="nav-item"><a href="#tab-ip" data-bs-toggle="tab" class="nav-link">IP Addresses</a></li>
-				</ul>
-				<div class="tab-content">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">{{ $langs->tab_general }}</a></li>
+                    <li class="nav-item"><a href="#tab-ip" data-bs-toggle="tab" class="nav-link">{{ $langs->tab_ip }}</a></li>
+                </ul>
+                <div class="tab-content">
 					<div id="tab-general" class="tab-pane active">
-						<form id="form-member" action="{{ $form_action}}" method="post" data-oc-toggle="ajax">
+                    <form id="form-member" action="" method="post">
 							@csrf
 							@method('PUT')
 							<fieldset>
@@ -69,7 +70,7 @@
 								<div class="row mb-3 required">
 									<label for="input-email" class="col-sm-2 col-form-label">{{ $langs->entry_email }}</label>
 									<div class="col-sm-10">
-										<input type="text" name="email" value="arhatron@gmail.com" placeholder="E-Mail" id="input-email" class="form-control"/>
+										<input type="text" name="email" value="{{ $member->email }}" placeholder="E-Mail" id="input-email" class="form-control"/>
 										<div id="error-email" class="invalid-feedback"></div>
 									</div>
 								</div>
@@ -127,94 +128,68 @@
 					</div>
 
 
-					<div id="tab-ip" class="tab-pane">
-						<fieldset>
-							<legend>IP</legend>
-							<div id="ip">{!! $ip !!}</div>
-						</fieldset>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <div id="tab-ip" class="tab-pane">
+                        <fieldset>
+                            <legend>IP</legend>
+                            <div id="ip">{!! $ip !!}</div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript"><!--
-$('#input-member-group').on('change', function () {
-		$.ajax({
-				url: 'index.php?route=member/member|customfield&user_token=5bb02794973e438e69f86e04c7730815&member_group_id=' + this.value,
-				dataType: 'json',
-				success: function (json) {
-						$('.custom-field').hide();
-						$('.custom-field').removeClass('required');
-
-						for (i = 0; i < json.length; i++) {
-								custom_field = json[i];
-
-								$('.custom-field-' + custom_field['custom_field_id']).show();
-
-								if (custom_field['required']) {
-										$('.custom-field-' + custom_field['custom_field_id']).addClass('required');
-								}
-						}
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-						console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-		});
-});
-
-$('#input-member-group').trigger('change');
 //$('#form-member, #form-address').on('submit', function (e) {
-$('#form-address').on('submit', function (e) {
-		e.preventDefault();
+$('#form-member').submit(function( e ) {
+    e.preventDefault();
 
-		$.ajax({
-				url: {{ route('lang.admin.member.members.update', $member->id) }}
-				type: 'post',
-				data: $('#form-member, #form-address').serialize(),
-				dataType: 'json',
-				contentType: 'application/x-www-form-urlencoded',
-				beforeSend: function () {
-						$('#button-member').prop('disabled', true).addClass('loading');
-				},
-				complete: function () {
-						$('#button-member').prop('disabled', false).removeClass('loading');
-				},
-				success: function (json) {
-						$('.alert-dismissible').remove();
-						$('.is-invalid').removeClass('is-invalid');
-						$('.invalid-feedback').removeClass('d-block');
+    $.ajax({
+        url: '{{ $form_action }}',
+        type: 'post',
+        data: $('#form-member, #form-address').serialize(),
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        beforeSend: function () {
+            $('#button-member').prop('disabled', true).addClass('loading');
+        },
+        complete: function () {
+            $('#button-member').prop('disabled', false).removeClass('loading');
+        },
+        success: function (json) {
+            $('.alert-dismissible').remove();
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').removeClass('d-block');
 
-						if (json['error']) {
-								if (json['error']['warning']) {
-										$('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
-								}
+            if (json['error']) {
+                if (json['error']['warning']) {
+                    $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                }
 
-								for (key in json['error']) {
-										$('#input-' + key.replaceAll('_', '-')).addClass('is-invalid').find('.form-control, .form-select, .form-check-input, .form-check-label').addClass('is-invalid');
-										$('#error-' + key.replaceAll('_', '-')).html(json['error'][key]).addClass('d-block');
-								}
-						}
+                for (key in json['error']) {
+                    $('#input-' + key.replaceAll('_', '-')).addClass('is-invalid').find('.form-control, .form-select, .form-check-input, .form-check-label').addClass('is-invalid');
+                    $('#error-' + key.replaceAll('_', '-')).html(json['error'][key]).addClass('d-block');
+                }
+            }
 
-						if (json['success']) {
-								$('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+            if (json['success']) {
+                $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-								// Replace any form values that correspond to form names.
-								for (key in json) {
-										$('#form-member, #form-address').find('[name=\'' + key + '\']').val(json[key]);
-								}
-						}
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-						console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-		});
+                // Replace any form values that correspond to form names.
+                for (key in json) {
+                    $('#form-member, #form-address').find('[name=\'' + key + '\']').val(json[key]);
+                }
+            }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
 });
-
 $('#ip').on('click', '.pagination a', function (e) {
-		e.preventDefault();
+        e.preventDefault();
 
-		$('#ip').load(this.href);
+        $('#ip').load(this.href);
 });
 //--></script>
 @endsection

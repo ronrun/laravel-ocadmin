@@ -15,7 +15,7 @@ trait MenuTrait {
             'href'     => route('lang.admin.dashboard'),
             'children' => []
         ];
-
+        /*
         // Sales
         $sales = [];
 
@@ -39,6 +39,7 @@ trait MenuTrait {
                 'children' => $sales
             ];
         }
+        */
 
         // Members
         $members = [];
@@ -56,7 +57,7 @@ trait MenuTrait {
         // add to Menus
         if ($member) {
             $menus[] = [
-                'id'       => 'menu-sales',
+                'id'       => 'menu-members',
                 'icon'	   => 'fas fa-tag',
                 'name'	   => 'Members',
                 'href'     => '',
