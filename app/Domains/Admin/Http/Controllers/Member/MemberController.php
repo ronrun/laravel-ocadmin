@@ -48,7 +48,7 @@ class MemberController extends Controller
         );
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['langs'] = $langs;
+        $data['langs'] = $this->langs = $langs;
         // End Language
         
         $data['list'] = $this->getList();
@@ -158,10 +158,11 @@ class MemberController extends Controller
             $update_data['status'] = $this->request->input('status');
         }
 
-		if (!$json) {
-			if (!$id) {
+		if (empty($json)) {
+			if (!isset($id) || !is_numerric($id)) {
 				//$json['member_id'] = $this->model_customer_customer->addCustomer($this->request->all());
-			} else {
+                $json['error']['warning'] = 'id not correct.';
+			} else if(is_numerric($id)) {
 				$this->memberService->updateByKey('id', $id, $update_data);
 			}
 
@@ -185,17 +186,16 @@ class MemberController extends Controller
     public function list()
     {
         // Language
-        $langs = (object)[];
+        $this->langs = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
+            $this->langs->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
+            $this->langs->$key = $value;
         }
 
-        $data['langs'] = $langs;
-        //end Language
+        $data['langs'] = $this->langs;
         
         $data['form_action'] = route('lang.admin.member.members.list');
 
@@ -209,67 +209,82 @@ class MemberController extends Controller
      */
     public function getList()
     {
-        // Language
-        $langs = (object)[];
-        foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
-        }
+        $data['langs'] = $this->langs;
 
-        foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
-        }
-
-        $data['langs'] = $langs;
-        // End Language
-
-        //準備資料表格欄位排序的連結
+        // Prepare link for action
         $queries = [];
-        $strFilters = '';
-        foreach($this->request->query() as $key => $value) {
-            if(stripos($key , 'filter_')===0){
-                $queries[] = $key.'='.$value;
-            }
+
+        if(!empty($this->request->query('page'))){
+            $queries['page'] = $this->request->input('page');
+        }else{
+            $queries['page']  = 1;
         }
-        $strFilters = implode('&', $queries);
+
+        if(!empty($this->request->query('sort'))){
+            $queries['sort'] = $this->request->input('sort');
+        }else{
+            $queries['sort'] = 'id';
+        }
+
+        if(!empty($this->request->query('order'))){
+            $queries['order'] = $this->request->query('order');
+        }else{
+            $queries['order'] = 'DESC';
+        }
 
         if(!empty($this->request->query('limit'))){
             $queries['limit'] = $this->request->query('limit');
-        }  
-
-        if(!empty($this->request->query())){
-            $strFilters .= '&page='.$this->request->query('page');
-        }
-        
-        //轉換 $order, 用於排序連結
-        $order = $this->request->query('order');
-        $order = ($order == 'DESC') ? 'ASC' : 'DESC';
-        
-        //資料列排序連結
-        $locale = app()->getLocale();
-        $backend = env('FOLDER_ADMIN');
-        $data['sort_name'] = "/$locale/$backend/member/members?sort=name&order=$order&$strFilters";
-        $data['sort_email'] = "/$locale/$backend/member/members?sort=email&order=$order&$strFilters";
-
-        $requestData = $this->request->query();
-        $requestData['url'] = $this->request->url();
-        $requestData['limit'] = $this->request->query('limit');
-        if(!empty($this->request->query('filter_ip'))){
-            $requestData['filter_ip'] = $this->request->query('filter_ip');
         }
 
-        // Rows
-        $members = $this->memberService->getRows($requestData);
-
-        if(!empty($members)){
-            foreach ($members as $row) {
-                $row->url_edit = route('lang.admin.member.members.edit', $row->id);
-                $row->status = ($row->status) ? $langs->text_enabled : $langs->text_disabled;
+        foreach($this->request->all() as $key => $value){
+            if(strpos($key, 'filter_') !== false){
+                $queries[$key] = $value;
             }
         }
 
-        $members->withPath(route('lang.admin.member.members.list'));
-        $data['members'] = $members;
+        //$data['action'] = route('lang.admin.member.members.massDelete');
 
+        // Rows
+        $members = $this->memberService->getRows($queries);
+
+        if(!empty($members)){
+            foreach ($members as $row) {
+                $row->url_edit = route('lang.admin.member.members.edit', array_merge([$row->id], $queries));
+                $row->status = ($row->status) ? $this->langs->text_enabled : $this->langs->text_disabled;
+            }
+        }
+
+        $data['members'] = $members->appends($queries);
+
+        // Prepare links for list table's header
+        if(isset($queries['order']) && $queries['order'] == 'ASC'){
+            $order = 'DESC';
+        }else{
+            $order = 'ASC';
+        }
+        
+        $data['sort'] = strtolower($queries['sort']);
+        $data['order'] = strtolower($queries['order']);
+
+        unset($queries['sort']);
+        unset($queries['order']);
+
+        $url = '';
+
+        foreach($queries as $key => $value){
+            $url .= "&$key=$value";
+        }
+        
+        //link of table header for sorting
+        $locale = app()->getLocale();
+        $backend = env('FOLDER_ADMIN');
+
+        $route = route('lang.admin.member.members.list');
+        $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
+        $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
+        $data['sort_status'] = $route . "?sort=status&order=$order" .$url;
+        $data['sort_created_at'] = $route . "?sort=created_at&order=$order" .$url;
+        
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
         $data['menus'] = $this->getMenus();
         $data['form_action'] = route('lang.admin.member.members.list');
@@ -564,5 +579,11 @@ class MemberController extends Controller
 			return '';
 		}
 
+    }
+
+    // Maybe it's not good to do this.
+    public function massDelete()
+    {
+        echo "<pre>", print_r('massDelete', 1), "</pre>";
     }
 }

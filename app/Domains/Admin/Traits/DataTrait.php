@@ -34,7 +34,7 @@ trait DataTrait
         $query = $this->newModel()->query();
 
         $defineFilters = $this->defineFilters();
-
+        
         if(!empty($data['filter_ids'])){
             $query->whereIn('id', $data['filter_ids']);
         }
@@ -73,7 +73,7 @@ trait DataTrait
 
         // If sort field provided
         if (!empty($data['sort'])) {
-            $sort = $this->table . $data['sort'];
+            $sort = $this->table . '.' . $data['sort'];
             $query->orderBy($sort, $order);
         }
         // If no sort field provided, use id and DESC
@@ -138,6 +138,7 @@ trait DataTrait
         return $this->checkSqlExecution($row->save(), $row);
     }
 
+    // Should be overwrite in controller
     public function defineFilters(){
         $result['number'] = [
             'filter_id' => 'id',

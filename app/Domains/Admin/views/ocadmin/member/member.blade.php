@@ -16,9 +16,10 @@
 	<div class="page-header">
 		<div class="container-fluid">
 			<div class="float-end">
-				<button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-customer').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter"></i></button>
+				<button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-member').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
+				<button type="button" data-bs-toggle="tooltip" title="Download" class="btn btn-light"><i class="fas fa-file-excel" style="font-size:18px"></i></button>
 				<a href="{{ route('lang.admin.member.members.create') }}" data-bs-toggle="tooltip" title="Add New" class="btn btn-primary"><i class="fas fa-plus"></i></a>
-				<button type="submit" form="form-customer" formaction="http://opencart4x.test/backend/index.php?route=customer/customer|delete&amp;user_token=5bb02794973e438e69f86e04c7730815" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?');" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+				<?php /*<button type="submit" form="form-member" formaction="{{ route('lang.admin.member.members.massdelete') }}" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?');" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button> */ ?>
 			</div>
 			<h1>{{ $langs->heading_title }}</h1>
 			<ol class="breadcrumb">
@@ -30,7 +31,7 @@
 	</div>
   <div class="container-fluid">
     <div class="row">
-      <div id="filter-customer" class="col-lg-3 col-md-12 order-lg-last d-none d-lg-block mb-3">
+      <div id="filter-member" class="col-lg-3 col-md-12 order-lg-last d-none d-lg-block mb-3">
         <div class="card">
           <div class="card-header"><i class="fas fa-filter"></i> Filter</div>
 		  <div class="card-body">
@@ -64,17 +65,17 @@
       <div class="col-lg-9 col-md-12">
         <div class="card">
           <div class="card-header"><i class="fas fa-list"></i> {{ $langs->text_list }}</div>
-          <div id="customer" class="card-body">{!! $list !!}</div>
+          <div id="member" class="card-body">{!! $list !!}</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript"><!--
-$('#customer').on('click', 'thead a, .pagination a', function(e) {
+$('#member').on('click', 'thead a, .pagination a', function(e) {
     e.preventDefault();
 
-    $('#customer').load(this.href);
+    $('#member').load(this.href);
 });
 
 $('#button-filter').on('click', function() {
@@ -119,7 +120,7 @@ $('#button-filter').on('click', function() {
 
 	url = "{{ route('lang.admin.member.members.list') }}?" + url;
 
-    $('#customer').load("{{ route('lang.admin.member.members.list') }}?" + url);
+    $('#member').load(url);
 });
 
 $('#input-name').autocomplete({

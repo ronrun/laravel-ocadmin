@@ -24,6 +24,7 @@ class MemberService
         $result['number'] = [
             'filter_id' => 'id',
             'filter_code' => 'code',
+            'filter_status' => 'status',
         ];
 
         $result['string'] = [

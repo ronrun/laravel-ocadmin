@@ -18,7 +18,7 @@ class MemberSeeder extends Seeder
         Member::truncate();
 
         Member::factory()
-        ->count(200)
+        ->count(500)
         ->create();
     }
 }

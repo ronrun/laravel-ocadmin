@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         DB::statement("TRUNCATE TABLE `member_ips`");
         for ($i=1; $i < 10000; $i++) {
-            $member_id = mt_rand(1, 200);
+            $member_id = mt_rand(1, 500);
             $ip = mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255);
             DB::table('member_ips')->insert([
                 'ip' => $ip,
