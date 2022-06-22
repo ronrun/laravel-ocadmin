@@ -209,31 +209,31 @@ class MemberController extends Controller
      */
     public function getList()
     {
-        $data['langs'] = $this->langs;
+        $data['langs'] = $langs = $this->langs;
 
         // Prepare link for action
         $queries = [];
 
         if(!empty($this->request->query('page'))){
-            $queries['page'] = $this->request->input('page');
+            $page = $queries['page'] = $this->request->input('page');
         }else{
-            $queries['page']  = 1;
+            $page = $queries['page'] = 1;
         }
 
         if(!empty($this->request->query('sort'))){
-            $queries['sort'] = $this->request->input('sort');
+            $sort = $queries['sort'] = $this->request->input('sort');
         }else{
-            $queries['sort'] = 'id';
+            $sort = $queries['sort'] = 'id';
         }
 
         if(!empty($this->request->query('order'))){
-            $queries['order'] = $this->request->query('order');
+            $order = $queries['order'] = $this->request->query('order');
         }else{
-            $queries['order'] = 'DESC';
+            $order = $queries['order'] = 'DESC';
         }
 
         if(!empty($this->request->query('limit'))){
-            $queries['limit'] = $this->request->query('limit');
+            $limit = $queries['limit'] = $this->request->query('limit');
         }
 
         foreach($this->request->all() as $key => $value){
@@ -254,17 +254,17 @@ class MemberController extends Controller
             }
         }
 
-        $data['members'] = $members->appends($queries);
+        $data['members'] = $members->withPath(route('lang.admin.member.members.list'))->appends($queries);
 
         // Prepare links for list table's header
-        if(isset($queries['order']) && $queries['order'] == 'ASC'){
+        if($order == 'ASC'){
             $order = 'DESC';
         }else{
             $order = 'ASC';
         }
         
-        $data['sort'] = strtolower($queries['sort']);
-        $data['order'] = strtolower($queries['order']);
+        $data['sort'] = strtolower($sort);
+        $data['order'] = strtolower($order);
 
         unset($queries['sort']);
         unset($queries['order']);
@@ -307,7 +307,7 @@ class MemberController extends Controller
         $langs->text_form = ($action == 'create') ? $langs->text_add : $langs->text_edit;
 
 
-        $data['langs'] = $langs;
+        $data['langs'] = $this->langs = $langs;
   
         // Breadcomb
         $breadcumbs[] = (object)array(
@@ -324,7 +324,6 @@ class MemberController extends Controller
         $data['menus'] = $this->getMenus();
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
         $data['form_action'] = $this->form_action;
-
 
         // create
         if($action == 'create'){ 
@@ -397,16 +396,14 @@ class MemberController extends Controller
 	public function ip($member_id) 
     {
         //Language
-        $langs = (object)[];
+        $this->langs = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
+            $this->langs->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
+            $this->langs->$key = $value;
         }
-
-        $data['langs'] = $langs;
 
         return $this->getIp($member_id);
 	}
@@ -414,16 +411,7 @@ class MemberController extends Controller
 	public function getIp($member_id) 
     {
         //Language
-        $langs = (object)[];
-        foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
-        }
-
-        foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
-        }
-
-        $data['langs'] = $langs;
+        $data['langs'] = $langs = $this->langs;
 
 		if (!empty($member_id)) {
 			$member_id = (int)$member_id;
@@ -445,14 +433,9 @@ class MemberController extends Controller
 				'ip'         => $result->ip,
 				'account'    => $this->memberService->getTotalCustomersByIp($result->ip),
 				'registered_accounts' => $this->memberService->getTotalRegisteredCustomersByIp($result->ip),
-                //'registered_accounts' => 333,
-
-                
 				'country'    => $result->country,
-				//'created_at' => date($this->language->get('datetime_format'), strtotime($result['date_added'])),
                 'created_at' => $result->created_at,
 				'filter_ip'  => route('lang.admin.member.members.index', ['filter_ip' => $result->ip])
-                //$this->url->link('customer/customer', 'user_token=' . $this->session->data['user_token'] . '&filter_ip=' . $result['ip'])
 			];
 		}
 
@@ -463,7 +446,6 @@ class MemberController extends Controller
 			'page'  => $page,
 			'limit' => 10,
 			'url'   => route('lang.admin.member.members.ip', ['member_id'=>$member_id, 'page'=>'{page}']),
-            //$this->url->link('customer/customer|ip', 'user_token=' . $this->session->data['user_token'] . '&member_id=' . $member_id . '&page={page}')
 		]);
 
         $data['pagination'] = $pagination;

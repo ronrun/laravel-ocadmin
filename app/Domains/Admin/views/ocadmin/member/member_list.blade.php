@@ -30,6 +30,12 @@
 		</table>
 	</div>
 	{{-- $members->withQueryString()->links() --}}
-	{{-- $members->links('ocadmin.pagination.default', ['members'=>$members]) --}}
-	{{ $members->links('ocadmin.pagination.default', ['members'=>$members]) }}
+	{!! $members->links('ocadmin.pagination.default', ['members'=>$members]) !!}
+
+    <?php /*
+    <div class="row">
+        <div class="col-sm-6 text-start">{!! $pagination !!}</div>
+        <div class="col-sm-6 text-end">{{ $results }}</div>
+    </div>
+    */ ?>
 </form>

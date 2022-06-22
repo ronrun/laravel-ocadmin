@@ -4,9 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Member;
 
-class MemberSeeder extends Seeder
+class CountrySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +14,7 @@ class MemberSeeder extends Seeder
      */
     public function run()
     {
-        Member::truncate();
-
-        Member::factory()
-        ->count(200)
-        ->create();
+        DB::statement("TRUNCATE TABLE `countries`");
+        DB::unprepared(file_get_contents('database/imports/countries.sql'));
     }
 }
