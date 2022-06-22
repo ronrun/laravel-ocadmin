@@ -73,7 +73,6 @@ class LoginController extends Controller
         }
 
         $data['langs'] = $langs;
-        //end Language
 
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
         return view('ocadmin.login', $data); 

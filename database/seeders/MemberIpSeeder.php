@@ -15,7 +15,7 @@ class MemberIpSeeder extends Seeder
      */
     public function run()
     {
-        DB::statement("TRUNCATE TABLE `member_ips`");
+        DB::table('member_ips')->truncate();
         for ($i=1; $i < 10000; $i++) {
             $member_id = mt_rand(1, 200);
             $ip = mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255) . "." . mt_rand(0, 255);

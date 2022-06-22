@@ -49,7 +49,6 @@ class MemberController extends Controller
         $data['breadcumbs'] = (object)$breadcumbs;
 
         $data['langs'] = $this->langs = $langs;
-        // End Language
         
         $data['list'] = $this->getList();
         $data['menus'] = $this->getMenus();
