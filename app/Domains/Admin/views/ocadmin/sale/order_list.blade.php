@@ -45,13 +45,6 @@
               <datalist id="list-customer"></datalist>
             </div>
             <div class="mb-3">
-              <label for="input-store" class="form-label">Store</label>
-              <select name="filter_store_id" id="input-store" class="form-select">
-                <option value=""></option>
-                                  <option value="0" selected>Default</option>
-                              </select>
-            </div>
-            <div class="mb-3">
               <label for="input-order-status" class="form-label">Order Status</label>
               <select name="filter_order_status_id" id="input-order-status" class="form-select">
                 <option value=""></option>

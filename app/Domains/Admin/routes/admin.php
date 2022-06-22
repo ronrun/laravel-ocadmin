@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 
+
 Route::group(  
     [  
     'prefix' => LaravelLocalization::setLocale(),  
@@ -23,10 +24,6 @@ Route::group(
         Auth::routes();
 
         Route::group(['middleware' => ['auth:admin'],], function () use($backend){
-            //下面可以使用但很長
-            //Route::get('', [App\Domains\Admin\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-            //下面用陣列型式無法單獨使用，必須在檔案開頭加上 use。
-            //Route::get('', [DashboardController::class, 'index'])->name('dashboard');
             Route::get('', 'DashboardController@index')->name('dashboard');
 
             Route::group(['prefix' => 'sales', 'as' => 'sales.'], function () use($backend) {
@@ -34,6 +31,10 @@ Route::group(
             });
 
             Route::group(['prefix' => 'member', 'as' => 'member.'], function () use($backend) {
+                Route::get('members/autocomplete', 'Member\MemberController@autocomplete')->name('members.autocomplete');
+                Route::post('members/ex/massdelete', 'Member\MemberController@massDelete')->name('members.massdelete');
+                Route::get('members/ip/{member_id}', 'Member\MemberController@ip')->name('members.ip');
+                Route::get('members/list', 'Member\MemberController@list')->name('members.list');
                 Route::resource('members', Member\MemberController::class);
             });
 
@@ -45,13 +46,14 @@ Route::group(
             Route::group(['prefix' => 'system', 'as' => 'system.'], function () use($backend) {
                 Route::resource('settings', System\SettingController::class);
                 Route::group(['prefix' => 'user', 'as' => 'user.'], function () use($backend) {
+                    Route::get('users/list', 'System\User\UserController@list')->name('users.list');
                     Route::resource('users', System\User\UserController::class);
                     Route::resource('roles', System\User\UserController::class);
                 });
             });
-        }); 
-    });
 
+        });
+    });
 });
 
 ?>
