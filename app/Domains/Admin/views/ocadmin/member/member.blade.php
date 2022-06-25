@@ -18,10 +18,10 @@
 			<div class="float-end">
 				<button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-member').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
 				<button type="button" data-bs-toggle="tooltip" title="Download" class="btn btn-light"><i class="fas fa-file-excel" style="font-size:18px"></i></button>
-				<a href="{{ route('lang.admin.member.members.create') }}" data-bs-toggle="tooltip" title="Add New" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+				<a href="{{ route('lang.admin.member.members.form') }}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
 				<?php /*<button type="submit" form="form-member" formaction="{{ route('lang.admin.member.members.massdelete') }}" data-bs-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?');" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button> */ ?>
 			</div>
-			<h1>{{ $langs->heading_title }}</h1>
+			<h1>{{ $lang->heading_title }}</h1>
 			<ol class="breadcrumb">
 				@foreach($breadcumbs as $breadcumb)
 					<li class="breadcrumb-item"><a href="{{ $breadcumb->href }}">{{ $breadcumb->text }}</a></li>
@@ -36,25 +36,25 @@
           <div class="card-header"><i class="fas fa-filter"></i> Filter</div>
 		  <div class="card-body">
 					<div class="mb-3">
-						<label class="form-label">{{ $langs->entry_name }}</label>
-						<input type="text" name="filter_name" value="" placeholder="{{ $langs->entry_name }}" id="input-name" list="list-name" class="form-control"/>
+						<label class="form-label">{{ $lang->entry_name }}</label>
+						<input type="text" name="filter_name" value="" placeholder="{{ $lang->entry_name }}" id="input-name" list="list-name" class="form-control"/>
 						<datalist id="list-name"></datalist>
 					</div>
 					<div class="mb-3">
-						<label class="form-label">{{ $langs->entry_email }}</label>
-						<input type="text" name="filter_email" value="" placeholder="{{ $langs->entry_email }}" id="input-email" list="list-email" class="form-control"/>
+						<label class="form-label">{{ $lang->entry_email }}</label>
+						<input type="text" name="filter_email" value="" placeholder="{{ $lang->entry_email }}" id="input-email" list="list-email" class="form-control"/>
 						<datalist id="list-email"></datalist>
 					</div>
 					<div class="mb-3">
-						<label for="input-status" class="form-label">{{ $langs->entry_status }}</label> <select name="filter_status" id="input-status" class="form-select">
+						<label for="input-status" class="form-label">{{ $lang->entry_status }}</label> <select name="filter_status" id="input-status" class="form-select">
 							<option value=""></option>
 							<option value="1">Enabled</option>
 							<option value="0" >Disabled</option>
 						</select>
 					</div>
 					<div class="mb-3">
-						<label for="input-ip" class="form-label">{{ $langs->entry_ip }}</label>
-						<input type="text" name="filter_ip" value="" placeholder="{{ $langs->entry_ip }}" id="input-ip" class="form-control"/>
+						<label for="input-ip" class="form-label">{{ $lang->entry_ip }}</label>
+						<input type="text" name="filter_ip" value="" placeholder="{{ $lang->entry_ip }}" id="input-ip" class="form-control"/>
 					</div>
             <div class="text-end">
               <button type="button" id="button-filter" class="btn btn-light"><i class="fas fa-filter"></i> Filter</button>
@@ -64,7 +64,7 @@
       </div>
       <div class="col-lg-9 col-md-12">
         <div class="card">
-          <div class="card-header"><i class="fas fa-list"></i> {{ $langs->text_list }}</div>
+          <div class="card-header"><i class="fas fa-list"></i> {{ $lang->text_list }}</div>
           <div id="member" class="card-body">{!! $list !!}</div>
         </div>
       </div>

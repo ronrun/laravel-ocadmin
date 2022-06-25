@@ -12,27 +12,33 @@ trait DataTrait
       return new $this->modelName;
     }
 
-    public function findIdOrNew($id = null)
+    public function findId($id = null)
     {
-        if(empty($id)){
-            $row = new $this->modelName;
-        }else{
-            $row = $this->model->find($id);
+        $row = $this->model->find($id);
+        if(!empty($row)){
+            return $row;
         }
         return false;      
     }
 
-    public function findByKey($key, $value)
+    public function findIdOrNew($id = null)
     {
-        $model = new $this->modelName;
-        $row = $model->where($key, $value)->first();
-        return $row;
+        if(empty($id)){
+            return $this->newModel();
+        }else{
+            return $this->newModel()->find($id);
+        }     
+    }
+
+    public function findKey($key, $value)
+    {
+        return $this->newModel()->where($key, $value)->first();
     }
 
     public function getRows($data = array(), $debug = 0)
     {
-        $query = $this->newModel()->query();
-
+        $query = $this->model->query();
+        
         $defineFilters = $this->defineFilters();
         
         if(!empty($data['filter_ids'])){
@@ -81,6 +87,7 @@ trait DataTrait
             $query->orderBy($this->table .'.id', 'DESC');
         }
 
+        // with other model
         if(!empty($data['_with'])){
             foreach($data['_with'] as $with){
                 $query->with($with);
@@ -116,27 +123,27 @@ trait DataTrait
         return $this->checkSqlExecution($row->save(), $row);
     }
 
-    public function updateById($data, $id)
-    {
-        $row = $this->model->find($id);
+    // public function updateById($data, $id)
+    // {
+    //     $row = $this->model->find($id);
 
-        foreach ($data as $field => $content) {
-            $row->$field = $content;
-        }
+    //     foreach ($data as $field => $content) {
+    //         $row->$field = $content;
+    //     }
 
-        return $this->checkSqlExecution($row->save(), $row);
-    }
+    //     return $this->checkSqlExecution($row->save(), $row);
+    // }
 
-    public function updateByKey($key, $value, $data)
-    {
-        $row = $this->model->where($key, $value)->first();
+    // public function updateByKey($key, $value, $data)
+    // {
+    //     $row = $this->model->where($key, $value)->first();
 
-        foreach ($data as $field => $content) {
-            $row->$field = $content;
-        }
+    //     foreach ($data as $field => $content) {
+    //         $row->$field = $content;
+    //     }
         
-        return $this->checkSqlExecution($row->save(), $row);
-    }
+    //     return $this->checkSqlExecution($row->save(), $row);
+    // }
 
     // Should be overwrite in controller
     public function defineFilters(){
@@ -153,11 +160,20 @@ trait DataTrait
         return $result;
     }
 
-    public function checkSqlExecution($status, $object)
+    public function checkSqlExecution($result, $object, $return_field = null)
     {
-        if($status){
+        if($result && !empty($return_field)){
+            if(is_array($object)){
+                $return_val = $object[$return_field];
+            }else{
+                $return_val = $object->{$return_field};
+            }
+            return $return_val;            
+        }
+        else if($result && empty($return_field)){
             return $object;
-        }else{
+        }
+        else{
             return false;
         }
     }

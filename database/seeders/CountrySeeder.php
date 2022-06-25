@@ -14,7 +14,18 @@ class CountrySeeder extends Seeder
      */
     public function run()
     {
-        DB::statement("TRUNCATE TABLE `countries`");
-        DB::unprepared(file_get_contents('database/imports/countries.sql'));
+        DB::table('countries')->truncate();
+
+        $filename = 'database/imports/countries.csv';
+        $prefix = env('DB_PREFIX','');
+
+        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE ".$prefix."countries
+            FIELDS TERMINATED BY ','
+            ENCLOSED BY '\"'
+            LINES TERMINATED BY '\r\n'
+            IGNORE 0 LINES
+            (id,name,iso_code_2,iso_code_3,status);";
+    
+        DB::unprepared($query);
     }
 }

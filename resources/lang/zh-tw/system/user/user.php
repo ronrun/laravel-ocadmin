@@ -33,10 +33,11 @@
     // Error
     'error_permission'                      => '警告: 您沒有權限更改管理員帳號！',
     'error_account'                         => '警告: 您不能刪除自己的帳號！',
-    'error_username'                        => '管理員帳號必須是 3 到 20 個字！',
+    'error_username'                        => '管理員帳號必須是 2 到 20 個字！',
     'error_username_exists'                 => '警告: 管理員帳號已經存在！',
-    'error_password'                        => '密碼長度必須是 4 到 20 個字！',
+    'error_password'                        => '密碼長度必須是 6 到 20 個字！',
     'error_confirm'                         => '密碼和確認密碼不一致！',
+    'error_name'                            => '名字必須是 2 到 32 個字！',
     'error_firstname'                       => '名字必須是 1 到 32 個字！',
     'error_lastname'                        => '姓氏必須是 1 到 32 個字！',
     'error_email'                           => 'E-Mail 帳號無效!',

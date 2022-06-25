@@ -71,16 +71,18 @@ class LoginController extends Controller
     public function showLoginForm() 
     {
         //Language
-        $langs = (object)[];
+        $lang = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
         foreach (Lang::get('common/login') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
-        $data['langs'] = $langs;
+        $data['lang'] = $lang;
+
+        $data['refresh_token_url'] = route('getToken');
 
         $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
         return view('ocadmin.login', $data); 

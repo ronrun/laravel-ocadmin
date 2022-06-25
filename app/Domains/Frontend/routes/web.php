@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('refresh-token', function(){
     return csrf_token();
-});
+})->name('getToken');
 
 Route::group(  
     [  

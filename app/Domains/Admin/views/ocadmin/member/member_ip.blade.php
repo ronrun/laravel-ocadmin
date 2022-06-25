@@ -2,11 +2,11 @@
   <table class="table table-bordered table-hover">
     <thead>
       <tr>
-        <td class="text-start">{{ $langs->column_ip }}</td>
-        <?php /*<td class="text-end">{{ $langs->column_account }}</td>*/?>
-        <td class="text-end">{{ $langs->column_register_account }}</td>
-        <?php /*<td class="text-start">{{ $langs->column_country }}</td>*/?>
-        <td class="text-start">{{ $langs->column_date_added }}</td>
+        <td class="text-start">{{ $lang->column_ip }}</td>
+        <?php /*<td class="text-end">{{ $lang->column_account }}</td>*/?>
+        <td class="text-end">{{ $lang->column_register_account }}</td>
+        <?php /*<td class="text-start">{{ $lang->column_country }}</td>*/?>
+        <td class="text-start">{{ $lang->column_date_added }}</td>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +27,7 @@
         @endforeach
       @else
         <tr>
-          <td class="text-center" colspan="3">{{ $langs->text_no_results }}</td>
+          <td class="text-center" colspan="3">{{ $lang->text_no_results }}</td>
         </tr>
       @endif
     </tbody>

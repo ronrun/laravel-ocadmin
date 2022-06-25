@@ -21,8 +21,10 @@ class CreateMembersTable extends Migration
             $table->string('email', 100)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 128);
+            $table->string('telephone', 32)->nullable();
             $table->boolean('status')->default('1');
             $table->tinyInteger('member_group_id')->default('1');
+            //$table->tinyInteger('newsletter')->default('0');
             $table->string('ip', 40)->nullable();
             $table->rememberToken();
             $table->timestamps();

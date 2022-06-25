@@ -6,17 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Domains\Admin\Traits\MenuTrait;
 use App\Domains\Admin\Services\MemberService;
+use App\Domains\Admin\Services\Localisation\CountryService;
 use Lang;
 
 class MemberController extends Controller
 {
     use MenuTrait;
 
-    public function __construct(Request $request, MemberService $memberService)
+    public function __construct(Request $request, MemberService $memberService, CountryService $countryService)
     {
-        //parent::__construct();
         $this->request = $request;
         $this->memberService = $memberService;
+        $this->countryService = $countryService;
     }
 
     /**
@@ -27,29 +28,30 @@ class MemberController extends Controller
     public function index()
     {
         // Language
-        $langs = (object)[];
+        $lang = (object)[];
+
         foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
-        // Breadcomb
-        $breadcumbs[] = (object)array(
-            'text' => $langs->text_home,
-            'href' => route('lang.admin.dashboard'),
-        );
-        
-        $breadcumbs[] = (object)array(
-            'text' => $langs->heading_title,
-            'href' => null,
-        );
-        $data['breadcumbs'] = (object)$breadcumbs;
+        $data['lang'] = $this->lang = $lang;
 
-        $data['langs'] = $this->langs = $langs;
-        //echo "<pre>", print_r($data['langs'], 1), "</pre>"; exit;
+        // Breadcomb
+        $breadcumbs[] = (object)[
+            'text' => $lang->text_home,
+            'href' => route('lang.admin.dashboard'),
+        ];
+        
+        $breadcumbs[] = (object)[
+            'text' => $lang->heading_title,
+            'href' => null,
+        ];
+
+        $data['breadcumbs'] = (object)$breadcumbs;
         
         $data['list'] = $this->getList();
         $data['menus'] = $this->getMenus();
@@ -58,144 +60,276 @@ class MemberController extends Controller
         return view('ocadmin.member.member', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function form($member_id = null)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $queries = $this->request->query();
-        $this->form_action = route('lang.admin.member.members.update', array_merge([$id], $queries));
-
-        return $this->getForm($id, 'edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //Language
-        $langs = (object)[];
+        // Language
+        $lang = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
-        $data['langs'] = $langs;
+        $lang->text_form = empty($member_id) ? $lang->text_add : $lang->text_edit;
 
-        // Check Email
-		$member_info = $this->memberService->findByKey('email', $request->input('email'));
+        $data['lang'] = $this->lang = $lang;
+  
+        // Breadcomb
+        $data['breadcumbs'] = [];
 
-        if ($member_info && ($id != $member_info->id)) {
-            $json['error']['warning'] = $langs->error_exists;
-        }
-
-        $update_data = [];
+        $data['breadcumbs'][] = (object)array(
+            'text' => $lang->text_home,
+            'href' => route('lang.admin.dashboard'),
+        );
         
-        if($this->request->input('name')){
-            $update_data['name'] = $this->request->input('name');
+        $data['breadcumbs'][] = (object)array(
+            'text' => $lang->heading_title,
+            'href' => null,
+        );
+
+        // Prepare link for save, back
+        $queries = [];
+
+        foreach($this->request->all() as $key => $value){
+            if(strpos($key, 'filter_') !== false){
+                $queries[$key] = $value;
+            }
         }
 
-        if($this->request->input('firstname')){
-            $update_data['firstname'] = $this->request->input('firstname');
+        if(!empty($this->request->query('page'))){
+            $queries['page'] = $this->request->query('page');
+        }else{
+            $queries['page'] = 1;
         }
 
-        if($this->request->input('lastname')){
-            $update_data['lastname'] = $this->request->input('lastname');
+        if(!empty($this->request->query('sort'))){
+            $queries['sort'] = $this->request->query('sort');
+        }else{
+            $queries['sort'] = 'id';
         }
 
-        if($this->request->input('email')){
-            $update_data['email'] = $this->request->input('email');
+        if(!empty($this->request->query('order'))){
+            $queries['order'] = $this->request->query('order');
+        }else{
+            $queries['order'] = 'DESC';
         }
 
-        if($this->request->input('password')){
-            $update_data['password'] = bcrypt($this->request->input('password'));
+        if(!empty($this->request->query('limit'))){
+            $queries['limit'] = $this->request->query('limit');
         }
 
-        if($this->request->input('status')){
-            $update_data['status'] = $this->request->input('status');
-        }
+		$data['save'] = route('lang.admin.member.members.save');
+		$data['back'] = route('lang.admin.member.members.index', $queries);
 
-		if (empty($json)) {
-			if (!isset($id) || !is_numerric($id)) {
-				//$json['member_id'] = $this->model_customer_customer->addCustomer($this->request->all());
-                $json['error']['warning'] = 'id not correct.';
-			} else if(is_numerric($id)) {
-				$this->memberService->updateByKey('id', $id, $update_data);
-			}
-
-			$json['success'] = $this->language->get('text_success');
+        // Sale Orders
+		if (!empty($member_id)) {
+			//$data['orders'] = $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'] . '&filter_customer_id=' . $this->request->get['customer_id']);
+			$data['orders'] = '';
+		} else {
+			$data['orders'] = '';
 		}
- 
-        return response()->json($json);
+
+        // Get Record
+		// if (!empty($this->request->query('member_id'))) {
+		// 	$member = $this->memberService->find($this->request->query('member_id'));
+		// }
+		$data['member'] = $this->memberService->findIdOrNew($member_id);
+
+        $data['countries'] = $this->countryService->getRows();
+
+        if(!empty($member_id)){
+            $data['member_id'] = $member_id;
+        }else{
+            $data['member_id'] = null;
+        }
+        
+        if(!empty($member_id)){
+            $data['ip'] = $this->getIp($member_id);
+        }else{
+            $data['ip'] = '';
+        }
+
+        if(!empty($member_id)){
+            //$datap['form_action'] = route('lang.admin.member.members.form');
+        }else{
+            //$member_id = 0;
+        }
+        //echo "<pre>", print_r($data['form_action'], 1), "</pre>";exit;
+        /*
+		if (!empty($this->request->query('member_id'))) {
+			$data['member_id'] = (int)$this->request->query('member_id');
+		} else {
+			$data['member_id'] = 0;
+		}
+
+        // Get all groups for select options
+		//$data['customer_groups'] = $this->memberService->getCustomerGroups();
+
+
+		if (!empty($member)) {
+			$data['firstname'] = $member['firstname'];
+		} else {
+			$data['firstname'] = '';
+		}
+
+		if (!empty($member)) {
+			$data['lastname'] = $member['lastname'];
+		} else {
+			$data['lastname'] = '';
+		}
+
+		if (!empty($member)) {
+			$data['email'] = $member['email'];
+		} else {
+			$data['email'] = '';
+		}
+
+		if (!empty($member)) {
+			$data['telephone'] = $member['telephone'];
+		} else {
+			$data['telephone'] = '';
+		}
+
+		$data['password'] = '';
+		$data['confirm'] = '';
+
+		if (!empty($member)) {
+			$data['newsletter'] = $member['newsletter'];
+		} else {
+			$data['newsletter'] = 0;
+		}
+
+		if (!empty($member)) {
+			$data['status'] = $member['status'];
+		} else {
+			$data['status'] = 1;
+		}
+
+        $data['countries'] = $this->countryService->getRows();
+
+		// if (!empty($this->request->query('member_id'))) {
+		// 	$data['addresses'] = $this->memberService->getAddresses((int)$this->request->query('member_id'));
+		// } else {
+		// 	$data['addresses'] = [];
+		// }
+
+		// $data['payment_method'] = $this->getPayment();
+		// $data['history'] = $this->getHistory();
+		// $data['transaction'] = $this->getTransaction();
+		// $data['reward'] = $this->getReward();
+		// $data['ip'] = $this->getIp();
+        */
+
+        
+
+        $data['menus'] = $this->getMenus();
+        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
+
+        return view('ocadmin.member.member_form', $data);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+
+    public function save()
     {
-        //
+        //Language
+        $lang = (object)[];
+        foreach (Lang::get('common/common') as $key => $value) {
+            $lang->$key = $value;
+        }
+
+        foreach (Lang::get('member/member') as $key => $value) {
+            $lang->$key = $value;
+        }
+
+        $data = $this->request->post();
+
+		$json = [];
+
+		// if (!$this->user->hasPermission('modify', 'customer/customer')) {
+		// 	$json['error']['warning'] = $this->lang->error_permission;
+		// }
+
+		if ((utf8_strlen($this->request->post('firstname')) < 1) || (utf8_strlen($this->request->post('firstname')) > 32)) {
+			$json['error']['firstname'] = $lang->error_firstname;
+		}
+
+		if ((utf8_strlen($this->request->post('lastname')) < 1) || (utf8_strlen($this->request->post('lastname')) > 32)) {
+			$json['error']['lastname'] = $lang->error_lastname;
+		}
+
+		if (empty($this->request->post('name'))){
+			$data['name'] = $this->request->post('firstname') . ' ' . $this->request->post('lastname');
+		}
+
+		if ((utf8_strlen($this->request->post('email')) > 96) || !filter_var($this->request->post('email'), FILTER_VALIDATE_EMAIL)) {
+			$json['error']['email'] = $lang->error_email;
+		}
+        
+        $member = $this->memberService->findKey('email', $this->request->post('email'));
+ 
+		if (!$this->request->post('member_id')) {
+			if ($member) {
+				$json['error']['warning'] = $lang->error_exists;
+			}
+		} else {
+			if ($member && ($this->request->post('member_id') != $member->id)) {
+				$json['error']['warning'] = $lang->error_exists;
+			}
+		}
+
+		//if ($this->config->get('config_telephone_required') && (utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+        /*
+        if ((utf8_strlen($this->request->input('telephone')) < 3) || (utf8_strlen($this->request->input('telephone')) > 20)) {
+			$json['error']['telephone'] = $this->lang->error_telephone;
+		}
+        */
+
+        // If create, password must be checked. If edit, password can be ignored.
+		if ($this->request->post('password') || (empty($this->request->post('member_id')))) {
+			if ((utf8_strlen(html_entity_decode($this->request->post('password'), ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->input('password'), ENT_QUOTES, 'UTF-8')) > 20)) {
+				$json['error']['password'] = $lang->error_password;
+			}
+
+			if ($this->request->post('password') != $this->request->post('confirm')) {
+				$json['error']['confirm'] = $lang->error_confirm;
+			}
+		}
+
+		if (isset($json['error']) && !isset($json['error']['warning'])) {
+			$json['error']['warning'] = $lang->error_warning;
+		}
+
+		if (!$json) {
+			if (!$this->request->post('member_id')) {
+                $json['member_id'] = $this->memberService->addMember($data);
+			} else {
+				$this->memberService->editMember($this->request->post('member_id'), $data);
+			}
+
+			$json['success'] = $lang->text_success;
+		}
+
+        //return response()->json($json);
+        return response(json_encode($json))->header('Content-Type','application/json');
     }
 
     public function list()
     {
         // Language
-        $this->langs = (object)[];
+        $this->lang = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $this->langs->$key = $value;
+            $this->lang->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $this->langs->$key = $value;
+            $this->lang->$key = $value;
         }
 
-        $data['langs'] = $this->langs;
+        $data['lang'] = $this->lang;
         
         $data['form_action'] = route('lang.admin.member.members.list');
 
@@ -209,7 +343,7 @@ class MemberController extends Controller
      */
     public function getList()
     {
-        $data['langs'] = $langs = $this->langs;
+        $data['lang'] = $lang = $this->lang;
 
         // Prepare link for action
         $queries = [];
@@ -249,8 +383,8 @@ class MemberController extends Controller
 
         if(!empty($members)){
             foreach ($members as $row) {
-                $row->url_edit = route('lang.admin.member.members.edit', array_merge([$row->id], $queries));
-                $row->status = ($row->status) ? $this->langs->text_enabled : $this->langs->text_disabled;
+                $row->url_edit = route('lang.admin.member.members.form', array_merge([$row->id], $queries));
+                $row->status = ($row->status) ? $this->lang->text_enabled : $this->lang->text_disabled;
             }
         }
 
@@ -276,9 +410,6 @@ class MemberController extends Controller
         }
         
         //link of table header for sorting
-        $locale = app()->getLocale();
-        $backend = env('FOLDER_ADMIN');
-
         $route = route('lang.admin.member.members.list');
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
@@ -290,61 +421,6 @@ class MemberController extends Controller
         $data['form_action'] = route('lang.admin.member.members.list');
 
         return view('ocadmin.member.member_list', $data);
-    }
-
-    public function getForm($id, $action = null)
-    {
-        //Language
-        $langs = (object)[];
-        foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
-        }
-
-        foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
-        }
-        
-        $langs->text_form = ($action == 'create') ? $langs->text_add : $langs->text_edit;
-
-
-        $data['langs'] = $this->langs = $langs;
-  
-        // Breadcomb
-        $breadcumbs[] = (object)array(
-            'text' => $langs->text_home,
-            'href' => route('lang.admin.dashboard'),
-        );
-        
-        $breadcumbs[] = (object)array(
-            'text' => $langs->heading_title,
-            'href' => null,
-        );
-        $data['breadcumbs'] = (object)$breadcumbs;
-
-        $data['menus'] = $this->getMenus();
-        $data['base'] = env('APP_URL') . '/' . env('FOLDER_ADMIN');
-        $data['form_action'] = $this->form_action;
-
-        // create
-        if($action == 'create'){ 
-            $member = $this->memberService->newModel($id);
-        }
-        // edit
-        else{
-            if(!empty($id)){
-                $member = $this->memberService->findByKey('id', $id);
-            }else if(!empty($this->query('code'))){
-                $member = $this->memberService->findByKey('code', $this->query('code'));
-            }
-        }
-
-		$data['ip'] = $this->getIp($id); //return view so singular
-        
-        $data['member'] = $member;
-
-
-        return view('ocadmin.member.member_form', $data);
-
     }
 
     public function autocomplete()
@@ -396,13 +472,13 @@ class MemberController extends Controller
 	public function ip($member_id) 
     {
         //Language
-        $this->langs = (object)[];
+        $this->lang = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $this->langs->$key = $value;
+            $this->lang->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $this->langs->$key = $value;
+            $this->lang->$key = $value;
         }
 
         return $this->getIp($member_id);
@@ -411,7 +487,7 @@ class MemberController extends Controller
 	public function getIp($member_id) 
     {
         //Language
-        $data['langs'] = $langs = $this->langs;
+        $data['lang'] = $lang = $this->lang;
 
 		if (!empty($member_id)) {
 			$member_id = (int)$member_id;
@@ -450,7 +526,7 @@ class MemberController extends Controller
 
         $data['pagination'] = $pagination;
 
-		$data['results'] = sprintf($langs->text_pagination, ($ip_total) ? (($page - 1) * 10) + 1 : 0, ((($page - 1) * 10) > ($ip_total - 10)) ? $ip_total : ((($page - 1) * 10) + 10), $ip_total, ceil($ip_total / 10));
+		$data['results'] = sprintf($lang->text_pagination, ($ip_total) ? (($page - 1) * 10) + 1 : 0, ((($page - 1) * 10) > ($ip_total - 10)) ? $ip_total : ((($page - 1) * 10) + 10), $ip_total, ceil($ip_total / 10));
 
 		return view('ocadmin.member.member_ip', $data);
 	}
@@ -458,16 +534,16 @@ class MemberController extends Controller
     public function pagination($setting)
     {
         // Language
-        $langs = (object)[];
+        $lang = (object)[];
         foreach (Lang::get('common/common') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
         foreach (Lang::get('member/member') as $key => $value) {
-            $langs->$key = $value;
+            $lang->$key = $value;
         }
 
-        $setting['langs'] = $langs;
+        $setting['lang'] = $lang;
         // End Language
 
 		if (isset($setting['total'])) {

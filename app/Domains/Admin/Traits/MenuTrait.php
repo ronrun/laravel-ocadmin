@@ -41,10 +41,75 @@ trait MenuTrait {
         }
         */
 
+        // Catalog
+        $catalog = [];
+        /*
+        // Catalog / Category
+        if (1) {
+            $catalog[] = [
+                'name'	   => 'Categorie',
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.categories.index'),
+                'children' => []
+            ];
+        }
+
+        // Catalog / Product
+        if (1) {
+            $catalog[] = [
+                'name'	   => 'Products',
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.products.index'),
+                'children' => []
+            ];
+        }
+
+        */
+        // Catalog / Update Meta
+        $meta = [];
+
+        // if (1) {
+        //     $meta[] = [
+        //         'name'	   => 'Categories',
+        //         'icon'	   => ' ',
+        //         'href'     => route('lang.admin.system.user.users.index'),
+        //         'children' => []
+        //     ];
+        // }
+
+        if (1) {
+            $meta[] = [
+                'name'	   => 'Products',
+                'icon'	   => ' ',
+                'href'     => route('lang.admin.catalog.products.showMetaForm'),
+                'children' => []
+            ];
+        }
+
+        if ($meta) {
+            $catalog[] = [
+                'name'	   => 'Update Meta',
+                'icon'	   => ' ',
+                'href'     => '',
+                'children' => $meta
+            ];
+        }
+
+        // add to Menus
+        if ($catalog) {
+            $menus[] = [
+                'id'       => 'menu-catalog',
+                'icon'	   => 'fas fa-tag',
+                'name'	   => 'Catalog',
+                'href'     => '',
+                'children' => $catalog
+            ];
+        }
+
         // Members
         $members = [];
 
-        // Sales / Orders
+        // Members / Members
         if (1) {
             $member[] = [
                 'name'	   => 'Members',
@@ -128,7 +193,6 @@ trait MenuTrait {
                 'children' => $system
             ];
         }
-        //echo "<pre>", print_r($menus, 1), "</pre>"; exit;
 
         return $menus;
     }
