@@ -6,6 +6,7 @@ use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Route;
 
 class RedirectIfAuthenticated
 {
@@ -31,16 +32,15 @@ class RedirectIfAuthenticated
         return $next($request);
         */
 
-        $backend = env('FOLDER_ADMIN');
+        $routeName = Route::currentRouteName();
 
-        //default backend segment is 1, if locale exists,2
-        if($request->segment(1) == $backend || $request->segment(2) == $backend){
+        if($routeName == 'lang.admin.login'){
             if(Auth::guard('admin')->check()){
                 return redirect(route('lang.admin.dashboard'));
             }
         }
 
-        if($request->segment(1) != $backend && $request->segment(2) != $backend){
+        if($routeName == 'lang.login'){
             if(Auth::guard('web')->check()){
                 return redirect(route('lang.home'));
             }
