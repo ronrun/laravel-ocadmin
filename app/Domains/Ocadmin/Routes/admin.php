@@ -20,14 +20,17 @@ Route::group(
     'as' => 'lang.'
     ], function()  
 {
+
     Route::group([
         'prefix' => config('config.admin_folder'),
+        'middleware' => [ 'is_admin',],
         'namespace' => 'App\Domains\Admin\Http\Controllers',
         'as' => 'admin.',
     ], function ()
     { 
         Route::get('/', function () {
-            return 'dashboard';
+            //return 'dashboard';
+            return view('ocadmin.dashboard');
         });
 
     });
