@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CountrySeeder::class,
             ZoneSeeder::class,
+            SettingSeeder::class,
         ]);
     }
 }

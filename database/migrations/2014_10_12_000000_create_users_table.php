@@ -17,17 +17,17 @@ return new class extends Migration
             $table->id();
             $table->string('code',10)->unique()->nullable(); 
             $table->string('username',30)->unique()->nullable(); 
-            $table->string('email')->unique()->nullable(); 
+            $table->string('email',100)->unique()->nullable(); 
             $table->unsignedInteger('organization_id')->nullable(); 
             $table->string('name');
-            $table->string('short_name')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
+            $table->string('short_name',50)->nullable();
+            $table->string('first_name',100)->nullable();
+            $table->string('last_name',100)->nullable();
             $table->string('mobile_prefix',5)->nullable(); 
             $table->unsignedInteger('mobile')->nullable(); //max unsigned bit int = 18446744073709551615 total 20 digits, max unsigned int = 4294967295 total 10 digits
-            $table->string('job_title',20)->nullable(); 
+            $table->string('job_title',50)->nullable(); 
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password',100);
             $table->boolean('is_active')->default('1');
             $table->boolean('is_admin')->default('0');
             $table->rememberToken();

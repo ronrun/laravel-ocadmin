@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('zones', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('country_id');
-            $table->string('name',128);
-            $table->string('code',5);
-            $table->boolean('is_active')->default('1');
+            $table->string('group');
+            $table->string('key')->nullable();
+            $table->string('value')->nullable();
+            $table->boolean('autoload')->default('0');
+            $table->boolean('serialized')->default('0');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('zones');
+        Schema::dropIfExists('settings');
     }
 };
