@@ -11,11 +11,13 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+
 /.idea
 /.vscode
 #laravel default end
 
 *.code-workspace
+phpinfo.php
 php.bat
 composer.bat
 *.bak 
