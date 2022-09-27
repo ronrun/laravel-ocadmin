@@ -19,16 +19,16 @@ Route::group(
     'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ],
     'as' => 'lang.'
     ], function()  
-{  
-    Route::get('/', function () {
-        return view('welcome');
+{
+    Route::group([
+        'prefix' => config('config.admin_folder'),
+        'namespace' => 'App\Domains\Admin\Http\Controllers',
+        'as' => 'admin.',
+    ], function ()
+    { 
+        Route::get('/', function () {
+            return 'dashboard';
+        });
+
     });
-
-
-    //Route::get('/login', [App\Http\Controllers\Auth/Loginontroller::class, 'showLoginForm'])->name('login');
-    
-    Auth::routes();
-    
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    
 });
