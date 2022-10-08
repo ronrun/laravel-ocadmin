@@ -15,11 +15,10 @@ return new class extends Migration
     {
         Schema::create('zones', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('country_id');
+            $table->string('country_code',2);
             $table->string('name',128);
             $table->string('code',5);
             $table->boolean('is_active')->default('1');
-            $table->timestamps();
         });
     }
 

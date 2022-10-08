@@ -13,6 +13,7 @@
 'thousand_point'                        => ',',
 
 // Text
+'text_success'                          => 'Success: You have modified successfully!',
 'text_yes'                              => 'Yes',
 'text_no'                               => 'No',
 'text_on'                               => 'On',
@@ -160,6 +161,8 @@
 'tab_report'                            => 'Report',
 
 // Column
+'column_id'                             => 'ID',
+'column_name'                           => 'Name',
 'column_status'                         => 'Status',
 
 // Entry
@@ -167,35 +170,9 @@
 
 // Error
 'error_permission'                      => 'Warning: You do not have permission!',
-'error_exception'                       => 'Error Code(%s): %s in %s on line %s',
-'error_upload_1'                        => 'Warning: The uploaded file exceeds the upload_max_filesize directive in php.ini!',
-'error_upload_2'                        => 'Warning: The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form!',
-'error_upload_3'                        => 'Warning: The uploaded file was only partially uploaded!',
-'error_upload_4'                        => 'Warning: No file was uploaded!',
-'error_upload_6'                        => 'Warning: Missing a temporary folder!',
-'error_upload_7'                        => 'Warning: Failed to write file to disk!',
-'error_upload_8'                        => 'Warning: File upload stopped by extension!',
-'error_upload_999'                      => 'Warning: No error code available!',
-'error_upload_size'                     => 'Warning: The uploaded file exceeds the %smb max file size!',
-'error_curl'                            => 'CURL: Error Code(%s): %s',
-'error_format_b'                        => 'Warning: The uploaded file exceeds the max file size: %s bytes!',
-'error_format_kb'                       => 'Warning: The uploaded file exceeds the max file size: %s kilobytes!',
-'error_format_mb'                       => 'Warning: The uploaded file exceeds the max file size: %s megabytes!',
-'error_format_gb'                       => 'Warning: The uploaded file exceeds the max file size: %s gigabytes!',
-// CKEditor
-//$_['ckeditor']                    = 'af';
-//$_['ckeditor']                    = 'ar';
-//$_['ckeditor']                    = 'az';
-//$_['ckeditor']                    = 'bg';
-//$_['ckeditor']                    = 'bn';
-//$_['ckeditor']                    = 'bs';
-//$_['ckeditor']                    = 'ca';
-//$_['ckeditor']                    = 'cs';
-//$_['ckeditor']                    = 'cy';
-//$_['ckeditor']                    = 'da';
-//$_['ckeditor']                    = 'de';
-//$_['ckeditor']                    = 'de-ch';
-//$_['ckeditor']                    = 'el';
+'error_exception'                       => 'Error Code(%s): %s in %s on line %s',// CKEditor
+
+// Ckeditor
 'ckeditor'                              => 'en',
 //$_['ckeditor']                    = 'en-au';
 //$_['ckeditor']                    = 'en-ca';
@@ -252,6 +229,7 @@
 //$_['ckeditor']                    = 'vi';
 //$_['ckeditor']                    = 'zh';
 //$_['ckeditor']                    = 'zh-cn';
+
 // Datepicker
 'datepicker'                            => 'en-gb',
 //$_['datepicker']                  = 'af';

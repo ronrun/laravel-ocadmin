@@ -23,6 +23,6 @@ class IsAdmin
             return $next($request);
         }
 
-        return redirect('/error')->with('error',"There is something wrong!!");
+        return redirect(route('lang.login'))->with('error',"There is something wrong!!");
     }
 }

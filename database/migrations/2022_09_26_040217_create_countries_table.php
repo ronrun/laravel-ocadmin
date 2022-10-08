@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
+            $table->string('code',2)->unique();
             $table->string('name',128);
             $table->string('native_name',128);
-            $table->string('iso_code_2',2);
             $table->string('iso_code_3',3);
             $table->boolean('is_active')->default('1');
         });

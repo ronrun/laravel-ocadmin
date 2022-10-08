@@ -42,7 +42,7 @@ class ColumnLeftComposer
         
         $leftMenus = $this->getColumnLeft();
 
-        $view->with('navigation', $this->lang->navigation);
+        $view->with('navigation', $this->lang->text_navigation);
         $view->with('menus', $leftMenus);
     }
 
@@ -51,7 +51,7 @@ class ColumnLeftComposer
         $menus[] = [
             'id'       => 'menu-dashboard',
             'icon'	   => 'fas fa-home',
-            'name'	   => $this->lang->dashboard,
+            'name'	   => $this->lang->text_dashboard,
             'href'     => route('lang.admin.dashboard'),
             'children' => []
         ];
@@ -113,25 +113,6 @@ class ColumnLeftComposer
             ];
         }
 
-        // Sales / Orders
-        if(0) {
-            $sales[] = [
-                'name'	   => $this->lang->orders,
-                'icon'	   => '',
-                'href'     => route('lang.admin.sales.orders.index'),
-                'children' => []
-            ];
-        }
-
-        if(0) {
-            $sales[] = [
-                'name'	   => $this->lang->cto,
-                'icon'	   => '',
-                'href'     => route('lang.admin.sales.cto.index'),
-                'children' => []
-            ];
-        }
-
         // if(1) {
         //     $sales[] = [
         //         'name'	   => $this->lang->cto,
@@ -141,56 +122,21 @@ class ColumnLeftComposer
         //     ];
         // }
 
-        // System / User (Users, Roles, Permissions)
-        $dr = [];
-
-        // System / User / Users
-        if(0) {
-            $dr[] = [
-                'name'	   => 'Project',
-                'icon'	   => ' ',
-                'href'     => route('lang.admin.sales.dr.project.index'),
-                'children' => []
-            ];
-        }
-
-        // System / User / Roles
-        if(0) {
-            $dr[] = [
-                'name'	   => 'Tracking',
-                'icon'	   => ' ',
-                'href'     => route('lang.admin.sales.dr.tracking.index'),
-                'children' => []
-            ];
-        }
-
-        if($dr) {
-            $sales[] = [
-                'name'	   => 'DR',
-                'icon'	   => ' ',
-                'href'     => '',
-                'children' => $dr
-            ];
-        }
-
-        // add to Menus
-        if(!empty($sales)) {
-            $menus[] = [
-                'id'       => 'menu-sales',
-                'icon'	   => 'fas fa-tag',
-                'name'	   => $this->lang->sales,
-                'href'     => '',
-                'children' => $sales
-            ];
-        }
-
         // Members
         $member = [];
 
-        // Members / Members
-        if(0) {
+        if(1) {
             $member[] = [
-                'name'	   => $this->lang->members,
+                'name'	   => $this->lang->text_individual,
+                'icon'	   => '',
+                'href'     => route('lang.admin.member.members.index'),
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $member[] = [
+                'name'	   => $this->lang->text_organization,
                 'icon'	   => '',
                 'href'     => route('lang.admin.member.members.index'),
                 'children' => []
@@ -201,34 +147,10 @@ class ColumnLeftComposer
         if(!empty($member)) {
             $menus[] = [
                 'id'       => 'menu-members',
-                'icon'	   => 'fas fa-tag',
-                'name'	   => $this->lang->members,
+                'icon'	   => 'fas fa-user',
+                'name'	   => $this->lang->text_member,
                 'href'     => '',
                 'children' => $member
-            ];
-        }
-
-        // Tools
-        $tools = [];
-
-        // Tools / Setting
-        if(0) {
-            $tools[] = [
-                'name'	   => 'Translations',
-                'icon'	   => '',
-                'href'     => route('lang.admin.tools.trans_from_opencart'),
-                'children' => []
-            ];
-        }
-
-        // add to Menus
-        if(!empty($tools)) {
-            $menus[] = [
-                'id'       => 'menu-tools',
-                'icon'	   => 'fas fa-tag',
-                'name'	   => 'Tools',
-                'href'     => '',
-                'children' => $tools
             ];
         }
 
@@ -238,44 +160,10 @@ class ColumnLeftComposer
         // Setting
         if(1) {
             $system[] = [
-                'name'	   => $this->lang->settings,
-                'icon'	   => ' ',
-                'href'     => route('lang.admin.system.settings.index'),
+                'name'	   => $this->lang->text_setting,
+                'icon'	   => '',
+                'href'     => route('lang.admin.system.setting.stores.index'),
                 'children' => []
-            ];
-        }
-
-
-        // System / User (Users, Roles, Permissions)
-        $user = [];
-
-        // System / User / Users
-        if(0) {
-            $user[] = [
-                'name'	   => 'Users',
-                //$this->lang->users,
-                'icon'	   => ' ',
-                'href'     => route('lang.admin.system.user.users.index'),
-                'children' => []
-            ];
-        }
-
-        // System / User / Roles
-        if(0) {
-            $user[] = [
-                'name'	   => 'Roles',
-                'icon'	   => ' ',
-                'href'     => route('lang.admin.system.user.roles.index'),
-                'children' => []
-            ];
-        }
-
-        if(!empty($user)) {
-            $system[] = [
-                'name'	   => $this->lang->users,
-                'icon'	   => ' ',
-                'href'     => '',
-                'children' => $user
             ];
         }
 
@@ -291,7 +179,7 @@ class ColumnLeftComposer
         
         if(isset($database)) {
             $system[] = [
-                'name'	   => $this->lang->database,
+                'name'	   => $this->lang->text_database,
                 'icon'	   => ' ',
                 'href'     => '',
                 'children' => $database
@@ -301,8 +189,8 @@ class ColumnLeftComposer
         if(!empty($system)) {
             $menus[] = [
                 'id'       => 'menu-system',
-                'icon'	   => 'fas fa-tag',
-                'name'	   => $this->lang->system,
+                'icon'	   => 'fas fa-cog',
+                'name'	   => $this->lang->text_system,
                 'href'     => '',
                 'children' => $system
             ];

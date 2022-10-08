@@ -24,5 +24,7 @@ class UserSeeder extends Seeder
             'is_active' => 1,
             'is_admin' => 1,
             ]);
+            
+        User::factory()->count(200)->create(); 
     }
 }

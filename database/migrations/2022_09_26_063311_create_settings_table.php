@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('organization_id')->nullable();
             $table->string('group');
             $table->string('key')->nullable();
-            $table->string('value')->nullable();
+            $table->text('value')->nullable();
             $table->boolean('autoload')->default('0');
             $table->boolean('serialized')->default('0');
+            $table->unique(['organization_id','group','key']);
             $table->timestamps();
         });
     }

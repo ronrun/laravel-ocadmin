@@ -22,9 +22,10 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            UserSeeder::class,
             CountrySeeder::class,
-            ZoneSeeder::class,
+            DivisionSeeder::class,
+            UserSeeder::class,
+            OrginazationSeeder::class,
             SettingSeeder::class,
         ]);
     }

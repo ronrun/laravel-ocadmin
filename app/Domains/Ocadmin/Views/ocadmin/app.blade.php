@@ -88,8 +88,14 @@ $('#nav-language .dropdown-item').on('click', function (e) {
               <li><a href="http://forum.opencart.com" target="_blank" class="dropdown-item"><i class="fa-solid fa-comments fa-fw"></i> Support Forum</a></li>
             </ul>
           </li>
-          <li id="nav-logout" class="nav-item"><a href="http://opencart4011.test/backend/index.php?route=common/logout&amp;user_token=4b8d1473f98be42ae37f45f2cee76115" class="nav-link"><i class="fa-solid fa-sign-out"></i> <span class="d-none d-md-inline">Logout</span></a></li>
-        </ul>
+          <li id="nav-logout" class="nav-item">
+              <a href="{{ route('lang.admin.logout') }}" class="nav-link" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                <i class="fa-solid fa-sign-out"></i> <span class="d-none d-md-inline">Logout</span>
+              </a>
+          <form id="logout-form" action="{{ route('lang.admin.logout') }}" method="POST" class="d-none">
+            @csrf
+            </form>
+            </li>        </ul>
           </div>
   </header>
             @yield('sidebar')
