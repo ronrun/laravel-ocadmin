@@ -5,7 +5,7 @@ namespace App\Domains\Ocadmin\ViewComposers;
 use Illuminate\View\View;
 use Lang;
 
-class LayoutComposer
+class ColumnLeftComposer
 { 
     /**
      * Create a new sidebar composer.
@@ -39,10 +39,9 @@ class LayoutComposer
         
         $view->with('authUser', $this->authUser);
         $view->with('simUser', $this->simUser);
-        $view->with('base', $this->base);
         
         $leftMenus = $this->getColumnLeft();
-        //$leftMenus = [];
+
         $view->with('navigation', $this->lang->navigation);
         $view->with('menus', $leftMenus);
     }
