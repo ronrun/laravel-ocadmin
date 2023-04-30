@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             UserSeeder::class,
             SettingSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }

@@ -19,10 +19,11 @@ class TranslationLibrary
     public $data;
 
     // getTransByGroups
-    public function getTranslations($groups)
+    public function getTranslations($group)
     {        
-        $this->groups = $groups;
+        $this->group = $group;
         $this->driver = config('app.translatoin_driver');
+
         $fallback_locale = config('app.fallback_locale');
         $locale = \App::getLocale();
 
@@ -49,7 +50,7 @@ class TranslationLibrary
     {
         $this->data = new TranslationData();
 
-        foreach ($this->groups as $group) {
+        foreach ($this->group as $group) {
             $query = Translation::query();
 
             $rows = $query->select('key','value')
@@ -68,7 +69,7 @@ class TranslationLibrary
     {
         $this->data = new TranslationData();
 
-        foreach ($this->groups as $group) {
+        foreach ($this->group as $group) {
             $arr = Lang::get($group);
             if(is_array($arr)){
                 foreach (Lang::get($group) as $key => $value) {

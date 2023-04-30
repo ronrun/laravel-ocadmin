@@ -32,11 +32,11 @@
               </div>
             </li>
             <li id="nav-language" class="nav-item dropdown">
-              <a href="en-gb" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><img src="http://laravel.test/catalog/language/en-gb/en-gb.png" alt="English" title="English"/></a>
+              <a href="en-gb" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><img src="{{ asset('assets/backend/ocadmin/image/language/en-gb.png') }}" alt="English" title="English"/></a>
               <ul class="dropdown-menu">
-                <li><a href="en-gb" class="dropdown-item"><img src="http://laravel.test/catalog/language/en-gb/en-gb.png" alt="English" title="English"/> English</a></li>
+                <li><a href="en-gb" class="dropdown-item"><img src="{{ asset('assets/backend/ocadmin/image/language/en-gb.png') }}" alt="English" title="English"/> English</a></li>
               </ul>
-              <input type="hidden" name="redirect" value="http://laravel.test/backend/index.php?route=common/dashboard&amp;user_token=e706be753bc9f199dff05a8888258bdb" id="input-redirect"/>
+              <input type="hidden" name="redirect" value="{{ route('lang.admin.dashboard') }}" id="input-redirect"/>
               <script type="text/javascript"><!--
                 $('#nav-language .dropdown-item').on('click', function (e) {
                     e.preventDefault();
@@ -107,6 +107,7 @@
       @yield('content')
       <footer id="footer"><a href="https://www.opencart.com">OpenCart</a> &copy; 2009-2023 All Rights Reserved.<br/>Version 4.0.2.1</footer>
     </div>
+    @yield('buttom')
     <script src="{{ asset('assets/backend/ocadmin/javascript/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>
   </body>
 </html>

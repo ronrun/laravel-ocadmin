@@ -1,10 +1,10 @@
-@extends('ocadmin.app')
+@extends('admin.app')
 
 @section('pageJsCss')
 @endsection
 
 @section('columnLeft')
-  @include('ocadmin.common.column_left')
+  @include('admin.common.column_left')
 @endsection
 
 @section('content')
@@ -85,7 +85,7 @@
                 $(document).ready(function () {
                     $.ajax({
                         //url: 'index.php?route=extension/opencart/dashboard/map.map&user_token=e706be753bc9f199dff05a8888258bdb',
-                        url: 'ocadmin/map.php',
+                        url: "{{ config('app.app_admin_url') }}/map.php",
                         url: "{{ asset('assets/backend/ocadmin/map.php') }}",
                         dataType: 'html',
                         success: function (json) {
