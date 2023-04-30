@@ -17,3 +17,20 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+#End of default
+
+/storage/framework/cache
+/storage/framework/views
+/storage/debugbar
+/storage/logs
+
+*.bak
+*bak.php 
+*.old
+*old.php
+*.copy
+*copy.php 
+*.code-workspace
+phpinfo.php
+php.bat
+composer.bat
