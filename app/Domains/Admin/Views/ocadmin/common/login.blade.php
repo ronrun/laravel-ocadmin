@@ -22,7 +22,7 @@
   <div id="alert" class="toast-container position-fixed top-0 end-0 p-3"></div>
   <header id="header" class="navbar navbar-expand navbar-light bg-light">
     <div class="container-fluid">
-      <a href="{{ route('backend.login') }}" class="navbar-brand d-none d-lg-block"><img src="{{ asset('assets/backend/ocadmin/image/logo.png') }}" alt="OpenCart" title="OpenCart"/></a>
+      <a href="{{ route('admin.login') }}" class="navbar-brand d-none d-lg-block"><img src="{{ asset('assets/backend/ocadmin/image/logo.png') }}" alt="OpenCart" title="OpenCart"/></a>
           </div>
   </header>
 
@@ -35,7 +35,7 @@
         <div class="card">
           <div class="card-header"><i class="fa-solid fa-lock"></i> Please enter your login details.</div>
           <div class="card-body">
-            <form id="form-login" action="{{ route('backend.login') }}" method="post" data-oc-toggle="ajax">
+            <form id="form-login" action="{{ route('admin.login') }}" method="post" data-oc-toggle="ajax">
               @csrf
                                           <div class="mb-3">
                 <label for="input-email" class="form-label">Username</label>

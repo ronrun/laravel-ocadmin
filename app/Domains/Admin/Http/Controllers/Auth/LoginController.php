@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Admin\Http\Controllers;
+namespace App\Domains\Admin\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -47,7 +47,7 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         $data['base'] = env('APP_URL') . '/' . env('APP_BACKEND_FOLDER');
-        return view('backend.login', $data); 
+        return view('ocadmin.common.login', $data); 
     }
 
     /** 
@@ -75,7 +75,7 @@ class LoginController extends Controller
             return redirect($params['prev_url']);
         }       
         
-        return redirect('http://laravel.test/backend/dashboard');
+        return redirect('http://laravel.test/admin/dashboard');
     }
 
     /** 
@@ -93,10 +93,10 @@ class LoginController extends Controller
             return $response;
         }
 
-        return redirect(route('backend.login'));
+        return redirect(route('admin.login'));
 
         // return $request->wantsJson()
         //     ? new JsonResponse([], 204)
-        //     : redirect(route('backend.login'));
+        //     : redirect(route('admin.login'));
     }
 }

@@ -21,7 +21,7 @@ class DashboardController extends Controller
 
         // $data['sales_chart_url'] = 'ocadmin-asset/test/dashboard-chart-sales.html';
 
-        return view('backend.dashboard', $data);
+        return view('ocadmin.common.dashboard', $data);
     }
 
     public function setLanguage($lang_code)

@@ -185,4 +185,6 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'translatoin_driver' => env('TRANSLATION_DRIVER', 'file'),
+
 ];
