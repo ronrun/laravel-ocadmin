@@ -1,4 +1,4 @@
-@extends('admin.app')
+@extends('ocadmin.app')
 
 @section('pageJsCss')
 <script src="{{ asset('oc-asset/javascript/jquery/datetimepicker/moment.min.js') }}" type="text/javascript"></script>
@@ -8,7 +8,7 @@
 @endsection
 
 @section('columnLeft')
-	@include('admin.common.column_left')
+	@include('ocadmin.common.column_left')
 @endsection
 
 @section('content')

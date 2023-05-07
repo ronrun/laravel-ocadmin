@@ -15,7 +15,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('admin.app', LayoutComposer::class);
-        View::composer('admin.common.column_left', LayoutComposer::class);
+        View::composer('ocadmin.app', LayoutComposer::class);
+        View::composer('ocadmin.common.column_left', LayoutComposer::class);
     }
 }

@@ -16,14 +16,20 @@ trait EloquentTrait
     public $model;
 
 
-    public function newModel()
+    public function newModel($modelName = null)
     {
-        $model = new $this->modelName;
-
-        if(empty($this->model)){
-            $this->model = $model;
+        if(!empty($modelName)){
+            $model = new $modelName;
+        }else if(!empty($this->modelName)){
+            $model = new $this->modelName;
+        }else{
+            $model = null;
         }
 
+        if(empty($this->model) && !empty($model)){
+            $this->model = $model;
+        }
+        
         return $model;
     }
 
@@ -36,7 +42,13 @@ trait EloquentTrait
     }
 
 
-    public function getModelInstance($data, $debug=0): Model
+    // public function getModelInstanceOrFail($data, $debug=0)
+    // {
+    //     $this->getModelInstance()
+
+    // }
+
+    public function getModelInstance($data, $debug=0)
     {
         $model = $this->newModel();
         $query = $model->query();

@@ -1,4 +1,4 @@
-<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ route('lang.admin.user.user.list') }}" data-oc-target="#user">
+<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ route('lang.admin.user.role.list') }}" data-oc-target="#role">
 	@csrf
 	@method('POST')
 	<div class="table-responsive">
@@ -25,5 +25,5 @@
 			</tbody>
 		</table>
 	</div>
-	{!! $records->links('admin.common.pagination', ['users' => $records]) !!}
+	{!! $records->links('ocadmin.common.pagination', ['roles' => $records]) !!}
 </form>

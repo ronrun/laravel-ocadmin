@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('username',30)->index()->default('');
-            $table->string('name')->default('');
-            $table->string('email')->default('')->index();
+            $table->string('user_nicename',30)->index()->default('');
+            $table->string('display_name',30);
+            $table->string('email')->index()->default('');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->default('');
-            $table->string('mobile')->default('');
             $table->rememberToken();
             $table->boolean('is_active')->default('1');
             $table->boolean('is_admin')->default('0');
@@ -31,8 +31,15 @@ return new class extends Migration
             $table->unsignedInteger('user_id');
             $table->string('meta_key');
             $table->longText('meta_value',30)->default('');
-            
             $table->index(['user_id','meta_key']);
+        });
+
+        Schema::create('user_logins', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->index();
+            $table->string('ip',40)->default('');
+            $table->string('user_agent',40)->default('');
+            $table->timestamps();
         });
     }
 
@@ -41,6 +48,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_logins');
         Schema::dropIfExists('usermeta');
         Schema::dropIfExists('users');
     }

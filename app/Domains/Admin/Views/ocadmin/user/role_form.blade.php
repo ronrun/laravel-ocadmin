@@ -1,10 +1,10 @@
-@extends('admin.app')
+@extends('ocadmin.app')
 
 @section('pageJsCss')
 @endsection
 
 @section('columnLeft')
-	@include('admin.common.column_left')
+	@include('ocadmin.common.column_left')
 @endsection
 
 @section('content')
@@ -12,20 +12,21 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="float-end">
-                <button type="submit" form="form-customer" data-bs-toggle="tooltip" class="btn btn-primary" aria-label="Save" data-bs-original-title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
-        <a href="http://opencart.test/backend/index.php?route=customer/customer&amp;user_token=a1d0d772d41ec8d7930ea1b78321d9f6" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
-      <h1>Customers</h1>
+        <button type="submit" form="form-role" data-bs-toggle="tooltip" class="btn btn-primary" aria-label="Save" data-bs-original-title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
+        <a href="{{ $back }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+      </div>
+      <h1>Role</h1>
       <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="http://opencart.test/backend/index.php?route=common/dashboard&amp;user_token=a1d0d772d41ec8d7930ea1b78321d9f6">Home</a></li>
-                  <li class="breadcrumb-item"><a href="http://opencart.test/backend/index.php?route=customer/customer&amp;user_token=a1d0d772d41ec8d7930ea1b78321d9f6">Customers</a></li>
-              </ol>
+        <li class="breadcrumb-item"><a href="http://opencart.test/backend/index.php?route=common/dashboard&amp;role_token=a1d0d772d41ec8d7930ea1b78321d9f6">Home</a></li>
+        <li class="breadcrumb-item"><a href="http://opencart.test/backend/index.php?route=role/role&amp;role_token=a1d0d772d41ec8d7930ea1b78321d9f6">Roles</a></li>
+      </ol>
     </div>
   </div>
   <div class="container-fluid">
     <div class="card">
-      <div class="card-header"><i class="fa-solid fa-pencil"></i> Add Customer</div>
+      <div class="card-header"><i class="fa-solid fa-pencil"></i> Add Role</div>
       <div class="card-body">
-        <form id="form-customer" action="{{ $save }}" method="post" data-oc-toggle="ajax">
+        <form id="form-role" action="{{ $save }}" method="post" data-oc-toggle="ajax">
           @csrf
           @method('PUT')
           <ul class="nav nav-tabs" role="tablist">
@@ -35,18 +36,18 @@
           <div class="tab-content">
             <div id="tab-general" class="tab-pane active show" role="tabpanel">
               <fieldset>
-                <legend>Customer Details</legend>
+                <legend>Role Details</legend>
                 <div class="row mb-3 required">
                   <label for="input-name" class="col-sm-2 col-form-label">First Name</label>
                   <div class="col-sm-10">
-                    <input type="text" name="name" value="{{ $user->name }}" placeholder="Name" id="input-name" class="form-control">
+                    <input type="text" name="name" value="{{ $role->name }}" placeholder="Name" id="input-name" class="form-control">
                     <div id="error-name" class="invalid-feedback"></div>
                   </div>
                 </div>
                 <div class="row mb-3 required">
                   <label for="input-email" class="col-sm-2 col-form-label">E-Mail</label>
                   <div class="col-sm-10">
-                    <input type="text" name="email" value="{{ $user->email }}" placeholder="E-Mail" id="input-email" class="form-control">
+                    <input type="text" name="email" value="{{ $role->email }}" placeholder="E-Mail" id="input-email" class="form-control">
                     <div id="error-email" class="invalid-feedback"></div>
                   </div>
                 </div>
@@ -78,28 +79,11 @@
               <fieldset>
                 <legend>Other</legend>
                 <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Newsletter</label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-switch form-switch-lg">
-                      <input type="hidden" name="newsletter" value="0"> <input type="checkbox" name="newsletter" value="1" id="input-newsletter" class="form-check-input">
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-3">
                   <label class="col-sm-2 col-form-label">Status</label>
                   <div class="col-sm-10">
                     <div class="form-check form-switch form-switch-lg">
                       <input type="hidden" name="status" value="0"> <input type="checkbox" name="status" value="1" id="input-status" class="form-check-input" checked="">
                     </div>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Safe</label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-switch form-switch-lg">
-                      <input type="hidden" name="safe" value="0"> <input type="checkbox" name="safe" value="1" id="input-safe" class="form-check-input">
-                    </div>
-                    <div class="form-text">Set to true to avoid this customer from being caught by the anti-fraud system</div>
                   </div>
                 </div>
               </fieldset>
@@ -108,7 +92,7 @@
                                           <div class="text-end">
                 <button type="button" id="button-address" class="btn btn-primary"><i class="fa-solid fa-plus-circle"></i> Add Address</button>
               </div>
-              <input type="hidden" name="user_id" value="{{ $user->id }}" id="input-customer-id">
+              <input type="hidden" name="role_id" value="{{ $role->id }}" id="input-role-id">
             </div>
 
             <div id="tab-payment" class="tab-pane" role="tabpanel">

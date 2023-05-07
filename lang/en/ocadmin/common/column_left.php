@@ -9,7 +9,9 @@ return [
 'text_product' => 'Product',
 'text_sale' => 'Sales',
 'text_order' => 'Orders',
-'text_user' => 'Users',
+'text_users' => 'Users',
+'text_roles' => 'Roles',
+'text_permissions' => 'Permissions',
 'text_system' => 'System',
 'text_setting' => 'Setting',
 ];

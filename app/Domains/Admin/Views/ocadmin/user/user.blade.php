@@ -1,10 +1,10 @@
-@extends('admin.app')
+@extends('ocadmin.app')
 
 @section('pageJsCss')
 @endsection
 
 @section('columnLeft')
-	@include('admin.common.column_left')
+	@include('ocadmin.common.column_left')
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
 				<a href="{{ route('lang.admin.user.user.form') }}" data-bs-toggle="tooltip" title="Add New" class="btn btn-primary"><i class="fas fa-plus"></i></a>
 			</div>
 			<h1>{{ $lang->heading_title }}</h1>
-			@include('admin.common.breadcumb')
+			@include('ocadmin.common.breadcumb')
 		</div>
 	</div>
   <div class="container-fluid">

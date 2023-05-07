@@ -14,7 +14,7 @@ class TransFromOpencartController extends Controller
      */
     public function getForm()
     {        
-        return view('admin.tools.trans_from_opencart');
+        return view('ocadmin.tools.trans_from_opencart');
     }
 
 
@@ -26,11 +26,17 @@ class TransFromOpencartController extends Controller
             $transText = str_replace("\r", '', $request->post('transText'));
             $transText = explode("\n", $transText);
 
+            $new[] = "<?php\r\n";
             $new[] = "return [";
             foreach ($transText as $value) {
                 $value = trim($value);
+
+                if(strstr($value, '// CKEditor')){
+                    break;
+                }
+
                 if(strstr($value, '//')){
-                    $new[] = $value;
+                    $new[] = "\r\n" . $value;
                 }else if(strstr($value, '$_')){
                     // https://www.phpliveregex.com/
                     preg_match('"\\$_\\[\\\'(.*)\\\'\\]\\s+\\=\\s*\\\'(.*)\\\'"', $value, $matches);
@@ -41,7 +47,8 @@ class TransFromOpencartController extends Controller
                     for ($i=0; $i < $c; $i++) {
                         $spaces .= ' ';
                     }
-                    $new[] = $new_str . $spaces . "=> '".$matches[2]."',";
+                    //$new[] = $new_str . $spaces . "=> '".$matches[2]."',";
+                    $new[] = $new_str . " => '".$matches[2]."',";
 
                     $toArray[] = ['key'=> $matches[1], 'value' => $matches[2]];
                 }
@@ -52,6 +59,6 @@ class TransFromOpencartController extends Controller
             //$data['toArray'] = $toArray ?? [];
         }
         
-        return view('admin.tools.trans_from_opencart', $data);
+        return view('ocadmin.tools.trans_from_opencart', $data);
     }
 }

@@ -1,10 +1,10 @@
-@extends('admin.app')
+@extends('ocadmin.app')
 
 @section('pageJsCss')
 @endsection
 
 @section('columnLeft')
-  @include('admin.common.column_left')
+  @include('ocadmin.common.column_left')
 @endsection
 
 @section('content')

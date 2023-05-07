@@ -5,7 +5,6 @@ return [
 'heading_title' => 'Users',
 
 // Text
-'text_success' => 'Success: You have modified users!',
 'text_list' => 'User List',
 'text_add' => 'Add User',
 'text_edit' => 'Edit User',
@@ -17,7 +16,10 @@ return [
 
 // Column
 'column_username' => 'Username',
+'column_display_name' => 'Display Name',
+'column_email' => 'Email',
 'column_mobile' => 'Mobile',
+'column_phone' => 'Phone',
 'column_status' => 'Status',
 'column_ip' => 'IP',
 'column_user_agent' => 'User Agent',

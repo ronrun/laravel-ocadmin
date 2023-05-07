@@ -18,9 +18,8 @@ return new class extends Migration
             $table->string('group')->default('default');
             $table->string('key')->nullable();
             $table->text('value')->nullable();
-            $table->boolean('autoload')->default('0');
-            $table->boolean('serialized')->default('0');
-            $table->unique(['group','key']);
+            $table->boolean('is_autoload')->default('0');
+            $table->boolean('is_json')->default('0');
             $table->timestamps();
         });
     }

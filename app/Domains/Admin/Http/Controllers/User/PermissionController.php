@@ -5,20 +5,20 @@ namespace App\Domains\Admin\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
-use App\Domains\Admin\Services\User\UserService;
+use App\Domains\Admin\Services\User\PermissionService;
 use Illuminate\Support\Facades\Auth;
 
-class UserController extends Controller
+class PermissionController extends Controller
 {
     private $lang;
     private $request;
-    private $UserService;
+    private $PermissionService;
 
-    public function __construct(Request $request, UserService $UserService)
+    public function __construct(Request $request, PermissionService $PermissionService)
     {
         $this->request = $request;
-        $this->UserService = $UserService;
-        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/user']);
+        $this->PermissionService = $PermissionService;
+        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/permission']);
     }
 
 
@@ -33,21 +33,21 @@ class UserController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_users,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.user.index'),
+            'href' => route('lang.admin.user.permission.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
         $data['list'] = $this->getList();
 
-        return view('ocadmin.user.user', $data);
+        return view('ocadmin.user.permission', $data);
     }
 
 
@@ -55,7 +55,7 @@ class UserController extends Controller
     {
         $data['lang'] = $this->lang;
 
-        $data['form_action'] = route('lang.admin.user.user.list');
+        $data['form_action'] = route('lang.admin.user.permission.list');
 
         return $this->getList();
     }
@@ -96,18 +96,18 @@ class UserController extends Controller
             }
         }
 
-        //$data['action'] = route('lang.admin.user.user.massDelete');
+        //$data['action'] = route('lang.admin.user.permission.massDelete');
 
         // Rows
-        $users = $this->UserService->getRecords($queries);
+        $users = $this->PermissionService->getRecords($queries);
 
         if(!empty($users)){
             foreach ($users as $row) {
-                $row->edit_url = route('lang.admin.user.user.form', array_merge([$row->id], $queries));
+                $row->edit_url = route('lang.admin.user.permission.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $users->withPath(route('lang.admin.user.user.list'))->appends($queries);
+        $data['records'] = $users->withPath(route('lang.admin.user.permission.list'))->appends($queries);
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -129,20 +129,20 @@ class UserController extends Controller
         }
 
         //link of table header for sorting
-        $route = route('lang.admin.user.user.list');
+        $route = route('lang.admin.user.permission.list');
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        return view('ocadmin.user.user_list', $data);
+        return view('ocadmin.user.permission_list', $data);
     }
 
 
-    public function form($user_id = null)
+    public function form($permission_id = null)
     {
         $data['lang'] = $this->lang;
 
-        $this->lang->text_form = empty($user_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
+        $this->lang->text_form = empty($permission_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
 
         // Breadcomb
         $breadcumbs[] = (object)[
@@ -158,7 +158,7 @@ class UserController extends Controller
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.user.index'),
+            'href' => route('lang.admin.user.permission.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
@@ -194,21 +194,25 @@ class UserController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.user.user.save');
-        $data['back'] = route('lang.admin.user.user.index', $queries);
+        $data['save'] = route('lang.admin.user.permission.save');
+        $data['back'] = route('lang.admin.user.permission.index', $queries);
 
         // Get Record
-        $user = $this->UserService->getRecordOrNew(['id' => $user_id]);
+        $filter_data = [
+            'filter_id' => $permission_id,
+            'regexp' => false,
+        ];
+        $permission = $this->PermissionService->getRecordOrNew($filter_data,1);
 
-        $data['user']  = $user;
+        $data['permission']  = $permission;
 
-        if(!empty($data['user']) && $user_id == $user->id){
-            $data['user_id'] = $user_id;
+        if(!empty($data['permission']) && $permission_id == $permission->id){
+            $data['permission_id'] = $permission_id;
         }else{
-            $data['user_id'] = null;
+            $data['permission_id'] = null;
         }
 
-        return view('ocadmin.user.user_form', $data);
+        return view('ocadmin.user.permission_form', $data);
     }
 
 
@@ -221,16 +225,16 @@ class UserController extends Controller
         // validator
 
         if(!$json) {
-            $result = $this->UserService->updateOrCreate($data);
+            $result = $this->PermissionService->updateOrCreate($data);
 
             if(empty($result['error'])){
-                $json['user_id'] = $result['data']['user_id'];
+                $json['permission_id'] = $result['data']['permission_id'];
                 $json['success'] = $this->lang->text_success;
             }else{
                 $user = Auth::user();
 
-                $user_id = auth()->user()->id;
-                if($user_id == 1){
+                $permission_id = auth()->user()->id;
+                if($permission_id == 1){
                     $json['error'] = $result['error'];
                 }else{
                     $json['error'] = $this->lang->text_fail;

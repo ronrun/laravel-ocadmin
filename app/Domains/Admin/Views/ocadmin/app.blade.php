@@ -22,7 +22,7 @@
       <div id="alert" class="toast-container position-fixed top-0 end-0 p-3"></div>
       <header id="header" class="navbar navbar-expand navbar-light bg-light">
         <div class="container-fluid">
-          <a href="http://laravel.test/backend/index.php?route=common/dashboard&amp;user_token=e706be753bc9f199dff05a8888258bdb" class="navbar-brand d-none d-lg-block"><img src="{{ asset('assets/backend/ocadmin/image/logo.png') }}" alt="OpenCart" title="OpenCart"/></a>
+          <a href="{{ route('lang.admin.dashboard') }}" class="navbar-brand d-none d-lg-block"><img src="{{ asset('assets/backend/ocadmin/image/logo.png') }}" alt="OpenCart" title="OpenCart"/></a>
           <button type="button" id="button-menu" class="btn btn-link d-inline-block d-lg-none"><i class="fa-solid fa-bars"></i></button>
           <ul class="nav navbar-nav">
             <li id="nav-notification" class="nav-item dropdown">

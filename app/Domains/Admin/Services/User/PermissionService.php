@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Domains\Admin\Services\Service;
 use App\Libraries\TranslationLibrary;
 
-class UserService extends Service
+class PermissionService extends Service
 {
     public $modelName;
     public $model;
@@ -15,8 +15,8 @@ class UserService extends Service
 
 	public function __construct()
 	{
-        $this->modelName = "\App\Models\User\User";
-        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/user']);
+        $this->modelName = 'Spatie\Permission\Models\Permission';
+        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/permission']);
 	}
 
 
@@ -25,20 +25,19 @@ class UserService extends Service
         DB::beginTransaction();
 
         try {
-            if(!empty($data['user_id'])){
-                $record = $this->getRecordByIdOrFail($data['user_id']);
+            if(!empty($data['permission_id'])){
+                $record = $this->getRecordByIdOrFail($data['permission_id']);
             }else{
                 $record = $this->newModel();
             }
-            $record->display_name = $data['display_name'];
-            $record->user_nicename = $data['display_name'];
-            $record->email = $data['email'] ?? '';
-            //$record->mobile = str_replace('-','',$data['mobile']) ?? '';
+
+            $record->name = $data['name'];
+            $record->guard_name = 'web';
             $record->save();
 
             DB::commit();
 
-            $result['data']['user_id'] = $record->id;
+            $result['data']['permission_id'] = $record->id;
     
             return $result;
 

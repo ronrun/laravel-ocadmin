@@ -29,7 +29,6 @@ class LayoutComposer
             'ocadmin/setting/setting',
         ];
         $this->lang = (new TranslationLibrary())->getTranslations($groups);
-        //echo '<pre>', print_r($this->lang , 1), "</pre>"; exit;
     }
  
     /**
@@ -60,6 +59,47 @@ class LayoutComposer
             'href'     => route('lang.admin.dashboard'),
             'children' => []
         ];
+
+        /**
+         * User
+         */
+        // L2
+        if(1) {
+            $user[] = [
+                'name'	   => $this->lang->text_users,
+                'icon'	   => '',
+                'href'     => route('lang.admin.user.user.index'),
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $user[] = [
+                'name'	   => $this->lang->text_permissions,
+                'icon'	   => '',
+                'href'     => route('lang.admin.user.permission.index'),
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $user[] = [
+                'name'	   => $this->lang->text_roles,
+                'icon'	   => '',
+                'href'     => route('lang.admin.user.role.index'),
+                'children' => []
+            ];
+        }
+
+        if(!empty($user)) {
+            $menus[] = [
+                'id'       => 'menu-user',
+                'icon'	   => 'fas fa-cog',
+                'name'	   => 'Users',
+                'href'     => '',
+                'children' => $user
+            ];
+        }
 
         /**
          * System
@@ -103,37 +143,6 @@ class LayoutComposer
                 'name'	   => $this->lang->text_system,
                 'href'     => '',
                 'children' => $system
-            ];
-        }
-
-        /**
-         * User
-         */
-        // L2
-        if(1) {
-            $user[] = [
-                'name'	   => 'Users',
-                'icon'	   => '',
-                'href'     => route('lang.admin.user.user.index'),
-                'children' => []
-            ];
-        }
-        if(1) {
-            $user[] = [
-                'name'	   => 'Groups',
-                'icon'	   => '',
-                'href'     => '/',
-                'children' => []
-            ];
-        }
-
-        if(!empty($user)) {
-            $menus[] = [
-                'id'       => 'menu-user',
-                'icon'	   => 'fas fa-cog',
-                'name'	   => 'Users',
-                'href'     => '',
-                'children' => $user
             ];
         }
 
