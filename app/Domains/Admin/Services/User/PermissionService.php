@@ -15,7 +15,7 @@ class PermissionService extends Service
 
 	public function __construct()
 	{
-        $this->modelName = 'Spatie\Permission\Models\Permission';
+        $this->modelName = 'App\Models\User\Permission';
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/permission']);
 	}
 
@@ -25,11 +25,7 @@ class PermissionService extends Service
         DB::beginTransaction();
 
         try {
-            if(!empty($data['permission_id'])){
-                $record = $this->getRecordByIdOrFail($data['permission_id']);
-            }else{
-                $record = $this->newModel();
-            }
+            $record = $this->findOrFailOrNew($data['permission_id']);
 
             $record->name = $data['name'];
             $record->guard_name = 'web';

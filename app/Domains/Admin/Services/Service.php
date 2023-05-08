@@ -2,13 +2,62 @@
 
 namespace App\Domains\Admin\Services;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Model\EloquentTrait;
+use App\Domains\Admin\Exceptions\NotFoundException;
+
 use Exception;
 
 class Service
 {
     use EloquentTrait;
+
+
+    // Eloquent
+    public function findOrNew($id)
+    {
+        return $this->newModel()->findOrNew($id);
+    }
+
+    
+    public function findOrFail($id)
+    {
+        try {
+            $record = $this->newModel()->findOrFail($id);
+        } catch (ModelNotFoundException  $e) {
+            throw new NotFoundException('Resource not found!!');
+        }
+        
+        return $record;
+    }
+
+    
+    public function findOrFailOrNew($id = null)
+    {
+        if($id == null){
+            return $this->newModel();
+        }else{
+            return $this->findOrFail($id);
+        }
+    }
+    
+
+    // EloquentTrait
+    public function getRecord($queries)
+    {
+        return $this->getModelInstance($queries);
+    }
+
+
+    public function getRecords($queries)
+    {
+        return $this->getModelCollection($queries);
+    }
+
+
+    
+
 
     /**
      * Return eloquent's first()
@@ -45,9 +94,9 @@ class Service
     /**
      * Return eloquent's first() or new an instance.
      */
-    public function getRecordOrNew($queries)
+    public function getRecordOrNew($queries, $debug=0)
     {
-        return $this->getModelFirstOrNew($queries);
+        return $this->getModelFirstOrNew($queries, $debug);
     }
 
 
@@ -83,18 +132,6 @@ class Service
         }
 
         return $record;
-    }
-    
-
-    public function getRecord($queries)
-    {
-        return $this->getModelInstance($queries);
-    }
-
-
-    public function getRecords($queries)
-    {
-        return $this->getModelCollection($queries);
     }
 
 }

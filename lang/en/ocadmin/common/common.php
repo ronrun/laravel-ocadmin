@@ -55,6 +55,7 @@ return [
 'column_id' => 'ID',
 'column_name' => 'Name',
 'column_date_added' => 'Date Added',
+'column_date_created' => 'Date Created',
 'column_date_modified' => 'Date Modified',
 'column_action' => 'Action',
 

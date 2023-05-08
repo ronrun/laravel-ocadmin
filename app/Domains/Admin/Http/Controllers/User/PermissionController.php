@@ -198,19 +198,10 @@ class PermissionController extends Controller
         $data['back'] = route('lang.admin.user.permission.index', $queries);
 
         // Get Record
-        $filter_data = [
-            'filter_id' => $permission_id,
-            'regexp' => false,
-        ];
-        $permission = $this->PermissionService->getRecordOrNew($filter_data,1);
+        $permission = $this->PermissionService->findOrFailOrNew($permission_id);
 
         $data['permission']  = $permission;
-
-        if(!empty($data['permission']) && $permission_id == $permission->id){
-            $data['permission_id'] = $permission_id;
-        }else{
-            $data['permission_id'] = null;
-        }
+        $data['permission_id'] = $permission_id ?? null;
 
         return view('ocadmin.user.permission_form', $data);
     }

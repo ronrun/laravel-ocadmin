@@ -198,15 +198,10 @@ class UserController extends Controller
         $data['back'] = route('lang.admin.user.user.index', $queries);
 
         // Get Record
-        $user = $this->UserService->getRecordOrNew(['id' => $user_id]);
+        $user = $this->UserService->findOrFailOrNew($user_id);
 
         $data['user']  = $user;
-
-        if(!empty($data['user']) && $user_id == $user->id){
-            $data['user_id'] = $user_id;
-        }else{
-            $data['user_id'] = null;
-        }
+        $data['user_id'] = $user_id ?? null;
 
         return view('ocadmin.user.user_form', $data);
     }
@@ -221,6 +216,7 @@ class UserController extends Controller
         // validator
 
         if(!$json) {
+            
             $result = $this->UserService->updateOrCreate($data);
 
             if(empty($result['error'])){

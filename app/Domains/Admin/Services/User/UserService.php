@@ -2,6 +2,7 @@
 
 namespace App\Domains\Admin\Services\User;
 
+use App\Domains\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\DB;
 use App\Domains\Admin\Services\Service;
 use App\Libraries\TranslationLibrary;
@@ -25,16 +26,18 @@ class UserService extends Service
         DB::beginTransaction();
 
         try {
-            if(!empty($data['user_id'])){
-                $record = $this->getRecordByIdOrFail($data['user_id']);
-            }else{
-                $record = $this->newModel();
-            }
+            $record = $this->findOrFailOrNew($data['user_id']);
+
             $record->display_name = $data['display_name'];
-            $record->user_nicename = $data['display_name'];
+            $record->user_nicename = $data['user_nicename'] ?? $data['display_name'] ?? '';
             $record->email = $data['email'] ?? '';
             //$record->mobile = str_replace('-','',$data['mobile']) ?? '';
+            
             $record->save();
+
+            if($record->wasRecentlyCreated){
+                // do something
+            }
 
             DB::commit();
 
@@ -44,7 +47,7 @@ class UserService extends Service
 
         } catch (\Exception $ex) {
             DB::rollback();
-            $result['error'] = $ex->getMessage();
+            $result['error'] = 'Exception error: code=' . $ex->getCode() . ', ' . $ex->getMessage();
             return $result;
         }
     }

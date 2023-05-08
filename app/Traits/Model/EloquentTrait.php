@@ -34,9 +34,9 @@ trait EloquentTrait
     }
 
 
-    public function getModelFirstOrNew($data): Model
+    public function getModelFirstOrNew($data, $debug=0): Model
     {
-        $record = $this->getModelInstance($data);
+        $record = $this->getModelInstance($data, $debug);
 
         return $record ?? $this->newModel();
     }
@@ -53,7 +53,7 @@ trait EloquentTrait
         $model = $this->newModel();
         $query = $model->query();
 
-        $this->setFiltersQuery(query:$query,data:$data);
+        $this->setFiltersQuery(query:$query, data:$data);
 
         // Sort
         if(empty($data['sort']) || $data['sort'] == 'id'){

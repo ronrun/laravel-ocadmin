@@ -25,18 +25,15 @@ class RoleService extends Service
         DB::beginTransaction();
 
         try {
-            $filter_data = [
-                'id' => $data['user_id'],
-            ];
-            $user = $this->getFirstOrNew($filter_data);
-            $user->name = $data['name'];
-            $user->email = $data['email'] ?? '';
-            $user->mobile = str_replace('-','',$data['mobile']) ?? '';
-            $user->save();
+            $record = $this->findOrFailOrNew($data['user_id']);
+            $record->name = $data['name'];
+            $record->email = $data['email'] ?? '';
+            $record->mobile = str_replace('-','',$data['mobile']) ?? '';
+            $record->save();
 
             DB::commit();
 
-            $result['data']['user_id'] = $user->id;
+            $result['data']['user_id'] = $record->id;
     
             return $result;
 

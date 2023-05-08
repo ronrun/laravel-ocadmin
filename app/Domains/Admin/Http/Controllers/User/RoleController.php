@@ -141,11 +141,11 @@ class RoleController extends Controller
     }
 
 
-    public function form($user_id = null)
+    public function form($role_id = null)
     {
         $data['lang'] = $this->lang;
 
-        $this->lang->text_form = empty($user_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
+        $this->lang->text_form = empty($role_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
 
         // Breadcomb
         $breadcumbs[] = (object)[
@@ -201,15 +201,10 @@ class RoleController extends Controller
         $data['back'] = route('lang.admin.user.role.index', $queries);
 
         // Get Record
-        $role = $this->RoleService->getRecordOrNew(['id' => $user_id]);
+        $role = $this->RoleService->findOrFailOrNew($role_id);
 
         $data['role']  = $role;
-
-        if(!empty($data['role']) && $user_id == $role->id){
-            $data['role_id'] = $user_id;
-        }else{
-            $data['role_id'] = null;
-        }
+        $data['role_id'] = $role_id ?? null;
 
         return view('ocadmin.user.role_form', $data);
     }

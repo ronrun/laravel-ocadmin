@@ -32,7 +32,7 @@
           <div class="tab-content">
             <div id="tab-general" class="tab-pane active show" role="tabpanel">
               <fieldset>
-                <legend>Customer Details</legend>
+                <legend>User Details</legend>
                 <div class="row mb-3 required">
                   <label for="input-display_name" class="col-sm-2 col-form-label">{{ $lang->column_display_name }}</label>
                   <div class="col-sm-10">
@@ -102,6 +102,7 @@
               </fieldset>
             </div>
           </div>
+          <input type="hidden" id="input-user_id" name="user_id" value="{{ $user_id ?? '' }}">
         </form>
       </div>
     </div>
