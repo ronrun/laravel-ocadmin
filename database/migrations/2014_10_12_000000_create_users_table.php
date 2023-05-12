@@ -26,11 +26,11 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('usermeta', function (Blueprint $table) {
+        Schema::create('user_meta', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
             $table->string('meta_key');
-            $table->longText('meta_value',30)->default('');
+            $table->longText('meta_value')->default('');
             $table->index(['user_id','meta_key']);
         });
 

@@ -61,43 +61,25 @@ class LayoutComposer
         ];
 
         /**
-         * User
+         * Post
          */
         // L2
         if(1) {
-            $user[] = [
-                'name'	   => $this->lang->text_users,
+            $post[] = [
+                'name'	   => $this->lang->text_tag,
                 'icon'	   => '',
-                'href'     => route('lang.admin.user.user.index'),
+                'href'     => route('lang.admin.post.tags.index'),
                 'children' => []
             ];
         }
-
-        if(1) {
-            $user[] = [
-                'name'	   => $this->lang->text_permissions,
-                'icon'	   => '',
-                'href'     => route('lang.admin.user.permission.index'),
-                'children' => []
-            ];
-        }
-
-        if(1) {
-            $user[] = [
-                'name'	   => $this->lang->text_roles,
-                'icon'	   => '',
-                'href'     => route('lang.admin.user.role.index'),
-                'children' => []
-            ];
-        }
-
-        if(!empty($user)) {
+        
+        if(!empty($post)) {
             $menus[] = [
-                'id'       => 'menu-user',
+                'id'       => 'menu-post',
                 'icon'	   => 'fas fa-cog',
-                'name'	   => 'Users',
+                'name'	   => 'Post',
                 'href'     => '',
-                'children' => $user
+                'children' => $post
             ];
         }
 

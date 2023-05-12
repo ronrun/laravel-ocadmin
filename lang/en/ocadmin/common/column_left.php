@@ -4,6 +4,7 @@ return [
 // Text
 'text_navigation' => 'Navigation',
 'text_dashboard' => 'Dashboard',
+'text_tag' => 'Tags',
 'text_catalog' => 'Catalog',
 'text_category' => 'Category',
 'text_product' => 'Product',

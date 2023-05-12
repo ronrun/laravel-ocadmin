@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Usermeta extends Model
 {
-    protected $table = 'usermeta';
+    protected $table = 'user_meta';
     public $timestamps = false; //must be public
 }

@@ -30,6 +30,18 @@ Route::group(
         Route::get('/dashboard', 'Common\DashboardController@index')->name('dashboard');
 
         Route::group([
+            'prefix' => 'post',
+            'as' => 'post.',
+        ], function ()
+        {
+            Route::get('tags', 'Post\TagController@index')->name('tags.index');
+            Route::get('tags/list', 'Post\TagController@list')->name('tags.list');
+            Route::get('tags/form/{tag_id?}', 'Post\TagController@form')->name('tags.form');
+            Route::post('tags/save/{tag_id?}', 'Post\TagController@save')->name('tags.save');
+            Route::get('tags/datalist', 'Post\TagController@list')->name('tags.list');
+        }); 
+
+        Route::group([
             'prefix' => 'user',
             'as' => 'user.',
         ], function ()
