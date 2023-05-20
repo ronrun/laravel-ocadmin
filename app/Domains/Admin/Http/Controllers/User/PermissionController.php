@@ -198,7 +198,7 @@ class PermissionController extends Controller
         $data['back'] = route('lang.admin.user.permission.index', $queries);
 
         // Get Record
-        $permission = $this->PermissionService->findOrFailOrNew($permission_id);
+        $permission = $this->PermissionService->findOrFailOrNew(id:$permission_id);
 
         $data['permission']  = $permission;
         $data['permission_id'] = $permission_id ?? null;

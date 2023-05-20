@@ -66,9 +66,27 @@ class LayoutComposer
         // L2
         if(1) {
             $post[] = [
-                'name'	   => $this->lang->text_tag,
+                'name'	   => $this->lang->text_tags,
                 'icon'	   => '',
                 'href'     => route('lang.admin.post.tags.index'),
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $post[] = [
+                'name'	   => $this->lang->text_categories,
+                'icon'	   => '',
+                'href'     => route('lang.admin.post.categories.index'),
+                'children' => []
+            ];
+        }
+        
+        if(1) {
+            $post[] = [
+                'name'	   => $this->lang->text_posts,
+                'icon'	   => '',
+                'href'     => route('lang.admin.post.posts.index'),
                 'children' => []
             ];
         }

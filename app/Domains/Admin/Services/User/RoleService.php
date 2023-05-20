@@ -25,7 +25,7 @@ class RoleService extends Service
         DB::beginTransaction();
 
         try {
-            $record = $this->findOrFailOrNew($data['user_id']);
+            $record = $this->findOrFailOrNew(id:$data['user_id']);
             $record->name = $data['name'];
             $record->email = $data['email'] ?? '';
             $record->mobile = str_replace('-','',$data['mobile']) ?? '';

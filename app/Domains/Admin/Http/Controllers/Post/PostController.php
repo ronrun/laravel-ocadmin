@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Domains\Admin\Http\Controllers\User;
+namespace App\Domains\Admin\Http\Controllers\Post;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
-use App\Domains\Admin\Services\User\UserService;
-use Illuminate\Support\Facades\Auth;
+use App\Domains\Admin\Services\Post\PostService;
+use LaravelLocalization;
 
-class UserController extends Controller
+class PostController extends Controller
 {
     private $lang;
     private $request;
-    private $UserService;
+    private $PostService;
 
-    public function __construct(Request $request, UserService $UserService)
+    public function __construct(Request $request, PostService $PostService)
     {
         $this->request = $request;
-        $this->UserService = $UserService;
-        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/user']);
+        $this->PostService = $PostService;
+        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/post/post']);
     }
 
 
@@ -33,21 +33,24 @@ class UserController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_post,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.user.index'),
+            'href' => route('lang.admin.post.posts.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
+        $data['addUrl'] = route('lang.admin.post.posts.form');
+        $data['listUrl'] = route('lang.admin.post.posts.list');
+
         $data['list'] = $this->getList();
 
-        return view('ocadmin.user.user', $data);
+        return view('ocadmin.post.post', $data);
     }
 
 
@@ -55,7 +58,7 @@ class UserController extends Controller
     {
         $data['lang'] = $this->lang;
 
-        $data['form_action'] = route('lang.admin.user.user.list');
+        $data['form_action'] = route('lang.admin.post.posts.list');
 
         return $this->getList();
     }
@@ -96,18 +99,16 @@ class UserController extends Controller
             }
         }
 
-        //$data['action'] = route('lang.admin.user.user.massDelete');
-
         // Rows
-        $users = $this->UserService->getRecords($queries);
+        $users = $this->PostService->getPosts($queries);
 
         if(!empty($users)){
             foreach ($users as $row) {
-                $row->edit_url = route('lang.admin.user.user.form', array_merge([$row->id], $queries));
+                $row->edit_url = route('lang.admin.post.posts.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $users->withPath(route('lang.admin.user.user.list'))->appends($queries);
+        $data['records'] = $users->withPath(route('lang.admin.post.posts.list'))->appends($queries); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -129,20 +130,20 @@ class UserController extends Controller
         }
 
         //link of table header for sorting
-        $route = route('lang.admin.user.user.list');
+        $route = route('lang.admin.post.posts.list');
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
-        $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        return view('ocadmin.user.user_list', $data);
+        return view('ocadmin.post.post_list', $data);
     }
 
 
-    public function form($user_id = null)
+    public function form($post_id = null)
     {
-        $data['lang'] = $this->lang;
+        // Language
+        $this->lang->text_form = empty($post_id) ? $this->lang->text_add : $this->lang->text_edit;
 
-        $this->lang->text_form = empty($user_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
+        $data['lang'] = $this->lang;
 
         // Breadcomb
         $breadcumbs[] = (object)[
@@ -151,14 +152,14 @@ class UserController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_post,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.user.index'),
+            'href' => route('lang.admin.post.posts.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
@@ -194,39 +195,41 @@ class UserController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.user.user.save');
-        $data['back'] = route('lang.admin.user.user.index', $queries);
+        $data['save'] = route('lang.admin.post.posts.save');
+        $data['back'] = route('lang.admin.post.posts.index', $queries);
+        $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
-        $user = $this->UserService->findOrFailOrNew(id:$user_id);
+        $post = $this->PostService->findOrFailOrNew(id:$post_id);
 
-        $data['user']  = $user;
-        $data['user_id'] = $user_id ?? null;
-
-        return view('ocadmin.user.user_form', $data);
+        $data['post']  = $post;
+        
+        $data['post_id'] = $post_id ?? null;
+        
+        $data['post_translations'] = $post->sortedTranslations();
+        
+        return view('ocadmin.post.post_form', $data);
     }
 
 
     public function save()
     {
-        $data = $this->request->all();
+        $postData = $this->request->post();
+        $queryData = $this->request->query();
 
         $json = [];
 
         // validator
 
         if(!$json) {
-            
-            $result = $this->UserService->updateOrCreate($data);
+            $result = $this->PostService->save($postData);
 
             if(empty($result['error'])){
-                $json['user_id'] = $result['data']['user_id'];
+                $json['post_id'] = $result['data']['record_id'];
                 $json['success'] = $this->lang->text_success;
+                $json['replaceUrl'] = route('lang.admin.post.posts.form', $result['data']['record_id']);
             }else{
-                $user = Auth::user();
-
-                $user_id = auth()->user()->id;
-                if($user_id == 1){
+                if(config('app.debug')){
                     $json['error'] = $result['error'];
                 }else{
                     $json['error'] = $this->lang->text_fail;
@@ -237,4 +240,6 @@ class UserController extends Controller
        return response(json_encode($json))->header('Content-Type','application/json');
 
     }
+
+
 }

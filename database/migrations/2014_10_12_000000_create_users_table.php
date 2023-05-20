@@ -49,7 +49,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('user_logins');
-        Schema::dropIfExists('usermeta');
+        Schema::dropIfExists('user_meta');
         Schema::dropIfExists('users');
     }
 };

@@ -27,6 +27,9 @@ Route::group(
         'middleware' => [ 'is_admin',],
     ], function ()
     {
+        Route::get('', function () {
+            return redirect(route('lang.admin.dashboard'));
+        });
         Route::get('/dashboard', 'Common\DashboardController@index')->name('dashboard');
 
         Route::group([
@@ -38,7 +41,16 @@ Route::group(
             Route::get('tags/list', 'Post\TagController@list')->name('tags.list');
             Route::get('tags/form/{tag_id?}', 'Post\TagController@form')->name('tags.form');
             Route::post('tags/save/{tag_id?}', 'Post\TagController@save')->name('tags.save');
-            Route::get('tags/datalist', 'Post\TagController@list')->name('tags.list');
+            
+            Route::get('categories', 'Post\CategoryController@index')->name('categories.index');
+            Route::get('categories/list', 'Post\CategoryController@list')->name('categories.list');
+            Route::get('categories/form/{category_id?}', 'Post\CategoryController@form')->name('categories.form');
+            Route::post('categories/save/{category_id?}', 'Post\CategoryController@save')->name('categories.save');
+
+            Route::get('posts', 'Post\PostController@index')->name('posts.index');
+            Route::get('posts/list', 'Post\PostController@list')->name('posts.list');
+            Route::get('posts/form/{tag_id?}', 'Post\PostController@form')->name('posts.form');
+            Route::post('posts/save/{tag_id?}', 'Post\PostController@save')->name('posts.save');
         }); 
 
         Route::group([

@@ -20,16 +20,16 @@ return new class extends Migration
 
         Schema::create('post_translations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('post_id');
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
-            $table->string('language_code',2)->default('');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->string('locale',5)->default('');
             $table->string('name')->index()->default('');
+            $table->string('slug')->default('');
             $table->longtext('content')->index()->default('');
         });
 
         Schema::create('post_meta', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('post_id');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->string('meta_key');
             $table->longText('meta_value')->default('');
             $table->index(['post_id','meta_key']);
@@ -41,6 +41,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('post_meta');
         Schema::dropIfExists('post_translations');
         Schema::dropIfExists('posts');
     }

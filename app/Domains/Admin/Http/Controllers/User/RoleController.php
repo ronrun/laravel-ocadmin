@@ -201,7 +201,7 @@ class RoleController extends Controller
         $data['back'] = route('lang.admin.user.role.index', $queries);
 
         // Get Record
-        $role = $this->RoleService->findOrFailOrNew($role_id);
+        $role = $this->RoleService->findOrFailOrNew(id:$role_id);
 
         $data['role']  = $role;
         $data['role_id'] = $role_id ?? null;

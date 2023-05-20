@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\Post\TagService;
-use Illuminate\Support\Facades\Auth;
+use LaravelLocalization;
 
 class TagController extends Controller
 {
@@ -18,7 +18,7 @@ class TagController extends Controller
     {
         $this->request = $request;
         $this->TagService = $TagService;
-        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/post/tag']);
+        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/common/term','ocadmin/post/tag']);
     }
 
 
@@ -33,7 +33,7 @@ class TagController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_post,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
@@ -44,6 +44,9 @@ class TagController extends Controller
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
+
+        $data['addUrl'] = route('lang.admin.post.tags.form');
+        $data['listUrl'] = route('lang.admin.post.tags.list');
 
         $data['list'] = $this->getList();
 
@@ -97,7 +100,7 @@ class TagController extends Controller
         }
 
         // Rows
-        $users = $this->TagService->getRecords($queries);
+        $users = $this->TagService->getTags($queries);
 
         if(!empty($users)){
             foreach ($users as $row) {
@@ -105,7 +108,7 @@ class TagController extends Controller
             }
         }
 
-        $data['records'] = $users->withPath(route('lang.admin.post.tags.list'))->appends($queries);
+        $data['records'] = $users->withPath(route('lang.admin.post.tags.list'))->appends($queries); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -137,9 +140,10 @@ class TagController extends Controller
 
     public function form($tag_id = null)
     {
-        $data['lang'] = $this->lang;
+        // Language
+        $this->lang->text_form = empty($tag_id) ? $this->lang->text_add : $this->lang->text_edit;
 
-        $this->lang->text_form = empty($tag_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
+        $data['lang'] = $this->lang;
 
         // Breadcomb
         $breadcumbs[] = (object)[
@@ -148,7 +152,7 @@ class TagController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_post,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
@@ -193,13 +197,17 @@ class TagController extends Controller
 
         $data['save'] = route('lang.admin.post.tags.save');
         $data['back'] = route('lang.admin.post.tags.index', $queries);
+        $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
-        $tag = $this->TagService->findOrFailOrNew($tag_id);
+        $tag = $this->TagService->findOrFailOrNew(id:$tag_id);
 
         $data['tag']  = $tag;
+        
         $data['tag_id'] = $tag_id ?? null;
-
+        
+        $data['tag_translations'] = $tag->sortedTranslations();
+        
         return view('ocadmin.post.tag_form', $data);
     }
 
@@ -214,16 +222,14 @@ class TagController extends Controller
         // validator
 
         if(!$json) {
-            $result = $this->TagService->updateOrCreate($postData);
+            $result = $this->TagService->save($postData);
 
             if(empty($result['error'])){
-                $json['tag_id'] = $result['data']['tag_id'];
+                $json['tag_id'] = $result['data']['record_id'];
                 $json['success'] = $this->lang->text_success;
+                $json['replaceUrl'] = route('lang.admin.post.tags.form', $result['data']['record_id']);
             }else{
-                $user = Auth::user();
-
-                $tag_id = auth()->user()->id;
-                if($tag_id == 1){
+                if(config('app.debug')){
                     $json['error'] = $result['error'];
                 }else{
                     $json['error'] = $this->lang->text_fail;

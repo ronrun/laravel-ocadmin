@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\Common;
+namespace App\Models\Post;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\ModelTrait;
 use App\Traits\TranslatableTrait;
 
-class Term extends Model
+class Post extends Model
 {
     use TranslatableTrait;
     use ModelTrait;
@@ -16,8 +16,7 @@ class Term extends Model
     protected $appends = ['name','content','slug'];
 
     public $translatedAttributes = ['name', 'content','slug'];
-    public $translationForeignKey = 'term_id';
-
+    public $translationForeignKey = 'post_id';
 
     protected function name(): Attribute
     {
@@ -26,17 +25,17 @@ class Term extends Model
         );
     }
 
-    protected function content(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->translation->content ?? '',
-        );
-    }
-
     protected function slug(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->translation->slug ?? '',
+        );
+    }
+
+    protected function content(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->translation->content ?? '',
         );
     }
 

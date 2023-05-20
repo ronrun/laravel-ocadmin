@@ -25,7 +25,7 @@ class PermissionService extends Service
         DB::beginTransaction();
 
         try {
-            $record = $this->findOrFailOrNew($data['permission_id']);
+            $record = $this->findOrFailOrNew(id:$data['permission_id']);
 
             $record->name = $data['name'];
             $record->guard_name = 'web';

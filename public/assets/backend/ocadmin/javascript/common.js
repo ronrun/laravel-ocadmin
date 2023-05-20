@@ -233,6 +233,12 @@ $(document).on('submit', 'form[data-oc-toggle=\'ajax\']', function (e) {
                 location = json['redirect'];
             }
 
+            //20230520 ronrun
+            if (json['replaceUrl']) {
+                window.history.pushState(null, null, json['replaceUrl']);
+            }
+            //
+
             if (typeof json['error'] == 'string') {
                 $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
             }

@@ -17,20 +17,21 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('parent_id')->default('0');
             $table->string('code',50)->default('');
-            $table->string('slug',200)->default('');
             $table->string('taxonomy',50)->default('');
             $table->boolean('is_active')->default('1');
             $table->smallInteger('sort_order')->default('0');
+            $table->unsignedInteger('count')->default('0');
+            $table->timestamps();
         });
 
         Schema::create('term_translations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('term_id')->constrained()->onDelete('cascade');
-            $table->string('locale',10);
+            $table->string('locale',5);
             $table->string('name');
-            $table->string('short_name');
-            $table->text('content')->nullable();
-            $table->index(['term_id', 'locale']);
+            $table->string('slug')->default('');
+            $table->longtext('content')->nullable();
+            $table->unique(['term_id', 'locale']);
 
         }); 
 
@@ -39,18 +40,7 @@ return new class extends Migration
             $table->unsignedInteger('object_id');  //id of terms->taxonomy's entity. If product_category, then object_id is product_id, term_id means category_id
             $table->foreignId('term_id')->constrained()->onDelete('cascade');
             $table->index(['term_id','object_id']);
-        });
-
-        Schema::create('term_taxonomies', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('term_id')->constrained()->onDelete('cascade');
-            $table->string('taxonomy',30);
-            $table->longtext('description');
-            $table->unsignedInteger('parent_id')->default('0');
-            $table->unsignedInteger('count')->default('0');
-            $table->unique(['term_id','taxonomy']);
-
-        });      
+        });   
     }
 
     /**

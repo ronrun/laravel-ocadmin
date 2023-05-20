@@ -1,10 +1,9 @@
 <?php
 
 return [
-'heading_title' => 'Tags',
+'heading_title' => 'Categories',
 
 
 // Text
 'text_post' => 'Post',
-
 ];

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits\Model;
+namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Carbon;

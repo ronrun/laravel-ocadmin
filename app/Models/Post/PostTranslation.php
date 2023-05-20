@@ -3,11 +3,9 @@
 namespace App\Models\Post;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Common\Term;
 
-class Tag extends Term
+class PostTranslation extends Model
 {
     protected $guarded = [];
-    protected $table = 'terms';
-
+    public $timestamps = false;
 }

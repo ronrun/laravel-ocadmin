@@ -5,7 +5,7 @@ namespace App\Domains\Admin\Services\Post;
 use Illuminate\Support\Facades\DB;
 use App\Domains\Admin\Services\Service;
 
-class TagService extends Service
+class CategoryService extends Service
 {
     public $modelName = "\App\Models\Common\Term";
     public $model;
@@ -13,30 +13,29 @@ class TagService extends Service
     public $lang;
 
 
-    public function getTags($data)
+    public function getCategories($data)
     {
-        $data['WhereRawSqls'][] = "taxonomy='post_tag'";
+        $data['WhereRawSqls'][] = "taxonomy='post_category'";
         
         return $this->getRecords($data);
     }
-
 
     public function save($data)
     {
         DB::beginTransaction();
 
         try {
-            $tag = $this->findOrFailOrNew(id:$data['tag_id']);
-            $tag->taxonomy = 'post_tag';
-            $this->saveModelInstance($tag, $data);
+            $category = $this->findOrFailOrNew(id:$data['category_id']);
+            $category->taxonomy = 'post_category';
+            $this->saveModelInstance($category, $data);
 
-            if(!empty($data['tag_translations'])){
-                $this->saveTranslationData($tag, $data['tag_translations']);
+            if(!empty($data['category_translations'])){
+                $this->saveTranslationData($category, $data['category_translations']);
             }
 
             DB::commit();
 
-            $result['data']['record_id'] = $tag->id;
+            $result['data']['record_id'] = $category->id;
     
             return $result;
 

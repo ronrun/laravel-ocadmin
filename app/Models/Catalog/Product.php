@@ -11,8 +11,8 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['name', 'shortName'];
-    public $translatedAttributes = ['name','short_name','description', 'meta_title', 'meta_description', 'meta_keyword',];
+    protected $appends = ['name'];
+    public $translatedAttributes = ['name','description', 'meta_title', 'meta_description', 'meta_keyword',];
     public $translation_foreign_key = 'product_id';
 
     // Attribute

@@ -3,7 +3,7 @@
 namespace App\Models\User;
 
 use Spatie\Permission\Models\Permission as SpatiePermission;
-use App\Traits\Model\ModelTrait;
+use App\Traits\ModelTrait;
 
 class Permission extends SpatiePermission
 {

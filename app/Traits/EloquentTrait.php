@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Traits\Model;
+namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 trait EloquentTrait
 {
@@ -14,7 +12,8 @@ trait EloquentTrait
 
     public $modelName;
     public $model;
-
+    public $connection;
+    public $table;
 
     public function newModel($modelName = null)
     {
@@ -26,7 +25,7 @@ trait EloquentTrait
             $model = null;
         }
 
-        if(empty($this->model) && !empty($model)){
+        if(!empty($model) && empty($this->model)){
             $this->model = $model;
         }
         
@@ -165,6 +164,18 @@ trait EloquentTrait
 
     private function setFiltersQuery($query, $data, $debug=0)
     {
+        $connection = null;
+
+        if(!empty($data['connection'])){
+            $connection = $data['connection'];
+        }
+
+        if(empty($this->table)){
+            $this->table = $this->model->getTable();
+        }
+        
+        $table_columns = $this->getColumns($this->table, $connection);
+
         // With relations
         if(!empty($data['with'])){
             $this->setWith($query, $data['with']);
@@ -182,18 +193,6 @@ trait EloquentTrait
                 $query->whereIn($column, $arr);
             }
         }
-
-        $connection = null;
-
-        if(!empty($data['connection'])){
-            $connection = $data['connection'];
-        }
-
-        if(empty($this->table)){
-            $this->table = $this->model->getTable();
-        }
-        
-        $table_columns = $this->getColumns($this->table, $connection);
 
         $translatedAttributes = $this->model->translatedAttributes ?? [];
 
@@ -515,9 +514,31 @@ trait EloquentTrait
 
 
     /**
+     * 
+     */
+    public function saveModelInstance($record, $data)
+    {
+        $table = $record->getTable();
+        $table_columns = $this->getColumns($table);
+
+        foreach ($data as $key => $value) {
+            if(!in_array($key, $table_columns)){
+                continue;
+            }
+
+            $record->$key = $value;
+        }
+
+        $result = $record->save();
+
+        return $result;
+    }
+
+
+    /**
      * translation model should have $foreigh_key
      */
-    public function saveTranslationData($record, $data, $translatedAttributes=null)
+    public function saveTranslationData($modelInstance, $data, $translatedAttributes=null)
     {
         // translatedAttributes
         if(empty($translatedAttributes)){
@@ -529,7 +550,7 @@ trait EloquentTrait
         }
 
         // translationModel
-        $translationModelName = get_class($record) . 'Translation';
+        $translationModelName = get_class($modelInstance) . 'Translation';
 
         if(class_exists($translationModelName)){
             $translationModel = new $translationModelName;
@@ -538,8 +559,8 @@ trait EloquentTrait
         }
 
         // foreigh_key
-        $foreigh_key = $translationModel->foreign_key;
-        $foreigh_key_value = $record->id;
+        $foreignKey = $modelInstance->translationForeignKey;
+        $foreighKeyValue = $modelInstance->id;
 
         foreach($data as $locale => $value){
             $arr = [];
@@ -547,7 +568,7 @@ trait EloquentTrait
                 $arr['id'] = $value['id'];
             }
             $arr['locale'] = $locale;
-            $arr[$foreigh_key] = $foreigh_key_value;
+            $arr[$foreignKey] = $foreighKeyValue;
             foreach ($translatedAttributes as $column) {
                 if(!empty($value[$column])){
                     $arr[$column] = $value[$column];
@@ -557,12 +578,16 @@ trait EloquentTrait
             $arrs[] = $arr;
         }
 
-        $this->translationModel->upsert($arrs,['id', $foreigh_key, 'locale']);
+        $translationModel->upsert($arrs,['id', $foreignKey, 'locale']);
     }
 
 
-	private function getColumns($table, $connection = null)
+	public function getColumns($table = null, $connection = null)
 	{
+        if(empty($table)){
+            $table = $this->model->getTable();
+        }
+
         if(empty($connection)){
             return DB::getSchemaBuilder()->getColumnListing($table);
         }else{
