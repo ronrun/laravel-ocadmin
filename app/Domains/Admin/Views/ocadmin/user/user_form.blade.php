@@ -34,17 +34,17 @@
               <fieldset>
                 <legend>User Details</legend>
                 <div class="row mb-3 required">
-                  <label for="input-display_name" class="col-sm-2 col-form-label">{{ $lang->column_display_name }}</label>
-                  <div class="col-sm-10">
-                    <input type="text" id="input-display_name" name="display_name" value="{{ $user->display_name }}" placeholder="Name" class="form-control">
-                    <div id="error-display_name" class="invalid-feedback"></div>
-                  </div>
-                </div>
-                <div class="row mb-3 required">
                   <label for="input-email" class="col-sm-2 col-form-label">E-Mail</label>
                   <div class="col-sm-10">
                     <input type="text" name="email" value="{{ $user->email }}" placeholder="E-Mail" id="input-email" class="form-control">
                     <div id="error-email" class="invalid-feedback"></div>
+                  </div>
+                </div>
+                <div class="row mb-3 required">
+                  <label for="input-display_name" class="col-sm-2 col-form-label">{{ $lang->column_display_name }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="input-display_name" name="display_name" value="{{ $user->display_name }}" placeholder="Name" class="form-control">
+                    <div id="error-display_name" class="invalid-feedback"></div>
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -57,14 +57,14 @@
               </fieldset>
               <fieldset>
                 <legend>Password</legend>
-                <div class="row mb-3 required">
+                <div class="row mb-3">
                   <label for="input-password" class="col-sm-2 col-form-label">Password</label>
                   <div class="col-sm-10">
                     <input type="password" name="password" value="" placeholder="Password" id="input-password" class="form-control" autocomplete="new-password">
                     <div id="error-password" class="invalid-feedback"></div>
                   </div>
                 </div>
-                <div class="row mb-3 required">
+                <div class="row mb-3">
                   <label for="input-confirm" class="col-sm-2 col-form-label">Confirm</label>
                   <div class="col-sm-10">
                     <input type="password" name="confirm" value="" placeholder="Confirm" id="input-confirm" class="form-control">
@@ -75,28 +75,11 @@
               <fieldset>
                 <legend>Other</legend>
                 <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Newsletter</label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-switch form-switch-lg">
-                      <input type="hidden" name="newsletter" value="0"> <input type="checkbox" name="newsletter" value="1" id="input-newsletter" class="form-check-input">
-                    </div>
-                  </div>
-                </div>
-                <div class="row mb-3">
                   <label class="col-sm-2 col-form-label">Status</label>
                   <div class="col-sm-10">
                     <div class="form-check form-switch form-switch-lg">
                       <input type="hidden" name="status" value="0"> <input type="checkbox" name="status" value="1" id="input-status" class="form-check-input" checked="">
                     </div>
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label class="col-sm-2 col-form-label">Safe</label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-switch form-switch-lg">
-                      <input type="hidden" name="safe" value="0"> <input type="checkbox" name="safe" value="1" id="input-safe" class="form-check-input">
-                    </div>
-                    <div class="form-text">Set to true to avoid this customer from being caught by the anti-fraud system</div>
                   </div>
                 </div>
               </fieldset>

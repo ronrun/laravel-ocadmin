@@ -12,9 +12,8 @@
 	<div class="page-header">
 		<div class="container-fluid">
 			<div class="float-end">
-				<button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-user').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
-				{{--<button type="button" data-bs-toggle="tooltip" title="Export" class="btn btn-light" data-bs-original-title="Edit" aria-label="Edit" id="button-export"><i class="fa fa-file-export" style="font-size:20px"></i></button>--}}
-				<a href="{{ route('lang.admin.user.user.form') }}" data-bs-toggle="tooltip" title="Add New" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+				<button type="button" data-bs-toggle="tooltip" title="{{ $lang->button_filter }}" onclick="$('#filter-user').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
+				<a href="{{ $addUrl}}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
 			</div>
 			<h1>{{ $lang->heading_title }}</h1>
 			@include('ocadmin.common.breadcumb')
@@ -90,7 +89,7 @@ $('#button-filter').on('click', function() {
 		url += '&filter_email=' + encodeURIComponent(filter_email);
 	}
 
-	url = "{{ route('lang.admin.user.user.list') }}?" + url;
+	url = "{{ $listUrl }}?" + url;
 
 	$('#user').load(url);
 });

@@ -57,7 +57,6 @@ class TagController extends Controller
     public function list()
     {
         $data['lang'] = $this->lang;
-
         $data['form_action'] = route('lang.admin.post.tags.list');
 
         return $this->getList();
@@ -133,6 +132,8 @@ class TagController extends Controller
         $route = route('lang.admin.post.tags.list');
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
+
+        $data['listUrl'] = route('lang.admin.post.tags.list');
 
         return view('ocadmin.post.tag_list', $data);
     }

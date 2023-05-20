@@ -1,4 +1,4 @@
-<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ route('lang.admin.post.posts.list') }}" data-oc-target="#post">
+<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ $listUrl }}" data-oc-target="#post">
 	@csrf
 	@method('POST')
 	<div class="table-responsive">

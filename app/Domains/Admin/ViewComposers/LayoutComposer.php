@@ -105,6 +105,43 @@ class LayoutComposer
          * System
          */
 
+        // 
+        $admin = [];
+
+        if (1) {
+            $admin[] = [
+                'name'	   => 'Users', // user/users
+                'href'     => route('lang.admin.system.admin.users.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        if (1) {
+            $admin[] = [
+                'name'	   => 'Permissions', // user/permissions
+                'href'     => route('lang.admin.system.admin.permissions.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        if (1) {
+            $admin[] = [
+                'name'	   => 'Roles',  // user/roles
+                'href'     => route('lang.admin.system.admin.roles.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        if ($admin) {
+            $system[] = [
+                'name'	   => 'Admins', // user
+                'icon'	   => ' ',
+                'children' => $admin
+            ];
+        }
+
+
+
         // System Maintenance
         $maintenance = [];
 

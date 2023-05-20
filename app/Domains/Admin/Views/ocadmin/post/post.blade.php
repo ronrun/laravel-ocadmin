@@ -66,7 +66,7 @@ $('#button-filter').on('click', function() {
 		url += '&filter_name=' + encodeURIComponent(filter_name);
 	}
 
-	url = "{{ route('lang.admin.post.posts.list') }}?" + url;
+	url = "{{ $listUrl }}?" + url;
 
 	$('#post').load(url);
 });

@@ -134,6 +134,8 @@ class CategoryController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
+        $data['listUrl'] = route('lang.admin.post.categories.list');
+
         return view('ocadmin.post.category_list', $data);
     }
 

@@ -20,6 +20,14 @@ class UserService extends Service
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/user']);
 	}
 
+    public function getUsers($data)
+    {
+        $data['WhereRawSqls'][] = "is_admin=1";
+        
+        return $this->getRecords($data);
+
+    }
+
 
     public function updateOrCreate($data)
     {

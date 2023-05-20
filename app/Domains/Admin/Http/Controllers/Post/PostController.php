@@ -134,6 +134,8 @@ class PostController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
+        $data['listUrl'] = route('lang.admin.post.posts.list');
+
         return view('ocadmin.post.post_list', $data);
     }
 
