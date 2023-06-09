@@ -20,9 +20,11 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            CountrySeeder::class,
+            //CountrySeeder::class,
             UserSeeder::class,
             SettingSeeder::class,
+            //TaxonomySeeder::class,
+            TermSeeder::class,
         ]);
     }
 }

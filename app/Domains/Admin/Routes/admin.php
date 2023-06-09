@@ -54,6 +54,27 @@ Route::group(
         });
 
         Route::group([
+            'prefix' => 'catalog',
+            'as' => 'catalog.',
+        ], function ()
+        {
+            Route::get('tags', 'Catalog\TagController@index')->name('tags.index');
+            Route::get('tags/list', 'Catalog\TagController@list')->name('tags.list');
+            Route::get('tags/form/{tag_id?}', 'Catalog\TagController@form')->name('tags.form');
+            Route::post('tags/save/{tag_id?}', 'Catalog\TagController@save')->name('tags.save');
+            
+            Route::get('categories', 'Catalog\CategoryController@index')->name('categories.index');
+            Route::get('categories/list', 'Catalog\CategoryController@list')->name('categories.list');
+            Route::get('categories/form/{category_id?}', 'Catalog\CategoryController@form')->name('categories.form');
+            Route::post('categories/save/{category_id?}', 'Catalog\CategoryController@save')->name('categories.save');
+
+            Route::get('products', 'Catalog\ProductController@index')->name('products.index');
+            Route::get('products/list', 'Catalog\ProductController@list')->name('products.list');
+            Route::get('products/form/{tag_id?}', 'Catalog\ProductController@form')->name('products.form');
+            Route::post('products/save/{tag_id?}', 'Catalog\ProductController@save')->name('products.save');
+        });
+
+        Route::group([
             'prefix' => 'system',
             'as' => 'system.',
         ], function ()

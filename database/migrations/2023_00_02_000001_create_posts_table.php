@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('post_status',20)->default('');
-            $table->string('comment_status',20)->default('');
+            $table->tinyInteger('post_status')->default('0');
+            $table->tinyInteger('comment_status')->default('0');
             $table->timestamps();
         });
 
         Schema::create('post_translations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
-            $table->string('locale',5)->default('');
+            $table->string('locale',10);
             $table->string('name')->index()->default('');
             $table->string('slug')->default('');
             $table->longtext('content')->index()->default('');

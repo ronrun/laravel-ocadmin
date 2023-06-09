@@ -1,0 +1,9 @@
+﻿id,taxonomy_id,locale,name
+1,1,en,Post Category
+2,2,en,Post Tag
+3,3,en,Product Category
+4,4,en,Product Tag
+5,5,en,Project Category
+6,6,en,Project Tag
+7,7,en,Inventory Stock Category
+8,8,en,Inventory Accounting Category

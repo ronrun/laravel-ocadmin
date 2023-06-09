@@ -102,6 +102,47 @@ class LayoutComposer
         }
 
         /**
+         * Catalog
+         */
+        // L2
+        if(1) {
+            $product[] = [
+                'name'	   => $this->lang->text_catalog_tags,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.tags.index'),
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $product[] = [
+                'name'	   => $this->lang->text_catalog_categories,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.categories.index'),
+                'children' => []
+            ];
+        }
+        
+        if(1) {
+            $product[] = [
+                'name'	   => $this->lang->text_catalog_products,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.products.index'),
+                'children' => []
+            ];
+        }
+        
+        if(!empty($product)) {
+            $menus[] = [
+                'id'       => 'menu-product',
+                'icon'	   => 'fas fa-cog',
+                'name'	   => 'Catalog',
+                'href'     => '',
+                'children' => $product
+            ];
+        }
+
+        /**
          * System
          */
 
