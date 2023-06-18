@@ -45,8 +45,8 @@ class UserController extends Controller
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['addUrl'] = route('lang.admin.system.admin.users.form');
-        $data['listUrl'] = route('lang.admin.system.admin.users.list');
+        $data['add_url'] = route('lang.admin.system.admin.users.form');
+        $data['list_url'] = route('lang.admin.system.admin.users.list');
 
         $data['list'] = $this->getList();
 
@@ -137,7 +137,7 @@ class UserController extends Controller
         $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        $data['listUrl'] = route('lang.admin.system.admin.users.list');
+        $data['list_url'] = route('lang.admin.system.admin.users.list');
 
         return view('ocadmin.user.user_list', $data);
     }
@@ -199,8 +199,8 @@ class UserController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.system.admin.users.save');
-        $data['back'] = route('lang.admin.system.admin.users.index', $queries);
+        $data['save_url'] = route('lang.admin.system.admin.users.save');
+        $data['back_url'] = route('lang.admin.system.admin.users.index', $queries);
 
         // Get Record
         $user = $this->UserService->findOrFailOrNew(id:$user_id);
@@ -225,7 +225,7 @@ class UserController extends Controller
             $result = $this->UserService->updateOrCreate($data);
 
             if(empty($result['error'])){
-                $json['user_id'] = $result['data']['user_id'];
+                $json['user_id'] = $result['user_id'];
                 $json['success'] = $this->lang->text_success;
             }else{
                 $user = Auth::user();

@@ -1,9 +1,19 @@
 ﻿id,term_id,locale,name
-1,1,en,Cameras
-2,2,en,Components
-3,3,en,Desktops
-4,4,en,Laptops & Notebooks
-5,5,en,MP3 Players
-6,6,en,Phones & PDAs
-7,7,en,Software
-8,8,en,Tablets
+1,1,en,Product Category
+2,2,en,Cameras
+3,3,en,Components
+4,4,en,Desktops
+5,5,en,Laptops & Notebooks
+6,6,en,MP3 Players
+7,7,en,Phones & PDAs
+8,8,en,Software
+9,9,en,Tablets
+10,1,zh_TW,商品分類
+11,2,zh_TW,相機
+12,3,zh_TW,零組件
+13,4,zh_TW,桌機
+14,5,zh_TW,筆電
+15,6,zh_TW,MP3 Players
+16,7,zh_TW,手機
+17,8,zh_TW,軟體
+18,9,zh_TW,平板

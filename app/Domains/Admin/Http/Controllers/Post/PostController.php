@@ -45,8 +45,8 @@ class PostController extends Controller
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['addUrl'] = route('lang.admin.post.posts.form');
-        $data['listUrl'] = route('lang.admin.post.posts.list');
+        $data['add_url'] = route('lang.admin.post.posts.form');
+        $data['list_url'] = route('lang.admin.post.posts.list');
 
         $data['list'] = $this->getList();
 
@@ -134,7 +134,7 @@ class PostController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        $data['listUrl'] = route('lang.admin.post.posts.list');
+        $data['list_url'] = route('lang.admin.post.posts.list');
 
         return view('ocadmin.post.post_list', $data);
     }
@@ -197,8 +197,8 @@ class PostController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.post.posts.save');
-        $data['back'] = route('lang.admin.post.posts.index', $queries);
+        $data['save_url'] = route('lang.admin.post.posts.save');
+        $data['back_url'] = route('lang.admin.post.posts.index', $queries);
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
@@ -229,7 +229,7 @@ class PostController extends Controller
             if(empty($result['error'])){
                 $json['post_id'] = $result['data']['record_id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replaceUrl'] = route('lang.admin.post.posts.form', $result['data']['record_id']);
+                $json['replace_url'] = route('lang.admin.post.posts.form', $result['data']['record_id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];

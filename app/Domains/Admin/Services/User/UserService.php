@@ -37,7 +37,7 @@ class UserService extends Service
             $record = $this->findOrFailOrNew(id:$data['user_id']);
 
             $record->display_name = $data['display_name'];
-            $record->user_nicename = $data['user_nicename'] ?? $data['display_name'] ?? '';
+            //$record->user_nicename = $data['user_nicename'] ?? $data['display_name'] ?? '';
             $record->email = $data['email'] ?? '';
             //$record->mobile = str_replace('-','',$data['mobile']) ?? '';
             
@@ -49,14 +49,13 @@ class UserService extends Service
 
             DB::commit();
 
-            $result['data']['user_id'] = $record->id;
+            $result['user_id'] = $record->id;
     
             return $result;
 
         } catch (\Exception $ex) {
             DB::rollback();
-            $result['error'] = 'Exception error: code=' . $ex->getCode() . ', ' . $ex->getMessage();
-            return $result;
+            return ['error' => 'Exception error: code="' . $ex->getCode() . '", ' . $ex->getMessage()];
         }
     }
 

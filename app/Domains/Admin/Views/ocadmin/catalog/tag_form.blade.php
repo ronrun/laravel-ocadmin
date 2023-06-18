@@ -12,7 +12,7 @@
     <div class="container-fluid">
       <div class="float-end">
         <button type="submit" form="form-tag" data-bs-toggle="tooltip" class="btn btn-primary" aria-label="Save" data-bs-original-title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
-        <a href="{{ $back }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+        <a href="{{ $back_url }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
       @include('ocadmin.common.breadcumb')
@@ -22,7 +22,7 @@
     <div class="card">
       <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ $lang->button_add }}</div>
       <div class="card-body">
-        <form id="form-tag" action="{{ $save }}" method="post" data-oc-toggle="ajax">
+        <form id="form-tag" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
           @csrf
           @method('POST')
           <ul class="nav nav-tabs" role="tablist">
@@ -39,22 +39,22 @@
               </ul>
               <div class="tab-content">
                 @foreach($supportedLocales as $locale => $localeContent)
-                  <input type="hidden" name="tag_translations[{{ $locale }}][id]" value="{{ !empty($tag_translations->$locale) ? $tag_translations->$locale->id : '' }}" >
+                  <input type="hidden" name="translations[{{ $locale }}][id]" value="{{ !empty($translations->$locale) ? $translations->$locale->id : '' }}" >
 
                   <div id="language-{{ $locale }}" class="tab-pane @if($loop->first) active @endif">
                     <div class="row mb-3 required">
                       <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-name-{{ $locale }}" name="tag_translations[{{ $locale }}][name]" value="{{ !empty($tag_translations->$locale) ? $tag_translations->$locale->name : '' }}" class="form-control">
-                        <div id="error-name" class="invalid-feedback"></div>
+                        <input type="text" id="input-name-{{ $locale }}" name="translations[{{ $locale }}][name]" value="{{ !empty($translations->$locale) ? $translations->$locale->name : '' }}" class="form-control">
+                        <div id="error-name-{{ $locale }}" class="invalid-feedback"></div>
                       </div>
                     </div>
 
                     <div class="row mb-3 required">
                       <label for="input-slug" class="col-sm-2 col-form-label">{{ $lang->column_slug }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-slug-{{ $locale }}" name="tag_translations[{{ $locale }}][slug]" value="{{ !empty($tag_translations->$locale) ? $tag_translations->$locale->slug : '' }}" class="form-control">
-                        <div id="error-slug" class="invalid-feedback"></div>
+                        <input type="text" id="input-slug-{{ $locale }}" name="translations[{{ $locale }}][slug]" value="{{ !empty($translations->$locale) ? $translations->$locale->slug : '' }}" class="form-control">
+                        <div id="error-slug-{{ $locale }}" class="invalid-feedback"></div>
                       </div>
                     </div>
                   </div>

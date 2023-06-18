@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\Catalog\CategoryService;
-use LaravelLocalization;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class CategoryController extends Controller
 {
@@ -45,8 +45,8 @@ class CategoryController extends Controller
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['addUrl'] = route('lang.admin.catalog.categories.form');
-        $data['listUrl'] = route('lang.admin.catalog.categories.list');
+        $data['add_url'] = route('lang.admin.catalog.categories.form');
+        $data['list_url'] = route('lang.admin.catalog.categories.list');
         
         $data['list'] = $this->getList();
 
@@ -130,7 +130,7 @@ class CategoryController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        $data['listUrl'] = route('lang.admin.catalog.categories.list');
+        $data['list_url'] = route('lang.admin.catalog.categories.list');
 
         return view('ocadmin.catalog.category_list', $data);
     }
@@ -193,8 +193,9 @@ class CategoryController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.catalog.categories.save');
-        $data['back'] = route('lang.admin.catalog.categories.index', $queries);
+        $data['save_url'] = route('lang.admin.catalog.categories.save');
+        $data['back_url'] = route('lang.admin.catalog.categories.index', $queries);
+
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
@@ -204,7 +205,7 @@ class CategoryController extends Controller
         
         $data['category_id'] = $category_id ?? null;
         
-        $data['category_translations'] = $category->sortedTranslations();
+        $data['translations'] = $category->sortedTranslations();
         
         return view('ocadmin.catalog.category_form', $data);
     }
@@ -213,19 +214,33 @@ class CategoryController extends Controller
     public function save()
     {
         $postData = $this->request->post();
-        $queryData = $this->request->query();
 
         $json = [];
 
-        // validator
+        // Validate
+        foreach ($postData['translations'] as $locale => $translation) {
+            if(empty($translation['name']) || mb_strlen($translation['name']) < 1){
+                $json['error']['name-' . $locale] = $this->lang->error_name;
+            }
+            
+            if(empty($translation['slug']) || mb_strlen($translation['slug']) < 1){
+                $json['error']['slug-' . $locale] = $this->lang->error_slug;
+            }
+        }  
+
+
+        // Default error warning   
+        if(isset($json['error']) && !isset($json['error']['warning'])) {
+            $json['error']['warning'] = $this->lang->error_warning;
+        }
 
         if(!$json) {
             $result = $this->CategoryService->save($postData);
 
             if(empty($result['error'])){
-                $json['category_id'] = $result['data']['record_id'];
+                $json['category_id'] = $result['category_id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replaceUrl'] = route('lang.admin.catalog.categories.form', $result['data']['record_id']);
+                $json['replace_url'] = route('lang.admin.catalog.categories.form', $result['category_id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];
@@ -235,7 +250,7 @@ class CategoryController extends Controller
             }
         }
 
-       return response(json_encode($json))->header('Content-Type','application/json');
+        return response(json_encode($json))->header('Content-Type','application/json');
 
     }
 

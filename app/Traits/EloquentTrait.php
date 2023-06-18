@@ -558,9 +558,18 @@ trait EloquentTrait
             $translationModel = new $this->model->translationModelName;
         }
 
+        if(empty($translationModel)){
+            return false;
+        }
+
         // foreigh_key
-        $foreignKey = $modelInstance->translationForeignKey;
-        $foreighKeyValue = $modelInstance->id;
+        $foreignKey = $translationModel->translationForeignKey ?? $modelInstance->getForeignKey() ?? null;
+
+        if(empty($foreignKey)){
+            return false;
+        }
+        
+        $foreignKeyValue = $modelInstance->id;
 
         foreach($data as $locale => $value){
             $arr = [];
@@ -568,7 +577,7 @@ trait EloquentTrait
                 $arr['id'] = $value['id'];
             }
             $arr['locale'] = $locale;
-            $arr[$foreignKey] = $foreighKeyValue;
+            $arr[$foreignKey] = $foreignKeyValue;
             foreach ($translatedAttributes as $column) {
                 if(!empty($value[$column])){
                     $arr[$column] = $value[$column];

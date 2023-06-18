@@ -45,8 +45,8 @@ class CategoryController extends Controller
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['addUrl'] = route('lang.admin.post.categories.form');
-        $data['listUrl'] = route('lang.admin.post.categories.list');
+        $data['add_url'] = route('lang.admin.post.categories.form');
+        $data['list_url'] = route('lang.admin.post.categories.list');
         
         $data['list'] = $this->getList();
 
@@ -56,10 +56,6 @@ class CategoryController extends Controller
 
     public function list()
     {
-        $data['lang'] = $this->lang;
-
-        $data['form_action'] = route('lang.admin.post.categories.list');
-
         return $this->getList();
     }
 
@@ -134,7 +130,7 @@ class CategoryController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        $data['listUrl'] = route('lang.admin.post.categories.list');
+        $data['list_url'] = route('lang.admin.post.categories.list');
 
         return view('ocadmin.post.category_list', $data);
     }
@@ -197,8 +193,8 @@ class CategoryController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.post.categories.save');
-        $data['back'] = route('lang.admin.post.categories.index', $queries);
+        $data['save_url'] = route('lang.admin.post.categories.save');
+        $data['back_url'] = route('lang.admin.post.categories.index', $queries);
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
@@ -208,7 +204,7 @@ class CategoryController extends Controller
         
         $data['category_id'] = $category_id ?? null;
         
-        $data['category_translations'] = $category->sortedTranslations();
+        $data['translations'] = $category->sortedTranslations();
         
         return view('ocadmin.post.category_form', $data);
     }
@@ -229,7 +225,7 @@ class CategoryController extends Controller
             if(empty($result['error'])){
                 $json['category_id'] = $result['data']['record_id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replaceUrl'] = route('lang.admin.post.categories.form', $result['data']['record_id']);
+                $json['replace_url'] = route('lang.admin.post.categories.form', $result['data']['record_id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];

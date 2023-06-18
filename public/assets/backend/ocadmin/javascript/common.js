@@ -249,8 +249,11 @@ $(document).on('submit', 'form[data-oc-toggle=\'ajax\']', function (e) {
                 }
 
                 for (key in json['error']) {
-                    $('#input-' + key.replaceAll('_', '-')).addClass('is-invalid').find('.form-control, .form-select, .form-check-input, .form-check-label').addClass('is-invalid');
-                    $('#error-' + key.replaceAll('_', '-')).html(json['error'][key]).addClass('d-block');
+                    // $('#input-' + key.replaceAll('_', '-')).addClass('is-invalid').find('.form-control, .form-select, .form-check-input, .form-check-label').addClass('is-invalid');
+                    // $('#error-' + key.replaceAll('_', '-')).html(json['error'][key]).addClass('d-block');
+
+                    $('#input-' + key).addClass('is-invalid').find('.form-control, .form-select, .form-check-input, .form-check-label').addClass('is-invalid');
+                    $('#error-' + key).html(json['error'][key]).addClass('d-block');
                 }
             }
 

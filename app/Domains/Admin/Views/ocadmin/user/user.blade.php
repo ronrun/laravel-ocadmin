@@ -13,7 +13,7 @@
 		<div class="container-fluid">
 			<div class="float-end">
 				<button type="button" data-bs-toggle="tooltip" title="{{ $lang->button_filter }}" onclick="$('#filter-user').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
-				<a href="{{ $addUrl}}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+				<a href="{{ $add_url}}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
 			</div>
 			<h1>{{ $lang->heading_title }}</h1>
 			@include('ocadmin.common.breadcumb')
@@ -89,7 +89,7 @@ $('#button-filter').on('click', function() {
 		url += '&filter_email=' + encodeURIComponent(filter_email);
 	}
 
-	url = "{{ $listUrl }}?" + url;
+	url = "{{ $list_url }}?" + url;
 
 	$('#user').load(url);
 });

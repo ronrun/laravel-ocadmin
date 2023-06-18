@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('parent_id')->default('0');
             $table->string('code',50)->default('');
-            $table->string('taxonomy',50)->default('');
+            $table->string('taxonomy_code',50)->default('');
             $table->boolean('is_active')->default('1');
             $table->smallInteger('sort_order')->default('0');
             $table->unsignedInteger('count')->default('0');

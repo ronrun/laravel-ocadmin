@@ -45,8 +45,8 @@ class TagController extends Controller
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['addUrl'] = route('lang.admin.catalog.tags.form');
-        $data['listUrl'] = route('lang.admin.catalog.tags.list');
+        $data['add_url'] = route('lang.admin.catalog.tags.form');
+        $data['list_url'] = route('lang.admin.catalog.tags.list');
         
         $data['list'] = $this->getList();
 
@@ -130,7 +130,7 @@ class TagController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        $data['listUrl'] = route('lang.admin.catalog.tags.list');
+        $data['list_url'] = route('lang.admin.catalog.tags.list');
 
         return view('ocadmin.catalog.tag_list', $data);
     }
@@ -193,8 +193,8 @@ class TagController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.catalog.tags.save');
-        $data['back'] = route('lang.admin.catalog.tags.index', $queries);
+        $data['save_url'] = route('lang.admin.catalog.tags.save');
+        $data['back_url'] = route('lang.admin.catalog.tags.index', $queries);
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
@@ -204,7 +204,7 @@ class TagController extends Controller
         
         $data['tag_id'] = $tag_id ?? null;
         
-        $data['tag_translations'] = $tag->sortedTranslations();
+        $data['translations'] = $tag->sortedTranslations();
         
         return view('ocadmin.catalog.tag_form', $data);
     }
@@ -223,9 +223,9 @@ class TagController extends Controller
             $result = $this->TagService->save($postData);
 
             if(empty($result['error'])){
-                $json['tag_id'] = $result['data']['record_id'];
+                $json['tag_id'] = $result['tag_id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replaceUrl'] = route('lang.admin.catalog.tags.form', $result['data']['record_id']);
+                $json['replace_url'] = route('lang.admin.catalog.tags.form', $result['tag_id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];

@@ -22,12 +22,12 @@ class TermSeeder extends Seeder
             ENCLOSED BY '\"'
             LINES TERMINATED BY '\r\n'
             IGNORE 1 LINES
-            (id,parent_id,taxonomy,is_active,created_at,updated_at);";
+            (id,parent_id,taxonomy_code,is_active,created_at,updated_at);";
              
         DB::unprepared($query);
 
         // Taxonomy Translations
-        $filename = 'database/imports/taxonomy_translations.csv';
+        $filename = 'database/imports/term_translations.csv';
 
         $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE term_translations
             FIELDS TERMINATED BY ','

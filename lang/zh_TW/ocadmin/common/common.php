@@ -1,6 +1,20 @@
 <?php
 
 return array (
+// Locale
+'code' => 'zh_TW',
+'direction' => 'ltr',
+'date_format_short' => 'Y/m/d',
+'date_format_long' => 'l jS F Y',
+'time_format' => 'A h:i:s',
+'datetime_format' => 'Y/m/d H:i:s',
+'decimal_point' => '.',
+'thousand_point' => ',',
+
+// Tab
+'tab_general' => '基本資料1',
+'tab_data' => '基本資料2',
+
 // Text
 'text_yes' => '是',
 'text_no' => '否',
@@ -58,8 +72,8 @@ return array (
 'column_name' => '名稱',
 'column_created_at' => '建立日期',
 'column_updated_at' => '修改日期',
-'column_date_added' => '建立日期',
-'column_date_modified' => '修改日期',
+'column_create_date' => '建立日期',
+'column_update_date' => '修改日期',
 'column_is_active' => '是否啟用',
 'column_action' => '操作',
 
@@ -67,12 +81,11 @@ return array (
 'entry_enable' => '啟用',
 'entry_disable' => '停用',
 'entry_default' => '是否預設',
-'entry_created_date' => '建立日期',
-'entry_updated_date' => '修改日期',
+'entry_create_date' => '建立日期',
+'entry_update_date' => '修改日期',
 'entry_required' => '必填欄位',
 
 // Error
 'error_permission' => '警告: 您沒有權限！',
 'error_warning' => '警告: 資料未正確輸入！',
-
 );

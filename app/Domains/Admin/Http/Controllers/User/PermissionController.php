@@ -194,8 +194,8 @@ class PermissionController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.user.permission.save');
-        $data['back'] = route('lang.admin.user.permission.index', $queries);
+        $data['save_url'] = route('lang.admin.user.permission.save');
+        $data['back_url'] = route('lang.admin.user.permission.index', $queries);
 
         // Get Record
         $permission = $this->PermissionService->findOrFailOrNew(id:$permission_id);

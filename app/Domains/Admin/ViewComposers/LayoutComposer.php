@@ -66,7 +66,7 @@ class LayoutComposer
         // L2
         if(1) {
             $post[] = [
-                'name'	   => $this->lang->text_tags,
+                'name'	   => $this->lang->text_post_tags,
                 'icon'	   => '',
                 'href'     => route('lang.admin.post.tags.index'),
                 'children' => []
@@ -75,7 +75,7 @@ class LayoutComposer
 
         if(1) {
             $post[] = [
-                'name'	   => $this->lang->text_categories,
+                'name'	   => $this->lang->text_post_categories,
                 'icon'	   => '',
                 'href'     => route('lang.admin.post.categories.index'),
                 'children' => []
@@ -95,7 +95,7 @@ class LayoutComposer
             $menus[] = [
                 'id'       => 'menu-post',
                 'icon'	   => 'fas fa-cog',
-                'name'	   => 'Post',
+                'name'	   => $this->lang->text_posts,
                 'href'     => '',
                 'children' => $post
             ];

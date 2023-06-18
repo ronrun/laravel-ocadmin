@@ -15,7 +15,7 @@ class CategoryService extends Service
 
     public function getCategories($data)
     {
-        $data['WhereRawSqls'][] = "taxonomy='product_category'";        
+        $data['WhereRawSqls'][] = "taxonomy_code='product_category'";        
         return $records = $this->getRecords($data);
     }
 
@@ -25,23 +25,22 @@ class CategoryService extends Service
 
         try {
             $category = $this->findOrFailOrNew(id:$data['category_id']);
-            $category->taxonomy = 'post_category';
+            $category->taxonomy_code = 'product_category';
             $this->saveModelInstance($category, $data);
 
-            if(!empty($data['category_translations'])){
-                $this->saveTranslationData($category, $data['category_translations']);
+            if(!empty($data['translations'])){
+                $this->saveTranslationData($category, $data['translations']);
             }
 
             DB::commit();
 
-            $result['data']['record_id'] = $category->id;
+            $result['category_id'] = $category->id;
     
             return $result;
 
         } catch (\Exception $ex) {
             DB::rollback();
-            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
-            return $result;
+            return ['error' => 'Exception error: code="' . $ex->getCode() . '", ' . $ex->getMessage()];
         }
     }
 

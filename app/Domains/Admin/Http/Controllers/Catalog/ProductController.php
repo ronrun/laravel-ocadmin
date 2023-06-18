@@ -45,8 +45,8 @@ class ProductController extends Controller
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['addUrl'] = route('lang.admin.catalog.products.form');
-        $data['listUrl'] = route('lang.admin.catalog.products.list');
+        $data['add_url'] = route('lang.admin.catalog.products.form');
+        $data['list_url'] = route('lang.admin.catalog.products.list');
         
         $data['list'] = $this->getList();
 
@@ -130,7 +130,7 @@ class ProductController extends Controller
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        $data['listUrl'] = route('lang.admin.catalog.products.list');
+        $data['list_url'] = route('lang.admin.catalog.products.list');
 
         return view('ocadmin.catalog.product_list', $data);
     }
@@ -193,8 +193,8 @@ class ProductController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.catalog.products.save');
-        $data['back'] = route('lang.admin.catalog.products.index', $queries);
+        $data['save_url'] = route('lang.admin.catalog.products.save');
+        $data['back_url'] = route('lang.admin.catalog.products.index', $queries);
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
@@ -225,7 +225,7 @@ class ProductController extends Controller
             if(empty($result['error'])){
                 $json['product_id'] = $result['data']['record_id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replaceUrl'] = route('lang.admin.catalog.products.form', $result['data']['record_id']);
+                $json['replace_url'] = route('lang.admin.catalog.products.form', $result['data']['record_id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];

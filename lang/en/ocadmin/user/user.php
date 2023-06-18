@@ -23,7 +23,6 @@ return [
 'column_status' => 'Status',
 'column_ip' => 'IP',
 'column_user_agent' => 'User Agent',
-'column_date_added' => 'Date Added',
 'column_action' => 'Action',
 
 // Entry

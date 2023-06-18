@@ -13,7 +13,7 @@
     <div class="container-fluid">
       <div class="float-end">
         <button type="submit" form="form-customer" data-bs-toggle="tooltip" class="btn btn-primary" aria-label="Save" data-bs-original-title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
-        <a href="{{ $back }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
+        <a href="{{ $back_url }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
       @include('ocadmin.common.breadcumb')
@@ -23,7 +23,7 @@
     <div class="card">
       <div class="card-header"><i class="fa-solid fa-pencil"></i> Add Customer</div>
       <div class="card-body">
-        <form id="form-customer" action="{{ $save }}" method="post" data-oc-toggle="ajax">
+        <form id="form-customer" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
           @csrf
           @method('PUT')
           <ul class="nav nav-tabs" role="tablist">

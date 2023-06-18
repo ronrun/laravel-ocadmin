@@ -15,7 +15,7 @@ class TagService extends Service
 
     public function getTags($data)
     {
-        $data['WhereRawSqls'][] = "taxonomy='post_tag'";
+        $data['WhereRawSqls'][] = "taxonomy_code='post_tag'";
         
         return $this->getRecords($data);
     }
@@ -27,23 +27,22 @@ class TagService extends Service
 
         try {
             $tag = $this->findOrFailOrNew(id:$data['tag_id']);
-            $tag->taxonomy = 'post_tag';
+            $tag->taxonomy_code = 'post_tag';
             $this->saveModelInstance($tag, $data);
 
-            if(!empty($data['tag_translations'])){
-                $this->saveTranslationData($tag, $data['tag_translations']);
+            if(!empty($data['translations'])){
+                $this->saveTranslationData($tag, $data['translations']);
             }
 
             DB::commit();
 
-            $result['data']['record_id'] = $tag->id;
+            $result['tag_id'] = $tag->id;
     
             return $result;
 
         } catch (\Exception $ex) {
             DB::rollback();
-            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
-            return $result;
+            return ['error' => 'Exception error: code="' . $ex->getCode() . '", ' . $ex->getMessage()];
         }
     }
 

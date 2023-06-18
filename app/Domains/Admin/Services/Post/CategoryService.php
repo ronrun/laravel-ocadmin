@@ -15,7 +15,7 @@ class CategoryService extends Service
 
     public function getCategories($data)
     {
-        $data['WhereRawSqls'][] = "taxonomy='post_category'";
+        $data['WhereRawSqls'][] = "taxonomy_code='post_category'";
         
         return $this->getRecords($data);
     }
@@ -26,11 +26,11 @@ class CategoryService extends Service
 
         try {
             $category = $this->findOrFailOrNew(id:$data['category_id']);
-            $category->taxonomy = 'post_category';
+            $category->taxonomy_code = 'post_category';
             $this->saveModelInstance($category, $data);
 
-            if(!empty($data['category_translations'])){
-                $this->saveTranslationData($category, $data['category_translations']);
+            if(!empty($data['translations'])){
+                $this->saveTranslationData($category, $data['translations']);
             }
 
             DB::commit();

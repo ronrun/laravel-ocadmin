@@ -50,7 +50,6 @@ return [
 'column_phone' => '電話',
 'column_customer_group' => '使用者群組',
 'column_status' => '狀態',
-'column_date_added' => '加入日期',
 'column_comment' => '備註',
 'column_description' => '說明',
 'column_amount' => '總額',

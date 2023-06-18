@@ -197,8 +197,8 @@ class RoleController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save'] = route('lang.admin.user.role.save');
-        $data['back'] = route('lang.admin.user.role.index', $queries);
+        $data['save_url'] = route('lang.admin.user.role.save');
+        $data['back_url'] = route('lang.admin.user.role.index', $queries);
 
         // Get Record
         $role = $this->RoleService->findOrFailOrNew(id:$role_id);

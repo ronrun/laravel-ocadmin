@@ -11,6 +11,10 @@ return [
 'decimal_point' => '.',
 'thousand_point' => ',',
 
+// Tab
+'tab_general' => 'General',
+'tab_data' => 'Data',
+
 // Text
 'text_yes' => 'Yes',
 'text_no' => 'No',
@@ -50,17 +54,6 @@ return [
 'text_form' => 'Form',
 'text_success' => 'Successfully updated.',
 
-
-// Column
-'column_id' => 'ID',
-'column_name' => 'Name',
-'column_date_added' => 'Date Added',
-'column_date_created' => 'Date Created',
-'column_date_modified' => 'Date Modified',
-'column_action' => 'Action',
-'column_is_active' => 'Active',
-
-
 // Button
 'button_add' => 'Add New',
 'button_delete' => 'Delete',
@@ -88,8 +81,16 @@ return [
 'button_close' => 'Close',
 'button_backup' => 'Backup',
 
-// Tab
-'tab_general' => 'General',
-'tab_data' => 'Data',
+// Column
+'column_id' => 'ID',
+'column_name' => 'Name',
+'column_created_at' => 'Date Added',
+'column_updated_at' => 'Date Modified',
+'column_create_date' => 'Date Added',
+'column_update_date' => 'Date Modified',
+'column_action' => 'Action',
+'column_is_active' => 'Active',
 
+// Error
+'error_warning' => 'Warning: Please check the form carefully for errors!',
 ];
