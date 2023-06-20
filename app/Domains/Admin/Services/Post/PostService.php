@@ -40,6 +40,7 @@ class PostService extends Service
         } catch (\Exception $ex) {
             DB::rollback();
             $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
+            echo '<pre>Exception ', print_r($result['error'], 1), "</pre>"; exit;
             return $result;
         }
     }

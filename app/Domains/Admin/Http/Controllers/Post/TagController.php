@@ -5,19 +5,20 @@ namespace App\Domains\Admin\Http\Controllers\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
-use App\Domains\Admin\Services\Post\TagService;
+//use App\Domains\Admin\Services\Post\TermService;
+use App\Domains\Admin\Services\Common\TermService;
 use LaravelLocalization;
 
 class TagController extends Controller
 {
     private $lang;
     private $request;
-    private $TagService;
+    private $TermService;
 
-    public function __construct(Request $request, TagService $TagService)
+    public function __construct(Request $request, TermService $TermService)
     {
         $this->request = $request;
-        $this->TagService = $TagService;
+        $this->TermService = $TermService;
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/common/term','ocadmin/post/tag']);
     }
 
@@ -98,8 +99,10 @@ class TagController extends Controller
             }
         }
 
+        $queries['filter_taxonomy_code'] = 'post_tag';
+
         // Rows
-        $users = $this->TagService->getTags($queries);
+        $users = $this->TermService->getRecords($queries);
 
         if(!empty($users)){
             foreach ($users as $row) {
@@ -135,7 +138,7 @@ class TagController extends Controller
 
         $data['list_url'] = route('lang.admin.post.tags.list');
 
-        return view('ocadmin.post.tag_list', $data);
+        return view('ocadmin.common.term_list', $data);
     }
 
 
@@ -201,34 +204,43 @@ class TagController extends Controller
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
-        $tag = $this->TagService->findOrFailOrNew(id:$tag_id);
+        $term = $this->TermService->findOrFailOrNew(id:$tag_id);
 
-        $data['tag']  = $tag;
+        $data['term']  = $term;
         
-        $data['tag_id'] = $tag_id ?? null;
+        $data['term_id'] = $term->id;
         
-        $data['translations'] = $tag->sortedTranslations();
+        $data['translations'] = $term->sortedTranslations();
         
-        return view('ocadmin.post.tag_form', $data);
+        return view('ocadmin.common.term_form', $data);
     }
 
 
     public function save()
     {
         $postData = $this->request->post();
-        $queryData = $this->request->query();
 
         $json = [];
+
+        foreach ($postData['translations'] as $locale => $translation) {
+            if(empty($translation['name']) || mb_strlen($translation['name']) < 2){
+                $json['error']['name-' . $locale] = $this->lang->error_name;
+            }
+        }    
 
         // validator
 
         if(!$json) {
-            $result = $this->TagService->save($postData);
+            $postData['taxonomy_code'] = 'post_tag';
+
+            $result = $this->TermService->save($postData);
 
             if(empty($result['error'])){
-                $json['tag_id'] = $result['tag_id'];
-                $json['success'] = $this->lang->text_success;
-                $json['replace_url'] = route('lang.admin.post.tags.form', $result['record_id']);
+                $json = [
+                    'term_id' => $result['row_id'],
+                    'success' => $this->lang->text_success,
+                    'replaceUrl' => route('lang.admin.post.tags.form', $result['row_id']),
+                ];
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];

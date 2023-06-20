@@ -83,7 +83,10 @@ return [
 
 // Column
 'column_id' => 'ID',
+'column_code' => 'Code',
 'column_name' => 'Name',
+'column_sort_order' => 'Sort Order',
+
 'column_created_at' => 'Date Added',
 'column_updated_at' => 'Date Modified',
 'column_create_date' => 'Date Added',

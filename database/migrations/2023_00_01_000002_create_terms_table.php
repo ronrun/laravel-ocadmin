@@ -16,12 +16,13 @@ return new class extends Migration
         Schema::create('terms', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('parent_id')->default('0');
-            $table->string('code',50)->default('');
+            $table->string('code',50)->nullable();
             $table->string('taxonomy_code',50)->default('');
             $table->boolean('is_active')->default('1');
             $table->smallInteger('sort_order')->default('0');
             $table->unsignedInteger('count')->default('0');
             $table->timestamps();
+            $table->unique(['code', 'taxonomy_code']);
         });
 
         Schema::create('term_translations', function (Blueprint $table) {

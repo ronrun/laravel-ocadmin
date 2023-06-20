@@ -514,11 +514,11 @@ trait EloquentTrait
 
 
     /**
-     * 
+     * 根據傳來的 $data ，批次儲存所有本表欄位
      */
-    public function saveModelInstance($record, $data)
+    public function saveModelInstance($row, $data)
     {
-        $table = $record->getTable();
+        $table = $row->getTable();
         $table_columns = $this->getColumns($table);
 
         foreach ($data as $key => $value) {
@@ -526,10 +526,10 @@ trait EloquentTrait
                 continue;
             }
 
-            $record->$key = $value;
+            $row->$key = $value;
         }
 
-        $result = $record->save();
+        $result = $row->save();
 
         return $result;
     }

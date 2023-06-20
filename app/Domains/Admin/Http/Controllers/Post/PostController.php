@@ -229,7 +229,7 @@ class PostController extends Controller
             if(empty($result['error'])){
                 $json['post_id'] = $result['data']['record_id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replace_url'] = route('lang.admin.post.posts.form', $result['data']['record_id']);
+                $json['replaceUrl'] = route('lang.admin.post.posts.form', $result['data']['record_id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];

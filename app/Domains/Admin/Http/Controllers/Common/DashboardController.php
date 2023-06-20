@@ -16,7 +16,6 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        //echo '<pre>', print_r(999, 1), "</pre>"; exit;
         $data['lang'] = (new TranslationLibrary())->getTranslations(['ocadmin/common/common',]);
 
         // $data['sales_chart_url'] = 'ocadmin-asset/test/dashboard-chart-sales.html';
