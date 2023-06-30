@@ -69,11 +69,13 @@ return array (
 
 // Column
 'column_id' => 'ID',  
+'column_sort_order' => '排序',
 'column_name' => '名稱',
-'column_created_at' => '建立日期',
-'column_updated_at' => '修改日期',
-'column_create_date' => '建立日期',
-'column_update_date' => '修改日期',
+'column_slug' => 'Slug',
+'column_created_at' => '建立時間',
+'column_date_created' => '建立日期',
+'column_updated_at' => '修改時間',
+'column_date_modified' => '修改日期',
 'column_is_active' => '是否啟用',
 'column_action' => '操作',
 

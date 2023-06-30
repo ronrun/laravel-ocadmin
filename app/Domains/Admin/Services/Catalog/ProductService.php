@@ -13,9 +13,9 @@ class ProductService extends Service
     public $lang;
 
 
-    public function getProducts($data)
+    public function getProducts($data, $debug=0)
     {        
-        return $this->getRecords($data);
+        return $this->getRecords($data, $debug);
     }
 
 

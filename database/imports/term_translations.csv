@@ -1,19 +1,56 @@
 ﻿id,term_id,locale,name
-1,1,en,Product Category
-2,2,en,Cameras
-3,3,en,Components
-4,4,en,Desktops
-5,5,en,Laptops & Notebooks
-6,6,en,MP3 Players
-7,7,en,Phones & PDAs
-8,8,en,Software
-9,9,en,Tablets
-10,1,zh_TW,商品分類
-11,2,zh_TW,相機
-12,3,zh_TW,零組件
-13,4,zh_TW,桌機
-14,5,zh_TW,筆電
-15,6,zh_TW,MP3 Players
-16,7,zh_TW,手機
-17,8,zh_TW,軟體
-18,9,zh_TW,平板
+1,1,en,Components
+2,2,en,Monitors
+3,3,en,Printers
+4,4,en,Scanners
+5,5,en,Web Cameras
+6,6,en,Desktops
+7,7,en,MAC
+8,8,en,PC
+9,9,en,Laptops & Notebooks
+10,10,en,Macs
+11,11,en,Windows
+12,12,en,Tablets
+13,13,en,Software
+14,1,zh_TW,零組件
+15,2,zh_TW,螢幕
+16,3,zh_TW,印表機
+17,4,zh_TW,掃描器
+18,5,zh_TW,網路攝影機
+19,6,zh_TW,桌機
+20,7,zh_TW,蘋果電腦
+21,8,zh_TW,PC
+22,9,zh_TW,筆電
+23,10,zh_TW,蘋果筆電
+24,11,zh_TW,Windows筆電
+25,12,zh_TW,平板
+26,13,zh_TW,軟體
+27,14,zh_TW,服飾
+28,15,zh_TW,短袖
+29,16,zh_TW,短褲
+30,17,zh_TW,長袖
+31,18,zh_TW,長褲
+32,19,zh_TW,內衣
+33,20,zh_TW,內褲
+34,21,zh_TW,福利品
+35,22,zh_TW,限時特價
+36,23,zh_TW,服飾
+37,24,zh_TW,男性
+38,25,zh_TW,女性
+39,26,zh_TW,夏季
+40,27,zh_TW,冬季
+41,28,zh_TW,運動
+42,29,zh_TW,休閒
+43,30,zh_TW,正式服裝
+44,31,zh_TW,牛仔
+45,32,zh_TW,時尚
+46,20,zh_TW,服飾
+47,21,zh_TW,男性
+48,22,zh_TW,女性
+49,23,zh_TW,夏季
+50,24,zh_TW,冬季
+51,25,zh_TW,運動
+52,26,zh_TW,休閒
+53,27,zh_TW,正式服裝
+54,28,zh_TW,牛仔
+55,29,zh_TW,時尚

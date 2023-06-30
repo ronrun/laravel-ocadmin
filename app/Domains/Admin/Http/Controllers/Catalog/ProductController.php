@@ -204,8 +204,8 @@ class ProductController extends Controller
         
         $data['product_id'] = $product_id ?? null;
         
-        $data['product_translations'] = $product->sortedTranslations();
-        
+        $data['translations'] = $product->sortedTranslations();
+
         return view('ocadmin.catalog.product_form', $data);
     }
 

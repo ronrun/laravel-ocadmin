@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('taxonomies', function (Blueprint $table) {
             $table->id();
-            $table->string('code',50)->unique();
+            $table->string('code',50)->nullable()->unique();
+            $table->string('model')->nullable();
             $table->boolean('is_active')->default('1');
             $table->timestamps();
         });

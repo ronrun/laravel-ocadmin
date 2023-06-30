@@ -14,6 +14,8 @@ trait EloquentTrait
     public $model;
     public $connection;
     public $table;
+    private $table_columns;
+    private $translation_model_name;
 
     public function newModel($modelName = null)
     {
@@ -85,6 +87,10 @@ trait EloquentTrait
         $model = $this->newModel();
         $query = $model->query();
 
+        if(empty($this->table_columns)){
+            $this->table_columns = $this->getColumns();
+        }
+
         // Filters - model's table
         $this->setFiltersQuery($query, $data, $debug);
 
@@ -94,15 +100,10 @@ trait EloquentTrait
                 $query->whereRaw($rawsql);
             }
         }
+        
 
-        // Sort
-        if(empty($data['sort']) || $data['sort'] == 'id'){
-            $sort = $model->getTable() . '.id';
-        }else{
-            $sort = $data['sort'];
-        }
-
-        // Order
+        // Sort & Order
+        //  - Order
         if (isset($data['order']) && ($data['order'] == 'ASC')) {
             $order = 'ASC';
         }
@@ -110,7 +111,29 @@ trait EloquentTrait
             $order = 'DESC';
         }
 
-        $query->orderBy($sort, $order);
+        //  - Sort
+        if(in_array($data['sort'], $this->model->translatedAttributes)){
+            
+            $translationTable = $this->getTranslationTable();
+            $master_key = $this->getTranslationMasterKey();
+
+            $query->join($translationTable, function ($join) use ($translationTable, $master_key, $order){
+                $join->on("{$this->table}.id", '=', "{$translationTable}.{$master_key}")
+                     ->where("{$translationTable}.locale", '=', 'en');
+            });
+
+            $query->orderBy("{$translationTable}.{$data['sort']}", $order);
+
+        }else{
+            if(empty($data['sort']) || $data['sort'] == 'id'){
+                $sort = $model->getTable() . '.id';
+            }
+            else{
+                $sort = $data['sort'];
+            }
+            $query->orderBy($sort, $order);
+        }
+        
 
         // Select
         $select = '';
@@ -634,6 +657,75 @@ trait EloquentTrait
         ];
 
         echo "<pre>".print_r($arr , 1)."</pre>"; exit;
+    }
+
+    
+
+    // Get translation functions.
+
+    public function getTranslationModelName()
+    {
+        if(empty($this->translation_model_name)){
+            $this->translation_model_name = get_class($this->model) . 'Translation';
+
+            if(empty($this->translation_model_name)){
+                return false;
+            }
+        }
+        return $this->translation_model_name;
+    }
+    
+
+    public function getTranslationModel()
+    {
+        if(empty($this->translationModel)){
+            $translation_model_name = $this->getTranslationModelName();
+
+            $this->translationModel = new $translation_model_name;
+
+            if(empty($this->translationModel)){
+                return false;
+            }
+        }
+
+        return $this->translationModel;
+    }
+
+    public function getTranslationTable()
+    {
+        if(empty($this->translation_model_table)){
+            $this->translation_model_table = $this->getTranslationModel()->getTable();
+
+            if(empty($this->translation_model_table)){
+                return false;
+            }
+        }
+
+        return $this->translation_model_table;        
+    }
+
+    public function getTranslationMasterKey()
+    {
+        if(!empty($this->translation_master_key)){
+            return $this->translation_master_key;
+        }else{
+            $translationModel = $this->getTranslationModel();
+
+            // Use translation's master_key first
+            if(!empty($translationModel->master_key)){
+                $this->translation_master_key = $translationModel->master_key;
+            }
+            // Use master model's foreign key.
+            else{
+                $this->translation_master_key = $this->model->getForeignKey();
+            }
+
+            if(empty($this->translation_master_key)){
+                return false;
+            }
+        }
+
+        return $this->translation_master_key;   
     }
 
 }

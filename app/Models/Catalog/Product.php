@@ -5,10 +5,14 @@ namespace App\Models\Catalog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Traits\ModelTrait;
+use App\Traits\TranslatableTrait;
 
 class Product extends Model
 {
     use HasFactory;
+    use TranslatableTrait;
+    use ModelTrait;
 
     protected $guarded = [];
     protected $appends = ['name'];

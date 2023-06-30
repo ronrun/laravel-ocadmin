@@ -15,7 +15,7 @@ class Term extends Model
     protected $guarded = [];
     protected $appends = ['name','content','slug'];
 
-    public $translatedAttributes = ['name', 'content','slug'];
+    public $translatedAttributes = ['name', 'content', 'slug',];
     public $translationForeignKey = 'term_id';
 
 

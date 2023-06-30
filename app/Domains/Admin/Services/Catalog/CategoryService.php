@@ -40,7 +40,7 @@ class CategoryService extends Service
 
         } catch (\Exception $ex) {
             DB::rollback();
-            return ['error' => 'Exception error: code="' . $ex->getCode() . '", ' . $ex->getMessage()];
+            return ['error' => $ex->getMessage()];
         }
     }
 

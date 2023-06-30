@@ -1,9 +1,14 @@
-﻿id,code,is_active,created_at,updated_at
-1,post_category,1,2023/6/9 00:00,2023/6/9 00:00
-2,post_tag,1,2023/6/9 00:00,2023/6/9 00:00
-3,product_category,1,2023/6/9 00:00,2023/6/9 00:00
-4,product_tag,1,2023/6/9 00:00,2023/6/9 00:00
-5,project_category,1,2023/6/9 00:00,2023/6/9 00:00
-6,project_tag,1,2023/6/9 00:00,2023/6/9 00:00
-7,inventory_stock_category,1,2023/6/9 00:00,2023/6/9 00:00
-8,inventory_accounting_category,1,2023/6/9 00:00,2023/6/9 00:00
+﻿id,name,code,model,is_active,created_at,updated_at
+1,Post Category,post_category,App\Models\Post\Post,1,2023/6/9 00:00,2023/6/9 00:00
+2,Post Tag,post_tag,App\Models\Post\Post,1,2023/6/9 00:00,2023/6/9 00:00
+3,Product Category,product_category,App\Models\Catalog\Product,1,2023/6/9 00:00,2023/6/9 00:00
+4,Product Tag,product_tag,App\Models\Catalog\Product,1,2023/6/9 00:00,2023/6/9 00:00
+5,Product Attribute,product_attribute,App\Models\Catalog\Product,1,2023/6/9 00:00,2023/6/9 00:00
+6,Product Filter,product_filter,App\Models\Catalog\Product,1,2023/6/9 00:00,2023/6/9 00:00
+7,Product Brand,product_brand,App\Models\Catalog\Product,,,
+8,Navication,navigation,,1,2023/6/9 00:00,2023/6/9 00:00
+9,Admin Menu,admin_menu,,1,2023/6/9 00:00,2023/6/9 00:00
+10,Project Category,project_category,App\Models\Project\Project,1,2023/6/9 00:00,2023/6/9 00:00
+11,Project Tag,project_tag,App\Models\Project\Project,1,2023/6/9 00:00,2023/6/9 00:00
+12,Inventory Stock Category,inventory_stock_category,App\Models\Catalog\Product,1,2023/6/9 00:00,2023/6/9 00:00
+13,Inventory Accounting Category,inventory_accounting_category,App\Models\Catalog\Product,1,2023/6/9 00:00,2023/6/9 00:00

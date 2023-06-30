@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             //TaxonomySeeder::class,
             TermSeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }

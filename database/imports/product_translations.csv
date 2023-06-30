@@ -1,0 +1,13 @@
+﻿id,product_id,locale,name
+1,1,en,3 Coke Big
+2,2,en,1 Coke Small
+3,3,en,2  Coke Medium
+4,1,zh_TW,3 可樂大
+5,2,zh_TW,1 可樂小
+6,3,zh_TW,2 可樂中
+7,4,en,3 Coffee Big
+8,5,en,1 Coffee Small
+9,6,en,2 Coffee Medium
+10,4,zh_TW,3 咖啡 大
+11,5,zh_TW,1 咖啡 小
+12,6,zh_TW,2 咖啡 中

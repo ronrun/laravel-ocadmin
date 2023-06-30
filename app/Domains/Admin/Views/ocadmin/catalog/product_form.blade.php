@@ -39,13 +39,13 @@
               </ul>
               <div class="tab-content">
                 @foreach($supportedLocales as $locale => $localeContent)
-                  <input type="hidden" name="post_translations[{{ $locale }}][id]" value="{{ !empty($post_translations->$locale) ? $post_translations->$locale->id : '' }}" >
+                  <input type="hidden" name="post_translations[{{ $locale }}][id]" value="{{ !empty($translations->$locale) ? $translations->$locale->id : '' }}" >
 
                   <div id="language-{{ $locale }}" class="tab-pane @if($loop->first) active @endif">
                     <div class="row mb-3 required">
                       <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-name-{{ $locale }}" name="post_translations[{{ $locale }}][name]" value="{{ !empty($post_translations->$locale) ? $post_translations->$locale->name : '' }}" class="form-control">
+                        <input type="text" id="input-name-{{ $locale }}" name="post_translations[{{ $locale }}][name]" value="{{ !empty($translations->$locale) ? $translations->$locale->name : '' }}" class="form-control">
                         <div id="error-name" class="invalid-feedback"></div>
                       </div>
                     </div>
@@ -53,7 +53,7 @@
                     <div class="row mb-3 required">
                       <label for="input-slug" class="col-sm-2 col-form-label">{{ $lang->column_slug }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-slug-{{ $locale }}" name="post_translations[{{ $locale }}][slug]" value="{{ !empty($post_translations->$locale) ? $post_translations->$locale->slug : '' }}" class="form-control">
+                        <input type="text" id="input-slug-{{ $locale }}" name="post_translations[{{ $locale }}][slug]" value="{{ !empty($translations->$locale) ? $translations->$locale->slug : '' }}" class="form-control">
                         <div id="error-slug" class="invalid-feedback"></div>
                       </div>
                     </div>
@@ -70,7 +70,7 @@
                   <div class="input-group">
                     <div id="input-is_active" class="form-check form-switch form-switch-lg">
                       <input type="hidden" name="is_active" value="0"/>
-                      <input type="checkbox" name="is_active" value="1" class="form-check-input" @if($post->is_active) checked @endif/>
+                      <input type="checkbox" name="is_active" value="1" class="form-check-input" @if($product->is_active) checked @endif/>
                     </div>
                   </div>
                 </div>
@@ -78,7 +78,7 @@
             </div>
 
           </div>
-          <input type="hidden" name="post_id" value="{{ $post_id }}" id="input-post_id"/>
+          <input type="hidden" name="post_id" value="{{ $product_id }}" id="input-post_id"/>
         </form>
       </div>
     </div>

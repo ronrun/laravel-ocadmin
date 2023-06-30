@@ -8,6 +8,7 @@ trait TranslatableTrait
     {
         if(empty($translationModelName)){
             $translationModelName = get_class($this) . 'Translation';
+            
             $translactionModel = new $translationModelName();
         }
 
@@ -35,7 +36,7 @@ trait TranslatableTrait
     public function sortedTranslations()
     {
         $translations = (object) $this->translations->keyBy('locale')->toArray();
-        
+
         foreach($translations as $locale => $translation){
             $translations->$locale = (object) $translation;
         }

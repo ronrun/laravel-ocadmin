@@ -20,6 +20,8 @@ return [
 'text_no' => 'No',
 'text_on' => 'On',
 'text_off' => 'Off',
+'text_active' => 'Active',
+'text_inactive' => 'Inactive',
 'text_enabled' => 'Enabled',
 'text_disabled' => 'Disabled',
 'text_none' => ' --- None --- ',
@@ -84,15 +86,16 @@ return [
 // Column
 'column_id' => 'ID',
 'column_code' => 'Code',
-'column_name' => 'Name',
 'column_sort_order' => 'Sort Order',
+'column_name' => 'Name',
+'column_slug' => 'Slug',
 
-'column_created_at' => 'Date Added',
-'column_updated_at' => 'Date Modified',
-'column_create_date' => 'Date Added',
-'column_update_date' => 'Date Modified',
-'column_action' => 'Action',
+'column_created_at' => 'Datetime created',
+'column_date_created' => 'Date created',
+'column_updated_at' => 'Datetime modified',
+'column_date_modified' => 'Date modified',
 'column_is_active' => 'Active',
+'column_action' => 'Action',
 
 // Error
 'error_warning' => 'Warning: Please check the form carefully for errors!',

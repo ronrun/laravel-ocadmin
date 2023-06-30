@@ -96,7 +96,7 @@ class CategoryController extends Controller
         }
 
         // Rows
-        $records = $this->CategoryService->getCategories($queries);
+        $records = $this->CategoryService->getCategories($queries,1);
 
         if(!empty($records)){
             foreach ($records as $row) {
@@ -104,7 +104,7 @@ class CategoryController extends Controller
             }
         }
 
-        $data['records'] = $records->withPath(route('lang.admin.catalog.categories.list'))->appends($queries); 
+        $data['records'] = $records->withPath(route('lang.admin.catalog.categories.list'))->appends($queries,1); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
