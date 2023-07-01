@@ -105,26 +105,54 @@ class LayoutComposer
          * Catalog
          */
         // L2
-        if(1) {
-            $product[] = [
-                'name'	   => $this->lang->text_catalog_tags,
-                'icon'	   => '',
-                'href'     => route('lang.admin.catalog.tags.index'),
-                'children' => []
-            ];
-        }
 
         if(1) {
-            $product[] = [
+            $catalog[] = [
                 'name'	   => $this->lang->text_catalog_categories,
                 'icon'	   => '',
                 'href'     => route('lang.admin.catalog.categories.index'),
                 'children' => []
             ];
         }
+
+        if(1) {
+            $catalog[] = [
+                'name'	   => $this->lang->text_catalog_tags,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.tags.index'),
+                'children' => []
+            ];
+        }
         
         if(1) {
-            $product[] = [
+            $catalog[] = [
+                'name'	   => $this->lang->text_catalog_attributes,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.attributes.index'),
+                'children' => []
+            ];
+        }
+        
+        if(1) {
+            $catalog[] = [
+                'name'	   => $this->lang->text_catalog_filters,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.filters.index'),
+                'children' => []
+            ];
+        }
+        
+        if(1) {
+            $catalog[] = [
+                'name'	   => $this->lang->text_catalog_options,
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.options.index'),
+                'children' => []
+            ];
+        }
+        
+        if(1) {
+            $catalog[] = [
                 'name'	   => $this->lang->text_catalog_products,
                 'icon'	   => '',
                 'href'     => route('lang.admin.catalog.products.index'),
@@ -132,13 +160,13 @@ class LayoutComposer
             ];
         }
         
-        if(!empty($product)) {
+        if(!empty($catalog)) {
             $menus[] = [
-                'id'       => 'menu-product',
+                'id'       => 'menu-catalog',
                 'icon'	   => 'fas fa-cog',
-                'name'	   => 'Catalog',
+                'name'	   => $this->lang->text_catalog,
                 'href'     => '',
-                'children' => $product
+                'children' => $catalog
             ];
         }
 

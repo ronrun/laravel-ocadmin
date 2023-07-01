@@ -12,7 +12,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach($records as $record)
+				@foreach($tags as $record)
 				<tr>
 					<td class="text-end">{{ $record->id }}</td>
 					<td class="text-start">{{ $record->name }}</td>
@@ -23,5 +23,5 @@
 			</tbody>
 		</table>
 	</div>
-	{!! $records->links('ocadmin.common.pagination', ['tags' => $records]) !!}
+	{!! $tags->links('ocadmin.common.pagination', ['tags' => $tags]) !!}
 </form>

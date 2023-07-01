@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domains\Admin\Services\Post;
+namespace App\Domains\Admin\Services\Catalog;
 
 use Illuminate\Support\Facades\DB;
 use App\Domains\Admin\Services\Service;
 
-class CategoryService extends Service
+class FilterService extends Service
 {
     public $model_name = "\App\Models\Common\Term";
     public $model;
@@ -15,9 +15,8 @@ class CategoryService extends Service
 
     public function getCategories($data)
     {
-        $data['WhereRawSqls'][] = "taxonomy_code='post_category'";
-        
-        return $this->getRows($data);
+        $data['WhereRawSqls'][] = "taxonomy_code='product_filter'";        
+        return $records = $this->getRows($data);
     }
 
     public function save($data)
@@ -26,7 +25,7 @@ class CategoryService extends Service
 
         try {
             $category = $this->findOrFailOrNew(id:$data['category_id']);
-            $category->taxonomy_code = 'post_category';
+            $category->taxonomy_code = 'product_filter';
             $this->saveModelInstance($category, $data);
 
             if(!empty($data['translations'])){
@@ -35,14 +34,13 @@ class CategoryService extends Service
 
             DB::commit();
 
-            $result['data']['record_id'] = $category->id;
+            $result['category_id'] = $category->id;
     
             return $result;
 
         } catch (\Exception $ex) {
             DB::rollback();
-            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
-            return $result;
+            return ['error' => $ex->getMessage()];
         }
     }
 

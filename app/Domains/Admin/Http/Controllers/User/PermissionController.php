@@ -99,7 +99,7 @@ class PermissionController extends Controller
         //$data['action'] = route('lang.admin.user.permission.massDelete');
 
         // Rows
-        $users = $this->PermissionService->getRecords($queries);
+        $users = $this->PermissionService->getRows($queries);
 
         if(!empty($users)){
             foreach ($users as $row) {

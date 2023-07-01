@@ -58,15 +58,31 @@ Route::group(
             'as' => 'catalog.',
         ], function ()
         {
-            Route::get('tags', 'Catalog\TagController@index')->name('tags.index');
-            Route::get('tags/list', 'Catalog\TagController@list')->name('tags.list');
-            Route::get('tags/form/{tag_id?}', 'Catalog\TagController@form')->name('tags.form');
-            Route::post('tags/save/{tag_id?}', 'Catalog\TagController@save')->name('tags.save');
             
             Route::get('categories', 'Catalog\CategoryController@index')->name('categories.index');
             Route::get('categories/list', 'Catalog\CategoryController@list')->name('categories.list');
             Route::get('categories/form/{category_id?}', 'Catalog\CategoryController@form')->name('categories.form');
             Route::post('categories/save/{category_id?}', 'Catalog\CategoryController@save')->name('categories.save');
+
+            Route::get('tags', 'Catalog\TagController@index')->name('tags.index');
+            Route::get('tags/list', 'Catalog\TagController@list')->name('tags.list');
+            Route::get('tags/form/{tag_id?}', 'Catalog\TagController@form')->name('tags.form');
+            Route::post('tags/save/{tag_id?}', 'Catalog\TagController@save')->name('tags.save');
+            
+            Route::get('attributes', 'Catalog\AttributeController@index')->name('attributes.index');
+            Route::get('attributes/list', 'Catalog\AttributeController@list')->name('attributes.list');
+            Route::get('attributes/form/{tag_id?}', 'Catalog\AttributeController@form')->name('attributes.form');
+            Route::post('attributes/save/{tag_id?}', 'Catalog\AttributeController@save')->name('attributes.save');
+            
+            Route::get('options', 'Catalog\OptionController@index')->name('options.index');
+            Route::get('options/list', 'Catalog\OptionController@list')->name('options.list');
+            Route::get('options/form/{option_id?}', 'Catalog\OptionController@form')->name('options.form');
+            Route::post('options/save/{option_id?}', 'Catalog\OptionController@save')->name('options.save');
+            
+            Route::get('filters', 'Catalog\FilterController@index')->name('filters.index');
+            Route::get('filters/list', 'Catalog\FilterController@list')->name('filters.list');
+            Route::get('filters/form/{tag_id?}', 'Catalog\FilterController@form')->name('filters.form');
+            Route::post('filters/save/{tag_id?}', 'Catalog\FilterController@save')->name('filters.save');
 
             Route::get('products', 'Catalog\ProductController@index')->name('products.index');
             Route::get('products/list', 'Catalog\ProductController@list')->name('products.list');

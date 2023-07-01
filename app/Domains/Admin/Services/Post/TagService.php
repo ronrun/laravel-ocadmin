@@ -7,7 +7,7 @@ use App\Domains\Admin\Services\Service;
 
 class TagService extends Service
 {
-    public $modelName = "\App\Models\Common\Term";
+    public $model_name = "\App\Models\Common\Term";
     public $model;
     public $table;
     public $lang;
@@ -17,7 +17,7 @@ class TagService extends Service
     {
         $data['WhereRawSqls'][] = "taxonomy_code='post_tag'";
         
-        return $this->getRecords($data);
+        return $this->getRows($data);
     }
 
 

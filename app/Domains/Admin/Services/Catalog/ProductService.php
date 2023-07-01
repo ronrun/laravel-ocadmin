@@ -7,7 +7,7 @@ use App\Domains\Admin\Services\Service;
 
 class ProductService extends Service
 {
-    public $modelName = "\App\Models\Catalog\Product";
+    public $model_name = "\App\Models\Catalog\Product";
     public $model;
     public $table;
     public $lang;
@@ -15,7 +15,7 @@ class ProductService extends Service
 
     public function getProducts($data, $debug=0)
     {        
-        return $this->getRecords($data, $debug);
+        return $this->getRows($data, $debug);
     }
 
 

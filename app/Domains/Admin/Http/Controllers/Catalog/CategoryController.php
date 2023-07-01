@@ -96,15 +96,15 @@ class CategoryController extends Controller
         }
 
         // Rows
-        $records = $this->CategoryService->getCategories($queries,1);
+        $categories = $this->CategoryService->getCategories($queries,1);
 
-        if(!empty($records)){
-            foreach ($records as $row) {
+        if(!empty($categories)){
+            foreach ($categories as $row) {
                 $row->edit_url = route('lang.admin.catalog.categories.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $records->withPath(route('lang.admin.catalog.categories.list'))->appends($queries,1); 
+        $data['categories'] = $categories->withPath(route('lang.admin.catalog.categories.list'))->appends($queries,1); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -222,12 +222,7 @@ class CategoryController extends Controller
             if(empty($translation['name']) || mb_strlen($translation['name']) < 1){
                 $json['error']['name-' . $locale] = $this->lang->error_name;
             }
-            
-            if(empty($translation['slug']) || mb_strlen($translation['slug']) < 1){
-                $json['error']['slug-' . $locale] = $this->lang->error_slug;
-            }
-        }  
-
+        }
 
         // Default error warning   
         if(isset($json['error']) && !isset($json['error']['warning'])) {
@@ -251,8 +246,5 @@ class CategoryController extends Controller
         }
 
         return response(json_encode($json))->header('Content-Type','application/json');
-
     }
-
-
 }

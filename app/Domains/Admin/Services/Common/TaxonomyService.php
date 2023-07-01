@@ -7,7 +7,7 @@ use App\Domains\Admin\Services\Service;
 
 class TaxonomyService extends Service
 {
-    public $modelName = "\App\Models\Common\Taxonomy";
+    public $model_name = "\App\Models\Common\Taxonomy";
     public $model;
     public $table;
     public $lang;
@@ -15,7 +15,7 @@ class TaxonomyService extends Service
 
     public function getPosts($data)
     {        
-        return $this->getRecords($data);
+        return $this->getRows($data);
     }
 
 

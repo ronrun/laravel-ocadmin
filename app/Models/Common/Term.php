@@ -13,9 +13,9 @@ class Term extends Model
     use ModelTrait;
     
     protected $guarded = [];
-    protected $appends = ['name','content','slug'];
+    protected $appends = ['name','slug','description',];
 
-    public $translatedAttributes = ['name', 'content', 'slug',];
+    public $translatedAttributes = ['name', 'description', 'slug',];
     public $translationForeignKey = 'term_id';
 
 

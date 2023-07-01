@@ -8,14 +8,14 @@ use App\Libraries\TranslationLibrary;
 
 class PermissionService extends Service
 {
-    public $modelName;
+    public $model_name;
     public $model;
     public $table;
     public $lang;
 
 	public function __construct()
 	{
-        $this->modelName = 'App\Models\User\Permission';
+        $this->model_name = 'App\Models\User\Permission';
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/permission']);
 	}
 

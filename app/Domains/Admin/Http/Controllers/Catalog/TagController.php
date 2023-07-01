@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\Catalog\TagService;
-use LaravelLocalization;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class TagController extends Controller
 {
@@ -96,15 +96,15 @@ class TagController extends Controller
         }
 
         // Rows
-        $records = $this->TagService->gettags($queries);
+        $tags = $this->TagService->getTags($queries);
 
-        if(!empty($records)){
-            foreach ($records as $row) {
+        if(!empty($tags)){
+            foreach ($tags as $row) {
                 $row->edit_url = route('lang.admin.catalog.tags.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $records->withPath(route('lang.admin.catalog.tags.list'))->appends($queries); 
+        $data['tags'] = $tags->withPath(route('lang.admin.catalog.tags.list'))->appends($queries,1); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -195,6 +195,7 @@ class TagController extends Controller
 
         $data['save_url'] = route('lang.admin.catalog.tags.save');
         $data['back_url'] = route('lang.admin.catalog.tags.index', $queries);
+
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
@@ -213,11 +214,20 @@ class TagController extends Controller
     public function save()
     {
         $postData = $this->request->post();
-        $queryData = $this->request->query();
 
         $json = [];
 
-        // validator
+        // Validate
+        foreach ($postData['translations'] as $locale => $translation) {
+            if(empty($translation['name']) || mb_strlen($translation['name']) < 1){
+                $json['error']['name-' . $locale] = $this->lang->error_name;
+            }
+        }
+
+        // Default error warning   
+        if(isset($json['error']) && !isset($json['error']['warning'])) {
+            $json['error']['warning'] = $this->lang->error_warning;
+        }
 
         if(!$json) {
             $result = $this->TagService->save($postData);
@@ -235,9 +245,6 @@ class TagController extends Controller
             }
         }
 
-       return response(json_encode($json))->header('Content-Type','application/json');
-
+        return response(json_encode($json))->header('Content-Type','application/json');
     }
-
-
 }

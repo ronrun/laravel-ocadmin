@@ -7,17 +7,17 @@ use App\Domains\Admin\Services\Service;
 
 class TagService extends Service
 {
-    public $modelName = "\App\Models\Common\Term";
+    public $model_name = "\App\Models\Common\Term";
     public $model;
     public $table;
     public $lang;
 
 
-    public function getTags($data)
+    public function getTags($data, $debug=0)
     {
         $data['WhereRawSqls'][] = "taxonomy_code='product_tag'";
         
-        return $this->getRecords($data);
+        return $this->getRows($data, $debug);
     }
 
 

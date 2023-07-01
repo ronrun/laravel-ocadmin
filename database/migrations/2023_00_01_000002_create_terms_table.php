@@ -31,17 +31,25 @@ return new class extends Migration
             $table->string('locale',5);
             $table->string('name');
             $table->string('slug')->default('');
-            $table->longtext('content')->nullable();
+            $table->longtext('description')->nullable();
             $table->unique(['term_id', 'locale']);
 
-        }); 
+        });
 
         Schema::create('term_relations', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('object_id');  //id of terms->taxonomy's entity. If product_category, then object_id is product_id, term_id means category_id
             $table->foreignId('term_id')->constrained()->onDelete('cascade');
             $table->index(['term_id','object_id']);
-        });   
+        });
+
+        Schema::create('term_metas', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('term_id');
+            $table->string('meta_key');
+            $table->longText('meta_value')->default('');
+            $table->unique(['term_id','meta_key']);
+        }); 
     }
 
     /**
@@ -51,6 +59,7 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('term_metas');
         Schema::dropIfExists('term_relations');
         Schema::dropIfExists('term_translations');
         Schema::dropIfExists('terms');

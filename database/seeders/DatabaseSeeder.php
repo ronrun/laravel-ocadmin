@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             //CountrySeeder::class,
             UserSeeder::class,
             SettingSeeder::class,
-            //TaxonomySeeder::class,
+            TaxonomySeeder::class,
             TermSeeder::class,
             ProductSeeder::class,
         ]);

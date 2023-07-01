@@ -12,16 +12,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach($terms as $term)
+				@foreach($options as $record)
 				<tr>
-					<td class="text-end">{{ $term->id }}</td>
-					<td class="text-start">{{ $term->name }}</td>
-					<td class="text-start d-none d-lg-table-cell">{{ $term->dateCreated }}</td>
-					<td class="text-end"><a href="{{ $term->edit_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
+					<td class="text-end">{{ $record->id }}</td>
+					<td class="text-start">{{ $record->name }}</td>
+					<td class="text-start d-none d-lg-table-cell">{{ $record->dateCreated }}</td>
+					<td class="text-end"><a href="{{ $record->edit_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
 				</tr>
 				@endforeach
 			</tbody>
 		</table>
 	</div>
-	{!! $terms->links('ocadmin.common.pagination', ['terms' => $terms]) !!}
+	{!! $options->links('ocadmin.common.pagination', ['options' => $options]) !!}
 </form>

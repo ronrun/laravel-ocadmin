@@ -68,7 +68,8 @@ return array (
 'button_filter' => '篩選',
 
 // Column
-'column_id' => 'ID',  
+'column_id' => 'ID',
+'column_code' => '編號',
 'column_sort_order' => '排序',
 'column_name' => '名稱',
 'column_slug' => 'Slug',

@@ -5,23 +5,25 @@
 4,4,en,Product Tag
 5,5,en,Product Attribute
 6,6,en,Product Filter
-7,7,en,Product Brand
-8,8,en,Navication
-9,9,en,Admin Menu
-10,10,en,Project Category
-11,11,en,Project Tag
-12,12,en,Inventory Stock Category
-13,13,en,Inventory Accounting Category
-14,1,zh_TW,文章分類
-15,2,zh_TW,文章標籤
-16,3,zh_TW,商品分類
-17,4,zh_TW,商品標籤
-18,5,zh_TW,商品規格
-19,6,zh_TW,商品篩選器
-20,7,zh_TW,商品品牌
-21,8,zh_TW,前台主選單
-22,9,zh_TW,後台選單
-23,10,zh_TW,專案分類
-24,11,zh_TW,專案標籤
-25,12,zh_TW,庫存分類
-26,13,zh_TW,會計分類
+7,7,en,Product Option
+8,8,en,Product Brand
+9,9,en,Navication
+10,10,en,Admin Menu
+11,11,en,Project Category
+12,12,en,Project Tag
+13,13,en,Inventory Stock Category
+14,14,en,Inventory Accounting Category
+15,1,zh_TW,文章分類
+16,2,zh_TW,文章標籤
+17,3,zh_TW,商品分類
+18,4,zh_TW,商品標籤
+19,5,zh_TW,商品規格
+20,6,zh_TW,商品篩選器
+21,7,zh_TW,商品選項
+22,8,zh_TW,商品品牌
+23,9,zh_TW,前台主選單
+24,10,zh_TW,後台選單
+25,11,zh_TW,專案分類
+26,12,zh_TW,專案標籤
+27,13,zh_TW,庫存分類
+28,14,zh_TW,會計分類

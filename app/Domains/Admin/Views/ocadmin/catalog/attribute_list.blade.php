@@ -1,4 +1,4 @@
-<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ $list_url }}" data-oc-target="#category">
+<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ $list_url }}" data-oc-target="#attribute">
 	@csrf
 	@method('POST')
 	<div class="table-responsive">
@@ -12,16 +12,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach($terms as $term)
+				@foreach($records as $record)
 				<tr>
-					<td class="text-end">{{ $term->id }}</td>
-					<td class="text-start">{{ $term->name }}</td>
-					<td class="text-start d-none d-lg-table-cell">{{ $term->dateCreated }}</td>
-					<td class="text-end"><a href="{{ $term->edit_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
+					<td class="text-end">{{ $record->id }}</td>
+					<td class="text-start">{{ $record->name }}</td>
+					<td class="text-start d-none d-lg-table-cell">{{ $record->dateCreated }}</td>
+					<td class="text-end"><a href="{{ $record->edit_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
 				</tr>
 				@endforeach
 			</tbody>
 		</table>
 	</div>
-	{!! $terms->links('ocadmin.common.pagination', ['terms' => $terms]) !!}
+	{!! $records->links('ocadmin.common.pagination', ['records' => $records]) !!}
 </form>

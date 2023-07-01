@@ -64,41 +64,6 @@
             </div>
 
             <div id="tab-data" class="tab-pane">
-
-              <div class="row mb-3">
-                <label for="input-code" class="col-sm-2 col-form-label">{{ $lang->column_code }}</label>
-                <div class="col-sm-10">
-                  <input type="text" id="input-code" name="code" value="{{ $term->code }}" placeholder="code (not necesarry)" class="form-control">
-                  <div id="error-code" class="invalid-feedback"></div>
-                </div>
-              </div>
-
-              <div class="row mb-3">
-                <label for="input-taxonomy_code" class="col-sm-2 col-form-label">{{ $lang->column_taxonomy_code }}</label>
-                <div class="col-sm-10">
-                  <input type="text" id="input-taxonomy_code" name="taxonomy_code" value="{{ $term->taxonomy_code }}" placeholder="code (not necesarry)" class="form-control">
-                  <div id="error-taxonomy_code" class="invalid-feedback"></div>
-                </div>
-              </div>
-
-              <div class="row mb-3">
-                <label for="input-parent_name" class="col-sm-2 col-form-label">{{ $lang->column_parent_name }}</label>
-                <div class="col-sm-10">
-                  <input type="text" id="input-parent_name" name="parent_name" value="{{ $term->parent_name }}" placeholder="autocomplete" class="form-control">
-                  <div id="error-parent_id" class="invalid-feedback"></div>
-                  <input type="hidden" id="input-parent_id" name="parent_id" value="{{ $term->parent_id }}" class="form-control">
-
-                </div>
-              </div>
-
-              <div class="row mb-3">
-                <label for="input-sort_order" class="col-sm-2 col-form-label">{{ $lang->column_sort_order }}</label>
-                <div class="col-sm-10">
-                  <input type="text" id="input-sort_order" name="sort_order" value="{{ $term->sort_order }}" placeholder="code (not necesarry)" class="form-control">
-                  <div id="error-sort_order" class="invalid-feedback"></div>
-                </div>
-              </div>
-
               <div class="row mb-3">
                 <label class="col-sm-2 col-form-label">{{ $lang->column_is_active }}</label>
                 <div class="col-sm-10">

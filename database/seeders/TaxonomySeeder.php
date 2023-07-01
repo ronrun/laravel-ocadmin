@@ -22,7 +22,8 @@ class TaxonomySeeder extends Seeder
             ENCLOSED BY '\"'
             LINES TERMINATED BY '\r\n'
             IGNORE 1 LINES
-            (id,code,is_active,created_at,updated_at);";
+            (id,code,model,is_active,created_at,updated_at
+        );";
              
         DB::unprepared($query);
 

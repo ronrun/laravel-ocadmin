@@ -1,27 +1,24 @@
 <?php
 
-namespace App\Domains\Admin\Http\Controllers\User;
+namespace App\Domains\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
-use App\Domains\Admin\Services\User\RoleService;
-use App\Domains\Admin\Services\User\UserService;
-use Illuminate\Support\Facades\Auth;
+use App\Domains\Admin\Services\Catalog\AttributeService;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
-class RoleController extends Controller
+class AttributeController extends Controller
 {
     private $lang;
     private $request;
-    private $RoleService;
-    private $UserService;
+    private $AttributeService;
 
-    public function __construct(Request $request, RoleService $RoleService, UserService $UserService)
+    public function __construct(Request $request, AttributeService $AttributeService)
     {
         $this->request = $request;
-        $this->RoleService = $RoleService;
-        $this->UserService = $UserService;
-        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/role']);
+        $this->AttributeService = $AttributeService;
+        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/catalog/attribute']);
     }
 
 
@@ -36,30 +33,29 @@ class RoleController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_attributes,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.role.index'),
+            'href' => route('lang.admin.catalog.attributes.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
+        $data['add_url'] = route('lang.admin.catalog.attributes.form');
+        $data['list_url'] = route('lang.admin.catalog.attributes.list');
+        
         $data['list'] = $this->getList();
 
-        return view('ocadmin.user.role', $data);
+        return view('ocadmin.catalog.attribute', $data);
     }
 
 
     public function list()
     {
-        $data['lang'] = $this->lang;
-
-        $data['form_action'] = route('lang.admin.user.role.list');
-
         return $this->getList();
     }
 
@@ -99,18 +95,16 @@ class RoleController extends Controller
             }
         }
 
-        //$data['action'] = route('lang.admin.user.role.massDelete');
-
         // Rows
-        $users = $this->RoleService->getRows($queries);
+        $records = $this->AttributeService->getCategories($queries,1);
 
-        if(!empty($users)){
-            foreach ($users as $row) {
-                $row->edit_url = route('lang.admin.user.role.form', array_merge([$row->id], $queries));
+        if(!empty($records)){
+            foreach ($records as $row) {
+                $row->edit_url = route('lang.admin.catalog.attributes.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $users->withPath(route('lang.admin.user.role.list'))->appends($queries);
+        $data['records'] = $records->withPath(route('lang.admin.catalog.attributes.list'))->appends($queries,1); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -132,20 +126,22 @@ class RoleController extends Controller
         }
 
         //link of table header for sorting
-        $route = route('lang.admin.user.role.list');
+        $route = route('lang.admin.catalog.attributes.list');
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
-        $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
-        return view('ocadmin.user.role_list', $data);
+        $data['list_url'] = route('lang.admin.catalog.attributes.list');
+
+        return view('ocadmin.catalog.attribute_list', $data);
     }
 
 
-    public function form($role_id = null)
+    public function form($term_id = null)
     {
-        $data['lang'] = $this->lang;
+        // Language
+        $this->lang->text_form = empty($term_id) ? $this->lang->text_add : $this->lang->text_edit;
 
-        $this->lang->text_form = empty($role_id) ? $this->lang->trans('text_add') : $this->lang->trans('text_edit');
+        $data['lang'] = $this->lang;
 
         // Breadcomb
         $breadcumbs[] = (object)[
@@ -154,14 +150,14 @@ class RoleController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_user,
+            'text' => $this->lang->text_attributes,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.role.index'),
+            'href' => route('lang.admin.catalog.attributes.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
@@ -197,38 +193,56 @@ class RoleController extends Controller
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save_url'] = route('lang.admin.user.role.save');
-        $data['back_url'] = route('lang.admin.user.role.index', $queries);
+        $data['save_url'] = route('lang.admin.catalog.attributes.save');
+        $data['back_url'] = route('lang.admin.catalog.attributes.index', $queries);
+
+        $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
-        $role = $this->RoleService->findOrFailOrNew(id:$role_id);
+        $term = $this->AttributeService->findOrFailOrNew(id:$term_id);
 
-        $data['role']  = $role;
-        $data['role_id'] = $role_id ?? null;
-
-        return view('ocadmin.user.role_form', $data);
+        $data['term']  = $term;
+        
+        $data['term_id'] = $term_id ?? null;
+        
+        $data['translations'] = $term->sortedTranslations();
+        
+        return view('ocadmin.catalog.attribute_form', $data);
     }
 
 
     public function save()
     {
-        $data = $this->request->all();
+        $postData = $this->request->post();
 
         $json = [];
 
-        // validator
+        // Validate
+        foreach ($postData['translations'] as $locale => $translation) {
+            if(empty($translation['name']) || mb_strlen($translation['name']) < 1){
+                $json['error']['name-' . $locale] = $this->lang->error_name;
+            }
+            
+            if(empty($translation['slug']) || mb_strlen($translation['slug']) < 1){
+                $json['error']['slug-' . $locale] = $this->lang->error_slug;
+            }
+        }  
+
+
+        // Default error warning   
+        if(isset($json['error']) && !isset($json['error']['warning'])) {
+            $json['error']['warning'] = $this->lang->error_warning;
+        }
 
         if(!$json) {
-            $result = $this->RoleService->updateOrCreate($data);
+            $result = $this->AttributeService->save($postData);
 
             if(empty($result['error'])){
-                $json['user_id'] = $result['data']['user_id'];
+                $json['term_id'] = $result['term_id'];
                 $json['success'] = $this->lang->text_success;
+                $json['replace_url'] = route('lang.admin.catalog.attributes.form', $result['term_id']);
             }else{
-                $user = Auth::user();
-
-                $user_id = auth()->user()->id;
-                if($user_id == 1){
+                if(config('app.debug')){
                     $json['error'] = $result['error'];
                 }else{
                     $json['error'] = $this->lang->text_fail;
@@ -236,7 +250,9 @@ class RoleController extends Controller
             }
         }
 
-       return response(json_encode($json))->header('Content-Type','application/json');
+        return response(json_encode($json))->header('Content-Type','application/json');
 
     }
+
+
 }

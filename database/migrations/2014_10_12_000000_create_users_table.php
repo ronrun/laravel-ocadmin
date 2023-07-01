@@ -25,12 +25,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('user_meta', function (Blueprint $table) {
+        Schema::create('user_metas', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id');
             $table->string('meta_key');
             $table->longText('meta_value')->default('');
-            $table->index(['user_id','meta_key']);
+            $table->unique(['user_id','meta_key']);
         });
 
         Schema::create('user_logins', function (Blueprint $table) {
@@ -48,7 +48,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('user_logins');
-        Schema::dropIfExists('user_meta');
+        Schema::dropIfExists('user_metas');
         Schema::dropIfExists('users');
     }
 };

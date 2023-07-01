@@ -9,14 +9,14 @@ use App\Libraries\TranslationLibrary;
 
 class UserService extends Service
 {
-    public $modelName;
+    public $model_name;
     public $model;
     public $table;
     public $lang;
 
 	public function __construct()
 	{
-        $this->modelName = "\App\Models\User\User";
+        $this->model_name = "\App\Models\User\User";
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/user']);
 	}
 
@@ -24,7 +24,7 @@ class UserService extends Service
     {
         $data['WhereRawSqls'][] = "is_admin=1";
         
-        return $this->getRecords($data);
+        return $this->getRows($data);
 
     }
 

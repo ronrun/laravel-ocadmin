@@ -50,7 +50,7 @@
                       </div>
                     </div>
 
-                    <div class="row mb-3 required">
+                    <div class="row mb-3">
                       <label for="input-slug" class="col-sm-2 col-form-label">{{ $lang->column_slug }}</label>
                       <div class="col-sm-10">
                         <input type="text" id="input-slug-{{ $locale }}" name="post_translations[{{ $locale }}][slug]" value="{{ !empty($translations->$locale) ? $translations->$locale->slug : '' }}" class="form-control">

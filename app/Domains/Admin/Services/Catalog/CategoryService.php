@@ -7,7 +7,7 @@ use App\Domains\Admin\Services\Service;
 
 class CategoryService extends Service
 {
-    public $modelName = "\App\Models\Common\Term";
+    public $model_name = "\App\Models\Common\Term";
     public $model;
     public $table;
     public $lang;
@@ -16,7 +16,7 @@ class CategoryService extends Service
     public function getCategories($data)
     {
         $data['WhereRawSqls'][] = "taxonomy_code='product_category'";        
-        return $records = $this->getRecords($data);
+        return $records = $this->getRows($data);
     }
 
     public function save($data)
@@ -24,17 +24,17 @@ class CategoryService extends Service
         DB::beginTransaction();
 
         try {
-            $category = $this->findOrFailOrNew(id:$data['category_id']);
-            $category->taxonomy_code = 'product_category';
-            $this->saveModelInstance($category, $data);
+            $term = $this->findOrFailOrNew(id:$data['category_id']);
+            $term->taxonomy_code = 'product_category';
+            $this->saveModelInstance($term, $data);
 
             if(!empty($data['translations'])){
-                $this->saveTranslationData($category, $data['translations']);
+                $this->saveTranslationData($term, $data['translations']);
             }
 
             DB::commit();
 
-            $result['category_id'] = $category->id;
+            $result['category_id'] = $term->id;
     
             return $result;
 

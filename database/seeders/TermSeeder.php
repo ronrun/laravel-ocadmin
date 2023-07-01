@@ -14,7 +14,7 @@ class TermSeeder extends Seeder
      */
     public function run()
     {
-        // Taxonomy
+        // terms
         $filename = 'database/imports/terms.csv';
 
         $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE terms
@@ -26,7 +26,7 @@ class TermSeeder extends Seeder
              
         DB::unprepared($query);
 
-        // Taxonomy Translations
+        // term_translations
         $filename = 'database/imports/term_translations.csv';
 
         $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE term_translations
@@ -35,6 +35,18 @@ class TermSeeder extends Seeder
             LINES TERMINATED BY '\r\n'
             IGNORE 1 LINES
             (id,term_id,locale,name);";
+             
+        DB::unprepared($query);
+
+        // term_metas
+        $filename = 'database/imports/term_metas.csv';
+
+        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE term_metas
+            FIELDS TERMINATED BY ','
+            ENCLOSED BY '\"'
+            LINES TERMINATED BY '\r\n'
+            IGNORE 1 LINES
+            (id,term_id,meta_key,meta_value);";
              
         DB::unprepared($query);
     }

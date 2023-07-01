@@ -7,7 +7,7 @@ use App\Domains\Admin\Services\Service;
 
 class PostService extends Service
 {
-    public $modelName = "\App\Models\Post\Post";
+    public $model_name = "\App\Models\Post\Post";
     public $model;
     public $table;
     public $lang;
@@ -15,7 +15,7 @@ class PostService extends Service
 
     public function getPosts($data)
     {        
-        return $this->getRecords($data);
+        return $this->getRows($data);
     }
 
 

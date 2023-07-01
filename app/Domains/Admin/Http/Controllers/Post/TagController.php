@@ -102,7 +102,7 @@ class TagController extends Controller
         $queries['filter_taxonomy_code'] = 'post_tag';
 
         // Rows
-        $users = $this->TermService->getRecords($queries);
+        $users = $this->TermService->getRows($queries);
 
         if(!empty($users)){
             foreach ($users as $row) {
