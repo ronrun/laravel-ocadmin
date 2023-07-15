@@ -206,9 +206,9 @@ class OptionController extends Controller
         $data['translations'] = $option->sortedTranslations();
 
         //$option_values = $this->OptionService->getOptionValues(option_id:$option->id);
+        //echo '<pre>option_values ', print_r($option->option_values->toArray(), 1), "</pre>"; exit;
         $option_values = $option->option_values;
 
-        echo '<pre>option_values ', print_r(999, 1), "</pre>"; exit;
         $data['option_values']  = $option_values;
         
         return view('ocadmin.catalog.option_form', $data);

@@ -8,7 +8,7 @@ use App\Models\Common\Term;
 
 class OptionService extends Service
 {
-    public $model_name = "\App\Models\Common\Term";
+    public $model_name = "\App\Models\Catalog\Option";
     public $model;
     public $table;
     public $lang;

@@ -1,23 +1,35 @@
 <?php
 
-namespace App\Models\Common;
+namespace App\Models\Catalog;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\ModelTrait;
 use App\Traits\TranslatableTrait;
 
-class Term extends Model
+class Option extends Model
 {
     use TranslatableTrait;
     use ModelTrait;
-    
+
+    protected $table = 'terms';
     protected $guarded = [];
-    protected $appends = ['name','slug','description',];
+    protected $appends = ['name','slug',];
+    public $translated_attributes = ['name', 'slug',];
 
-    public $translated_attributes = ['name', 'description', 'slug',];
-    public $translationForeignKey = 'term_id';
+    public function option_values()
+    {
+        return $this->hasMany(OptionValue::class, 'parent_id', 'id');
+    }
 
+    public static function boot()
+    {
+        parent::boot();
+ 
+        static::addGlobalScope(function ($query) {
+            $query->where('taxonomy_code', 'product_option');
+        });
+    }
 
     protected function name(): Attribute
     {

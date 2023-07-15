@@ -11,7 +11,7 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="float-end">
-        <button type="submit" form="form-category" data-bs-toggle="tooltip" class="btn btn-primary" aria-label="Save" data-bs-original-title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
+        <button type="submit" form="form-option" data-bs-toggle="tooltip" class="btn btn-primary" aria-label="Save" data-bs-original-title="Save"><i class="fa-solid fa-floppy-disk"></i></button>
         <a href="{{ $back_url }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fa-solid fa-reply"></i></a>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
@@ -22,7 +22,7 @@
     <div class="card">
       <div class="card-header"><i class="fa-solid fa-pencil"></i> {{ $lang->button_add }}</div>
       <div class="card-body">
-        <form id="form-category" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
+        <form id="form-option" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
           @csrf
           @method('POST')
           <ul class="nav nav-tabs" role="tablist">
@@ -70,7 +70,7 @@
                   <div class="input-group">
                     <div id="input-is_active" class="form-check form-switch form-switch-lg">
                       <input type="hidden" name="is_active" value="0"/>
-                      <input type="checkbox" name="is_active" value="1" class="form-check-input" @if($category->is_active) checked @endif/>
+                      <input type="checkbox" name="is_active" value="1" class="form-check-input" @if($option->is_active) checked @endif/>
                     </div>
                   </div>
                 </div>
@@ -78,7 +78,7 @@
             </div>
 
           </div>
-          <input type="hidden" name="category_id" value="{{ $category_id }}" id="input-category_id"/>
+          <input type="hidden" name="option_id" value="{{ $option_id }}" id="input-option_id"/>
         </form>
       </div>
     </div>

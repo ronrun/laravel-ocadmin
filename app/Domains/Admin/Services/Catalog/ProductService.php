@@ -14,7 +14,7 @@ class ProductService extends Service
 
 
     public function getProducts($data, $debug=0)
-    {        
+    {
         return $this->getRows($data, $debug);
     }
 

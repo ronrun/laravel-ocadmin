@@ -104,7 +104,7 @@ class AttributeController extends Controller
             }
         }
 
-        $data['records'] = $records->withPath(route('lang.admin.catalog.attributes.list'))->appends($queries,1); 
+        $data['records'] = $records->withPath(route('lang.admin.catalog.attributes.list'))->appends($queries); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -221,10 +221,6 @@ class AttributeController extends Controller
         foreach ($postData['translations'] as $locale => $translation) {
             if(empty($translation['name']) || mb_strlen($translation['name']) < 1){
                 $json['error']['name-' . $locale] = $this->lang->error_name;
-            }
-            
-            if(empty($translation['slug']) || mb_strlen($translation['slug']) < 1){
-                $json['error']['slug-' . $locale] = $this->lang->error_slug;
             }
         }  
 

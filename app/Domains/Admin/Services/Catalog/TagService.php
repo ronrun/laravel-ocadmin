@@ -36,14 +36,13 @@ class TagService extends Service
 
             DB::commit();
 
-            $result['data']['record_id'] = $tag->id;
+            $result['tag_id'] = $tag->id;
     
             return $result;
 
         } catch (\Exception $ex) {
             DB::rollback();
-            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
-            return $result;
+            return ['error' => $ex->getMessage()];
         }
     }
 

@@ -28,6 +28,8 @@ trait EloquentTrait
             $this->connection = DB::connection()->getName();
         }
 
+        $this->getTableColumns();
+
         $this->locale = app()->getLocale();
         $this->zh_hant_hans_transform = false;
 
@@ -113,7 +115,7 @@ trait EloquentTrait
         }
 
         // With translation relation
-        if(!empty($this->model->translatedAttributes)){
+        if(!empty($this->model->translated_attributes)){
             $query->with('translation');
         }
 
@@ -172,8 +174,7 @@ trait EloquentTrait
         }
 
         //  - Sort
-        if(in_array($data['sort'], $this->model->translatedAttributes)){
-            
+        if(in_array($data['sort'], $this->model->translated_attributes)){
             $translationTable = $this->getTranslationTable();
             $master_key = $this->getTranslationMasterKey();
 
@@ -248,7 +249,7 @@ trait EloquentTrait
 
     private function setFiltersQuery($query, $data, $debug=0)
     {
-        $translatedAttributes = $this->model->translatedAttributes ?? [];
+        $translated_attributes = $this->model->translated_attributes ?? [];
         
         // Ignore is_active if -1
         if(isset($data['filter_is_active'] ) && $data['filter_is_active'] == -1){
@@ -274,13 +275,13 @@ trait EloquentTrait
                 continue;
             }
 
-            // Has to be the table's columns
-            if(!in_array($column, $this->getTableColumns())){
+            // Translated column is not processed here
+            if(in_array($column, $translated_attributes)){
                 continue;
             }
 
-            // Translated column is not processed here
-            if(in_array($column, $translatedAttributes)){
+            // Has to be the table's columns
+            if(!in_array($column, $this->table_columns)){
                 continue;
             }
 
@@ -305,13 +306,25 @@ trait EloquentTrait
         }
 
         // set translated whereHas then return data
-        if(in_array($column, $translatedAttributes)){
-            $data['whereHas']['translation'][$key] = $data[$key];
-            unset($data[$key]);
+        $translated_attributes = $this->model->translated_attributes ?? [];
+
+        foreach ($data as $key => $value) {
+            if(!str_starts_with($key, 'filter_')){
+                continue;
+            }else{
+                $column = str_replace('filter_', '', $key);
+            }
+
+            if(in_array($column, $translated_attributes)){
+                $data['whereHas']['translation'][$key] = $data[$key];
+                unset($data[$key]);
+            }
         }
 
         // Filters - relations
-
+        if(!empty($data['whereHas'])){
+            $this->setWhereHas($query, $data['whereHas']);
+        }
 
         // Display sql statement
         if(!empty($debug)){
@@ -335,7 +348,6 @@ trait EloquentTrait
                 continue;
             }
 
-            $this->getTableColumns();
             if(!in_array($column, $this->table_columns)){ // Has to be the table's columns
                 continue;
             }
@@ -351,6 +363,38 @@ trait EloquentTrait
         }
 
         return $query;
+    }
+
+    private function setWith($query, $funcData)
+    {
+        // $data['with'] = 'translation'
+        if(!is_array($funcData)){
+            $query->with($funcData);
+        }else{
+            foreach ($funcData as $key => $filters) {
+
+                // Example: $data['with'] = ['products','members'];
+                if(!is_array($filters)){
+                    $query->with($funcData);
+                }
+
+                /* Example:
+                $data['with'] = [
+                    'products' => ['slug' => 'someCategory', 'is_active' => 1],
+                    'orders' => ['amount' => '>1000']
+                ];
+                */
+                else{
+                    // 注意：with 裡面使用Closure函數，只是過濾 with 表，然後附加過來。不會過濾主表
+                    $query->with([$key => function($query) use ($key, $filters) {
+                        foreach ($filters as $column => $value) {
+                            //$query = $this->setWhereQuery($query, $column, $value, 'where');
+                            $query->where("$key.$column", '=', $value);
+                        }
+                    }]);
+                }
+            }
+        }
     }
 
     /**
@@ -469,13 +513,23 @@ trait EloquentTrait
         }
         // '<123' Smaller than 123
         else if(str_starts_with($value, '<') && strlen($value) > 1){
-            $value = substr($value,1); // '123'
-            $query->$type($column, '<', $value);
+            $value = (int)substr($value,1);
+            if($type == 'where'){
+                $query->whereRaw("$column < $value");
+            }
+            if($type == 'orWhere'){
+                $query->orWhereRaw("$column < $value");
+            }
         }
         // '>123' bigger than 123
         else if(str_starts_with($value, '>') && strlen($value) > 1){
-            $value = substr($value,1);
-            $query->$type($column, '>', $value);
+            $value = (int)substr($value,1);
+            if($type == 'where'){
+                $query->whereRaw("$column > $value");
+            }
+            if($type == 'orWhere'){
+                $query->orWhereRaw("$column > $value");
+            }
         }
         // '*foo woo'
         else if(substr($value,0, 1) == '*' && substr($value,-1) != '*'){
@@ -519,35 +573,14 @@ trait EloquentTrait
         return $query;
     }
 
-    private function setWith($query, $funcData)
+    private function setWhereHas($query, $data)
     {
-        // $data['with'] = 'translation'
-        if(!is_array($funcData)){
-            $query->with($funcData);
-        }else{
-            foreach ($funcData as $key => $filters) {
-
-                // Example: $data['with'] = ['products','members'];
-                if(!is_array($filters)){
-                    $query->with($funcData);
+        foreach ($data as $rel_name => $relation) {
+            $query->whereHas($rel_name, function($query) use ($relation) {
+                foreach ($relation as $key => $value) {
+                    $this->setWhereQuery($query, $key, $value, 'where');
                 }
-
-                /* Example:
-                $data['with'] = [
-                    'products' => ['slug' => 'someCategory', 'is_active' => 1],
-                    'orders' => ['amount' => '>1000']
-                ];
-                */
-                else{
-                    // 注意：with 裡面使用Closure函數，只是過濾 with 表，然後附加過來。不會過濾主表
-                    $query->with([$key => function($query) use ($key, $filters) {
-                        foreach ($filters as $column => $value) {
-                            //$query = $this->setWhereQuery($query, $column, $value, 'where');
-                            $query->where("$key.$column", '=', $value);
-                        }
-                    }]);
-                }
-            }
+            });
         }
     }
 
@@ -609,10 +642,10 @@ trait EloquentTrait
         return new $translationModelName();
     }
 
-    public function saveTranslationData($masterModel, $data, $translatedAttributes=null)
+    public function saveTranslationData($masterModel, $data, $translated_attributes=null)
     {
-        if(empty($translatedAttributes)){
-            $translatedAttributes = $this->model->translatedAttributes;
+        if(empty($translated_attributes)){
+            $translated_attributes = $this->model->translated_attributes;
         }
 
         $translationModel = $this->getTranslationModel();
@@ -630,7 +663,7 @@ trait EloquentTrait
             $row_data_keys = []; //用於檢查非鍵的欄位是否有資料
 
             //設定語言表全部欄位，若無值則給空值，確保每一個欄位都有值。這是為了讓欄位數量一致，才能做批次upsert()。
-            foreach ($translatedAttributes as $column) {
+            foreach ($translated_attributes as $column) {
                 if(!empty($row[$column])){
                     $arr[$column] = $row[$column];
 

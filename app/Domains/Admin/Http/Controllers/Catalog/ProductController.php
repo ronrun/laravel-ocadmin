@@ -96,15 +96,15 @@ class ProductController extends Controller
         }
 
         // Rows
-        $records = $this->ProductService->getProducts($queries);
+        $rows = $this->ProductService->getProducts($queries);
 
-        if(!empty($records)){
-            foreach ($records as $row) {
+        if(!empty($rows)){
+            foreach ($rows as $row) {
                 $row->edit_url = route('lang.admin.catalog.products.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $records->withPath(route('lang.admin.catalog.products.list'))->appends($queries); 
+        $data['rows'] = $rows->withPath(route('lang.admin.catalog.products.list'))->appends($queries); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){

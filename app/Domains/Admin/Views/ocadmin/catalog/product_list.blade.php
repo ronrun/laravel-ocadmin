@@ -12,7 +12,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach($records as $record)
+				@foreach($rows as $record)
 				<tr>
 					<td class="text-end">{{ $record->id }}</td>
 					<td class="text-start">{{ $record->name }}</td>
@@ -23,5 +23,5 @@
 			</tbody>
 		</table>
 	</div>
-	{!! $records->links('ocadmin.common.pagination', ['posts' => $records]) !!}
+	{!! $rows->links('ocadmin.common.pagination', ['rows' => $rows]) !!}
 </form>

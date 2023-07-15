@@ -9,10 +9,12 @@ trait TranslatableTrait
         if(empty($translationModelName)){
             $translationModelName = get_class($this) . 'Translation';
             
-            $translactionModel = new $translationModelName();
+            $translationModel = new $translationModelName();
         }
+        
+        $foreign_key = $translationModel->foreign_key ?? $this->getForeignKey();
 
-        return $this->hasMany($translactionModel::class);
+        return $this->hasMany($translationModel::class, $foreign_key, 'id');
     }
 
     public function translation($locale = null, $translationModelName = null)
@@ -23,10 +25,12 @@ trait TranslatableTrait
 
         if(empty($translationModelName)){
             $translationModelName = get_class($this) . 'Translation';
-            $translactionModel = new $translationModelName();
+            $translationModel = new $translationModelName();
         }
+        
+        $foreign_key = $translationModel->foreign_key ?? $this->getForeignKey();
 
-        return $this->hasOne($translactionModel::class)->ofMany([
+        return $this->hasOne($translationModel::class, $foreign_key, 'id')->ofMany([
             'id' => 'max',
         ], function ($query) {
             $query->where('locale', app()->getLocale());

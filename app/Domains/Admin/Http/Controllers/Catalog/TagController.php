@@ -21,7 +21,6 @@ class TagController extends Controller
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/catalog/tag']);
     }
 
-
     public function index()
     {
         $data['lang'] = $this->lang;
@@ -53,12 +52,10 @@ class TagController extends Controller
         return view('ocadmin.catalog.tag', $data);
     }
 
-
     public function list()
     {
         return $this->getList();
     }
-
 
     public function getList()
     {
@@ -135,7 +132,6 @@ class TagController extends Controller
         return view('ocadmin.catalog.tag_list', $data);
     }
 
-
     public function form($tag_id = null)
     {
         // Language
@@ -209,7 +205,6 @@ class TagController extends Controller
         
         return view('ocadmin.catalog.tag_form', $data);
     }
-
 
     public function save()
     {

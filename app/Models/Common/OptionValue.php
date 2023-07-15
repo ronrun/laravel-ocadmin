@@ -12,5 +12,5 @@ class OptionValue extends Model
 {
     use TranslatableTrait;
 
-    public $translatedAttributes = ['name', 'content', 'slug',];
+    public $translated_attributes = ['name', 'content', 'slug',];
 }

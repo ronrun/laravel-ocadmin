@@ -13,10 +13,10 @@ class CategoryService extends Service
     public $lang;
 
 
-    public function getCategories($data)
+    public function getCategories($data, $debug=0)
     {
         $data['WhereRawSqls'][] = "taxonomy_code='product_category'";        
-        return $records = $this->getRows($data);
+        return $this->getRows($data, $debug);
     }
 
     public function save($data)

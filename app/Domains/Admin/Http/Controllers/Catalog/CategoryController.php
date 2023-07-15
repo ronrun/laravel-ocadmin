@@ -21,7 +21,6 @@ class CategoryController extends Controller
         $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/catalog/category']);
     }
 
-
     public function index()
     {
         $data['lang'] = $this->lang;
@@ -53,18 +52,16 @@ class CategoryController extends Controller
         return view('ocadmin.catalog.category', $data);
     }
 
-
     public function list()
     {
         return $this->getList();
     }
 
-
     public function getList()
     {
         $data['lang'] = $this->lang;
 
-        // Prepare link for action
+        // Prepare link for rows's action
         $queries = [];
 
         if(!empty($this->request->query('page'))){
@@ -96,7 +93,7 @@ class CategoryController extends Controller
         }
 
         // Rows
-        $categories = $this->CategoryService->getCategories($queries,1);
+        $categories = $this->CategoryService->getCategories($queries);
 
         if(!empty($categories)){
             foreach ($categories as $row) {
@@ -104,7 +101,7 @@ class CategoryController extends Controller
             }
         }
 
-        $data['categories'] = $categories->withPath(route('lang.admin.catalog.categories.list'))->appends($queries,1); 
+        $data['categories'] = $categories->withPath(route('lang.admin.catalog.categories.list'))->appends($queries); 
 
         // Prepare links for list table's header
         if($order == 'ASC'){
@@ -134,7 +131,6 @@ class CategoryController extends Controller
 
         return view('ocadmin.catalog.category_list', $data);
     }
-
 
     public function form($category_id = null)
     {
@@ -209,7 +205,6 @@ class CategoryController extends Controller
         
         return view('ocadmin.catalog.category_form', $data);
     }
-
 
     public function save()
     {
