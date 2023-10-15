@@ -3,59 +3,40 @@
 namespace App\Repositories\Catalog;
 
 use Illuminate\Support\Facades\DB;
-use App\Helpers\EloquentHelper;
 use App\Models\Catalog\Product;
-use App\Repositories\Repository;
+use App\Traits\EloquentNewTrait;
 
-class ProductRepository extends Repository
+class ProductRepository
 {
-    protected $model = 'App\Models\Catalog\Product';
+    use EloquentNewTrait;
+
+    protected $model_name = 'App\Models\Catalog\Product';
     
     public function getProducts($data = [], $debug = 0)
     {
-        $data['model'] = new Product;
-
-        $rows = EloquentHelper::getRows($data, $debug);
-
-        if(!empty($data['with']) && in_array('translations', $data['with'])){
-            $rows = EloquentHelper::resetTranslations($rows);
-        }
+        $rows = $this->getRows($data, $debug);
+        $rows = $this->setTranslationToRows($rows,['name']);
 
         return $rows;
     }
 
-    public function getProduct($data = [], $debug = 0)
-    {
-        $data['model'] = new Product;
-
-        $row = EloquentHelper::getRow($data, $debug);
-
-        if(!empty($data['with']) && in_array('translations', $data['with'])){
-            $row = EloquentHelper::resetRowTranslation($row);
-        }
-
-        return $row;
-    }
-
-    public function save($row, $data, $debug)
+    public function saveProduct($data, $debug)
     {
         DB::beginTransaction();
 
-
-
         try {
-            $row = EloquentHelper::findOrFailOrNew($row->id, $row);
-            EloquentHelper::save($row, $data);
+            $row = $this->findIdOrFailOrNew($data['product_id']);
+            $this->save($row, $data);
 
             if(!empty($data['translations'])){
-                $this->saveTranslationData($product, $data['product_translations']);
+                $this->saveTranslationMeta($row, $data['translations']);
             }
 
-            // DB::commit();
+            DB::commit();
 
-            // $result['data']['record_id'] = $product->id;
+            $result['data']['record_id'] = $row->id;
     
-            // return $result;
+            return $result;
 
         } catch (\Exception $ex) {
             DB::rollback();

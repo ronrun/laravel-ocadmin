@@ -2,13 +2,12 @@
 
 namespace App\Domains\Admin\Services\Catalog;
 
-use Illuminate\Support\Facades\DB;
-use App\Helpers\EloquentHelper;
+use App\Traits\EloquentNewTrait;
 use App\Repositories\Catalog\ProductRepository;
-
 
 class ProductService
 {
+    use EloquentNewTrait;
 
     public $model_name = "\App\Models\Catalog\Product";
     public $model;
@@ -25,9 +24,9 @@ class ProductService
     }
 
 
-    public function save($row, $data, $debug)
+    public function saveProduct($data, $debug = 0)
     {
-        return $this->ProductRepository->save($row, $data, $debug);
+        return $this->ProductRepository->saveProduct($data, $debug);
     }
 
 }

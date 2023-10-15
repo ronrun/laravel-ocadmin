@@ -39,13 +39,11 @@
               </ul>
               <div class="tab-content">
                 @foreach($supportedLocales as $locale => $localeContent)
-                  <input type="hidden" name="post_translations[{{ $locale }}][id]" value="{{ !empty($translations->$locale) ? $translations->$locale->id : '' }}" >
-
                   <div id="language-{{ $locale }}" class="tab-pane @if($loop->first) active @endif">
                     <div class="row mb-3 required">
                       <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-name-{{ $locale }}" name="post_translations[{{ $locale }}][name]" value="{{ !empty($translations->$locale) ? $translations->$locale->name : '' }}" class="form-control">
+                        <input type="text" id="input-name-{{ $locale }}" name="translations[{{ $locale }}][name]" value="{{ !empty($translations[$locale]['name']) ? $translations[$locale]['name'] : '' }}" class="form-control">
                         <div id="error-name" class="invalid-feedback"></div>
                       </div>
                     </div>
@@ -53,7 +51,7 @@
                     <div class="row mb-3">
                       <label for="input-slug" class="col-sm-2 col-form-label">{{ $lang->column_slug }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-slug-{{ $locale }}" name="post_translations[{{ $locale }}][slug]" value="{{ !empty($translations->$locale) ? $translations->$locale->slug : '' }}" class="form-control">
+                        <input type="text" id="input-slug-{{ $locale }}" name="translations[{{ $locale }}][slug]" value="{{ !empty($translations[$locale]['slug']) ? $translations[$locale]['slug'] : '' }}" class="form-control">
                         <div id="error-slug" class="invalid-feedback"></div>
                       </div>
                     </div>
@@ -64,6 +62,15 @@
             </div>
 
             <div id="tab-data" class="tab-pane">
+              
+              <div class="row mb-3">
+                <label for="input-model" class="col-sm-2 col-form-label">{{ $lang->column_model }}</label>
+                <div class="col-sm-10">
+                  <input type="text" id="input-model" name="model" value="{{ $product->model }}" class="form-control">
+                  <div id="error-model" class="invalid-feedback"></div>
+                </div>
+              </div>
+
               <div class="row mb-3">
                 <label class="col-sm-2 col-form-label">{{ $lang->column_is_active }}</label>
                 <div class="col-sm-10">
@@ -78,7 +85,7 @@
             </div>
 
           </div>
-          <input type="hidden" name="post_id" value="{{ $product_id }}" id="input-post_id"/>
+          <input type="hidden" name="product_id" value="{{ $product_id }}" id="input-product_id"/>
         </form>
       </div>
     </div>

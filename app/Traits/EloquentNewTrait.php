@@ -8,20 +8,284 @@ use Illuminate\Support\Facades\DB;
 
 trait EloquentNewTrait
 {
-    public function findOrFailOrNew($id, $model)
+    public function initialize($data = null)
+    {
+        $this->model = new $this->model_name;
+        $this->table = $this->model->getTable();
+        $this->connection  = $this->model->getConnectionName();
+        $this->table_columns = $this->getTableColumns($this->connection);
+        $this->locale = app()->getLocale();
+        $this->is_mapping_zh_hant_hans = false;
+    }
+
+    public function newModel()
+    {
+        $model = new $this->model_name;
+
+        if(empty($this->model)){
+            $this->model = $model;
+        }
+
+        return $model;
+    }
+
+    public function findIdOrFailOrNew($id, $data = null, $debug = 0)
     {
         //find
-        if(!empty($id)){
-            $row = $model->where('id', $id)->firstOrFail();
+        if(!empty(trim($id))){
+            $query = $this->newModel()->where('id', $id);
+
+            $row = $query->firstOrFail();
         }
         //new
         else{
-            $row = $model;
+            $row = $this->newModel();
+        }
+
+        return $row;
+    }
+    // public function findOrFailOrNew($id, $model)
+    // {
+    //     //find
+    //     if(!empty($id)){
+    //         $row = $model->where('id', $id)->firstOrFail();
+    //     }
+    //     //new
+    //     else{
+    //         $row = $model;
+    //     }
+
+    //     return $row;
+    // }
+
+    public function getRows($data = [], $debug = 0): mixed
+    {
+        $this->initialize();
+        $query = $this->model->query();
+
+        // Equals
+        $query = $this->setEqualsQuery($query, $data);
+
+        // Filters
+        $query = $this->setFiltersQuery($query, $data);
+
+
+        // Sort & Order
+        //  - Order
+        if (isset($data['order']) && ($data['order'] == 'ASC')) {
+            $order = 'ASC';
+        }
+        else{
+            $order = 'DESC';
+        }
+
+        //  - Sort
+        if(!empty($this->model->translation_attributes) && in_array($data['sort'], $this->model->translation_attributes)){
+            $translationTable = $this->getTranslationTable();
+            $master_key = $this->getTranslationMasterKey();
+            $sort = $data['sort'];
+
+            $query->join($translationTable, function ($join) use ($translationTable, $master_key, $sort){
+                $join->on("{$this->table}.id", '=', "{$translationTable}.{$master_key}")
+                     ->where("{$translationTable}.locale", '=', $this->locale)
+                     ->where("{$translationTable}.meta_key", '=', $sort);
+            });
+
+            $query->orderBy("{$translationTable}.meta_value", $order);
+
+            $query->select("{$this->table}.*");
+        }else{
+            if(empty($data['sort']) || $data['sort'] == 'id'){
+                $sort = $this->model->getTable() . '.id';
+            }
+            else{
+                $sort = $data['sort'];
+            }
+            $query->orderBy($sort, $order);
+        }
+
+
+        // see the sql statement
+        if(!empty($debug)){
+            $this->getQueries($query);
+        }
+
+
+        // get result
+        $result = [];
+
+        // single row
+        if(isset($data['first']) && $data['first'] = true){
+            $result = $query->first();
+            //$result = $this->getMetas($result);
+        }
+        // multi rows
+        else{
+            // Limit
+            if(isset($data['limit'])){
+                $limit = (int)$data['limit'];
+            }else if(!empty(config('setting.config_admin_pagination_limit'))){
+                $limit = (int)config('setting.config_admin_pagination_limit');
+            }else{
+                $limit = 10;
+            }
+    
+            // Pagination
+            if(isset($data['pagination']) ){
+                $pagination = (boolean)$data['pagination'];
+            }else{
+                $pagination = true;
+            }
+    
+            if($pagination == true && $limit != 0){
+                $result = $query->paginate($limit); // Get some rows per page
+            }
+            else if($pagination == false && $limit != 0){
+                $result = $query->limit($limit)->get(); // Get some rows without pagination
+            }
+            else if($pagination == false && $limit == 0){
+                $result = $query->get(); // Get all
+            }
+
+            if(count($result) > 0){
+                foreach ($result as $row) {
+                    //$row = $this->getMetas($row);
+                    //$row = $this->setTranslationToRow($row);
+                }
+
+
+
+            }
+        }
+
+        return $result;
+    }
+
+    public function getRow($data, $debug=0)
+    {
+        $data['first'] = true;
+        $row = $this->getRows($data, $debug);
+        return $row;
+    }
+
+    // Current Language
+    public function setTranslationToRow($row, $columns = [])
+    {
+        foreach ($row->translation as $translation) {
+            // 未指定欄位
+            if(empty($columns)){
+                $row->{$translation->meta_key} = $translation->meta_value;
+            }
+            // 有指定欄位
+            else if(!empty($columns)){
+                if(in_array($translation->meta_key, $columns)){
+                    $row->{$translation->meta_key} = $translation->meta_value;
+                }else{
+                    continue;
+                }
+            }
+            
+            $row->setRelation('translation',null);
         }
 
         return $row;
     }
 
+    public function setTranslationToRows($rows, $columns = [])
+    {
+        foreach ($rows as $row) {
+            $row = $this->setTranslationToRow($row, $columns);
+        }
+
+        return $rows;
+    }
+
+    // Multi Language
+    public function setTranslationstoRow($row, $columns = [])
+    {
+        $formattedTranslations = [];
+
+        foreach ($row->translations as $translation) {
+            $locale = $translation->locale;
+            $column = $translation->meta_key;
+            $value = $translation->meta_value;
+            $formattedTranslations[$locale][] = [$column => $value];
+        }
+
+        $row->setRelation('translations', collect($formattedTranslations));
+
+        return $row;
+    }
+
+    public function setTranslationstoRows($rows)
+    {
+        $rows->load('translations');
+
+        foreach ($rows as $row) {
+            $row = $this->setTranslationstoRow($row);
+        }
+
+        return $rows;
+    }
+
+    public function save($row, $data)
+    {
+        $this->initialize();
+
+        if(!empty($row->getFillable())){
+            $row->fill($data);
+            return $row->save();
+        }
+        
+        $table_columns = $this->table_columns;
+        $form_columns = array_keys($data);
+
+        foreach ($table_columns as $column) {
+            if(!in_array($column, $form_columns)){
+                continue;
+            }
+
+            $row->$column = $data[$column];
+        }
+
+        return $row->save;
+    }
+
+    public function getMetaModel()
+    {
+        if(!empty($this->model->meta_model_name)){
+            $meta_model_name = $this->model->meta_model_name;
+        }else{
+            $meta_model_name = get_class($this->model) . 'Meta';
+        }
+
+        return new $meta_model_name();
+    }
+
+    public function saveTranslationMeta($masterRow, $data)
+    {
+        $meta_keys = $masterRow->meta_keys;
+        $meta_model = $this->getMetaModel();
+
+        // Keys
+        $master_key = $meta_model->master_key ?? $masterRow->getForeignKey();
+        $master_key_value = $masterRow->id;
+
+        $upsert_data = [];
+
+        foreach($data as $locale => $row){
+            $arr = [];
+            foreach ($row as $key => $value) {
+                $arr[$master_key] = $master_key_value;
+                $arr['locale'] = $locale;
+                $arr['meta_key'] = $key;
+                $arr['meta_value'] = $value;
+            }
+            $upsert_data[] = $arr;
+        }
+
+        $meta_model->upsert($upsert_data,[$master_key, 'locale', 'meta_key']);
+    }
 
     private function getTableColumns()
     {
@@ -103,7 +367,7 @@ trait EloquentNewTrait
             // translation
             if(in_array($column, $translation_attributes)){
                 $data['whereHas']['metas'][] = [
-                    'locale' => app()->getLocale(),
+                    'locale' => '='.app()->getLocale(),
                     'meta_key' => '='.$column,
                     'meta_value' => $data[$key],
                 ];
@@ -113,7 +377,7 @@ trait EloquentNewTrait
 
         // whereHas
         if(!empty($data['whereHas'])){
-            self::setWhereHas($query, $data['whereHas']);
+            $this->setWhereHas($query, $data['whereHas']);
         }
 
         // sub query
@@ -124,7 +388,7 @@ trait EloquentNewTrait
         }
         if(!empty($data['subOrWhere'])){
             foreach ($data['subOrWhere'] as $set) {
-                self::setSubOrWhereQuery($query, $set);
+                $this->setSubOrWhereQuery($query, $set);
             }
         }
 
@@ -217,7 +481,7 @@ trait EloquentNewTrait
     private function getTranslationModel()
     {
         if(empty($translationModelName)){
-            $translationModelName = get_class($this->model) . 'Translation';
+            $translationModelName = get_class($this->model) . 'Meta';
         }
 
         if(empty($translationModelName) && !empty($this->model->translationModelName)){ // Customized
@@ -229,7 +493,7 @@ trait EloquentNewTrait
 
     private function getTranslationMasterKey()
     {
-        $translationModel = self::getTranslationModel();
+        $translationModel = $this->getTranslationModel();
 
         if(!empty($translationModel->master_key)){
             return $translationModel->master_key;
@@ -242,7 +506,7 @@ trait EloquentNewTrait
 
     private function getTranslationTable()
     {
-        $translation_model = self::getTranslationModel();
+        $translation_model = $this->getTranslationModel();
         return $translation_model->getTable();      
     }
 
@@ -466,15 +730,14 @@ trait EloquentNewTrait
     /**
      * 獲取 meta_data，並根據 meta_keys ，若 meta_key 不存在，設為空值 ''
      */
-    private function getMetaDatas($row)
+    private function getMetas($row)
     {
         $local = app()->getLocale();
 
         if(!empty($row->metas)){
             foreach ($row->metas as $meta) {
-                if($meta->locale == $local){
-                    $row->{$meta->meta_key} = $meta->meta_value;
-                }else if($meta->locale == null){
+                //將 $locale = null, 及 $locale = 當前語言，載入 $row。若 $locale = 非當前語言，不載入
+                if($meta->locale == null || $meta->locale == $local){
                     $row->{$meta->meta_key} = $meta->meta_value;
                 }
             }

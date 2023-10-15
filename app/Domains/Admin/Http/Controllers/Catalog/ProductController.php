@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\Catalog\ProductService;
-use LaravelLocalization;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class ProductController extends Controller
 {
@@ -97,7 +97,7 @@ class ProductController extends Controller
 
         // Rows
         $rows = $this->ProductService->getProducts($queries);
-        
+
         if(!empty($rows)){
             foreach ($rows as $row) {
                 $row->edit_url = route('lang.admin.catalog.products.form', array_merge([$row->id], $queries));
@@ -198,7 +198,7 @@ class ProductController extends Controller
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         // Get Record
-        $product = $this->ProductService->findOrFailOrNew(id:$product_id);
+        $product = $this->ProductService->findIdOrFailOrNew(id:$product_id);
 
         $data['product']  = $product;
         
@@ -212,7 +212,7 @@ class ProductController extends Controller
 
     public function save()
     {
-        $postData = $this->request->post();
+        $post_data = $this->request->post();
         $queryData = $this->request->query();
 
         $json = [];
@@ -220,7 +220,7 @@ class ProductController extends Controller
         // validator
 
         if(!$json) {
-            $result = $this->ProductService->save($postData);
+            $result = $this->ProductService->saveProduct($post_data);
 
             if(empty($result['error'])){
                 $json['product_id'] = $result['data']['record_id'];
@@ -236,7 +236,6 @@ class ProductController extends Controller
         }
 
        return response(json_encode($json))->header('Content-Type','application/json');
-
     }
 
 

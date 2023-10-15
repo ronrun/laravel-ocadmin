@@ -6,4 +6,8 @@ return [
 
 // Text
 'text_products' => 'Products',
+
+
+// Column
+'column_model' => 'Model',
 ];

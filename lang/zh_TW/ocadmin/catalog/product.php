@@ -6,4 +6,8 @@ return [
 
 // Text
 'text_products' => '商品',
+
+
+// Column
+'column_model' => '型號',
 ];

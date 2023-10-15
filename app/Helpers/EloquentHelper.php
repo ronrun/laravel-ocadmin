@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * 2023-10-15 昨日創建，現未使用。改回使用 Trait
+ * 不使用的原因：很多時候要用到物件 $this->model 等等，用靜態不太方便。
+ * 依然使用下列結構：
+ *   ProductController > ProductService > ProductRepository
+ *   並在其中使用 EloquentTrait
+ *  
+ */
 
 namespace App\Helpers;
 
