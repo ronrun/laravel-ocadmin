@@ -97,7 +97,7 @@ class ProductController extends Controller
 
         // Rows
         $rows = $this->ProductService->getProducts($queries);
-
+        
         if(!empty($rows)){
             foreach ($rows as $row) {
                 $row->edit_url = route('lang.admin.catalog.products.form', array_merge([$row->id], $queries));

@@ -27,7 +27,6 @@ class OptionService extends Service
         
         
         $option = (new \App\Repositories\Common\TermRepository)->getOptionValues($option_id);
-        echo '<pre>option ', print_r(999, 1), "</pre>"; exit;
 
     }
 }

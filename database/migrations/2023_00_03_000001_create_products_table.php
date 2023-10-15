@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('model', 50)->nullable();
             $table->boolean('is_active')->default('0');
             $table->timestamps();
         });
@@ -26,9 +27,10 @@ return new class extends Migration
             $table->longtext('content')->index()->default('');
         });
 
-        Schema::create('product_meta', function (Blueprint $table) {
+        Schema::create('product_metas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->string('locale',10)->nullable();
             $table->string('meta_key');
             $table->longText('meta_value')->default('');
             $table->index(['product_id','meta_key']);

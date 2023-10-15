@@ -248,9 +248,7 @@ trait EloquentTrait
     }
 
     private function setFiltersQuery($query, $data, $debug=0)
-    {
-        $translated_attributes = $this->model->translated_attributes ?? [];
-        
+    {        
         // Ignore is_active if -1
         if(isset($data['filter_is_active'] ) && $data['filter_is_active'] == -1){
             unset($data['filter_is_active']);

@@ -46,6 +46,7 @@ return new class extends Migration
         Schema::create('term_metas', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('term_id');
+            $table->string('locale',10)->nullable();
             $table->string('meta_key');
             $table->longText('meta_value')->default('');
             $table->unique(['term_id','meta_key']);

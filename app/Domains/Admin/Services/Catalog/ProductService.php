@@ -3,45 +3,31 @@
 namespace App\Domains\Admin\Services\Catalog;
 
 use Illuminate\Support\Facades\DB;
-use App\Domains\Admin\Services\Service;
+use App\Helpers\EloquentHelper;
+use App\Repositories\Catalog\ProductRepository;
 
-class ProductService extends Service
+
+class ProductService
 {
+
     public $model_name = "\App\Models\Catalog\Product";
     public $model;
     public $table;
     public $lang;
 
+    public function __construct(private ProductRepository $ProductRepository)
+    {}
+
 
     public function getProducts($data, $debug=0)
     {
-        return $this->getRows($data, $debug);
+        return $this->ProductRepository->getProducts($data, $debug);
     }
 
 
-    public function save($data)
+    public function save($row, $data, $debug)
     {
-        DB::beginTransaction();
-
-        try {
-            $product = $this->findOrFailOrNew(id:$data['product_id']);
-            $this->saveModelInstance($product, $data);
-
-            if(!empty($data['product_translations'])){
-                $this->saveTranslationData($product, $data['product_translations']);
-            }
-
-            DB::commit();
-
-            $result['data']['record_id'] = $product->id;
-    
-            return $result;
-
-        } catch (\Exception $ex) {
-            DB::rollback();
-            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
-            return $result;
-        }
+        return $this->ProductRepository->save($row, $data, $debug);
     }
 
 }

@@ -6,18 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\ModelTrait;
-use App\Traits\TranslatableTrait;
+use App\Traits\TableMetaTrait;
+use App\Models\Catalog\ProductMeta;
 
 class Product extends Model
 {
     use HasFactory;
-    use TranslatableTrait;
+    use TableMetaTrait;
     use ModelTrait;
 
     protected $guarded = [];
-    protected $appends = ['name'];
-    public $translated_attributes = ['name','description', 'meta_title', 'meta_description', 'meta_keyword',];
-    public $translation_foreign_key = 'product_id';
+    public $translation_attributes = ['name','description', 'meta_title', 'meta_description', 'meta_keyword',];
+    public $meta_attributes = ['name','description', 'meta_title', 'meta_description', 'meta_keyword','contact'];
+    private $translated = false;
+
+
+    public function metas()
+    {
+        return $this->hasMany(ProductMeta::class);
+        //return $this->hasMany(ProductMeta::class)->whereNull('locale');
+    }
 
     // Attribute
     
@@ -25,21 +33,6 @@ class Product extends Model
     {
         return Attribute::make(
             get: fn ($value) => number_format($value),
-        );
-    }
-
-    protected function name(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->translation->name ?? '',
-        );
-    }
-
-
-    protected function shortName(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->translation->short_name ?? '',
         );
     }
 }
