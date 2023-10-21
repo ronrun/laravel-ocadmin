@@ -13,7 +13,7 @@ class Post extends Model
     protected $guarded = [];
     protected $appends = ['name','content','slug'];
 
-    public $translated_attributes = ['name', 'content','slug'];
+    public $translation_attributes = ['name', 'content','slug'];
     public $translationForeignKey = 'post_id';
 
     protected function name(): Attribute

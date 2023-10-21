@@ -4,6 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use App\Models\Common\Taxonomy;
+use App\Models\Common\TaxonomyMeta;
+use App\Imports\TaxonomiesImport;
+use App\Imports\TaxonomyMetasImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TaxonomySeeder extends Seeder
 {
@@ -14,29 +20,17 @@ class TaxonomySeeder extends Seeder
      */
     public function run()
     {
-        // Taxonomy
-        $filename = 'database/imports/taxonomies.csv';
+        Schema::disableForeignKeyConstraints();
+        
+        TaxonomyMeta::truncate();
+        Taxonomy::truncate();
 
-        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE taxonomies
-            FIELDS TERMINATED BY ','
-            ENCLOSED BY '\"'
-            LINES TERMINATED BY '\r\n'
-            IGNORE 1 LINES
-            (id,code,model,is_active,created_at,updated_at
-        );";
-             
-        DB::unprepared($query);
+        // taxonomies
+        Excel::import(new TaxonomiesImport, 'database/imports/taxonomies.xlsx');
 
-        // Taxonomy Translations
-        $filename = 'database/imports/taxonomy_translations.csv';
+        // taxonomy meta
+        Excel::import(new TaxonomyMetasImport, 'database/imports/taxonomy_metas.xlsx');
 
-        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE taxonomy_translations
-            FIELDS TERMINATED BY ','
-            ENCLOSED BY '\"'
-            LINES TERMINATED BY '\r\n'
-            IGNORE 1 LINES
-            (id,taxonomy_id,locale,name);";
-             
-        DB::unprepared($query);
+        Schema::enableForeignKeyConstraints();
     }
 }

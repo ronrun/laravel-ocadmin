@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    private $lang;
+    protected $lang;
     private $request;
     private $UserService;
 

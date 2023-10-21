@@ -210,7 +210,7 @@ class EloquentHelper
 
     public function saveTranslationData($masterRow, $data)
     {
-        $translated_attributes = $masterRow->translated_attributes;
+        $translation_attributes = $masterRow->translation_attributes;
         echo '<pre>', print_r(888, 1), "</pre>"; exit;
         $translationModel = $this->getTranslationModel();
 
@@ -227,7 +227,7 @@ class EloquentHelper
             $row_data_keys = []; //用於檢查非鍵的欄位是否有資料
 
             //設定語言表全部欄位，若無值則給空值，確保每一個欄位都有值。這是為了讓欄位數量一致，才能做批次upsert()。
-            foreach ($translated_attributes as $column) {
+            foreach ($translation_attributes as $column) {
                 if(!empty($row[$column])){
                     $arr[$column] = $row[$column];
 

@@ -2,7 +2,8 @@
 
 /**
  * This class is used to replace laraval's original localization, and is used in all controllers.
- * Created by Ron, 2022
+ * Created by Ron
+ * Modified: 2023-10-21
  */
 
 namespace App\Libraries;
@@ -11,33 +12,51 @@ use Illuminate\Support\Facades\Lang;
 
 class TranslationLibrary
 {
-    public $paths;
+    public $fallback_locale;
+    public $locale;
     public $driver;
     public $data;
+    private $group;
 
-    public function getTranslations($paths)
+    public function getTranslations($group)
+    {        
+        $this->group = $group;
+        $this->driver = config('app.translatoin_driver');
+
+        $fallback_locale = config('app.fallback_locale');
+        $locale = app()->getLocale();
+
+        if($this->driver == 'file') {
+            $translations = $this->getFileTranslations($locale);
+        }
+
+        return (object) $translations;
+    }
+
+    public function getFileTranslations($locale)
     {
         $this->data = new TranslationData();
 
-        $this->driver = config('app.translatoin_driver');
+        $current_locale = app()->getLocale();
+        $fallback_locale = config('app.fallback_locale');
+        
+        foreach ($this->group as $folder_path) {
+            $current_translations = Lang::get($folder_path, [], $current_locale);
+            $fallback_translations = Lang::get($folder_path, [], $fallback_locale);
 
-        if($this->driver == 'file') {
-            $translations = $this->getFileTranslations($paths);
-        }
-        // else if($this->driver == 'database') {
-        //     $translations = $this->getDatabaseTranslations($paths);
-        // }
-
-        return $translations;
-    }
-
-    public function getFileTranslations($paths)
-    {
-        foreach ($paths as $path) {
-            $translations = Lang::get($path);
-            if(is_array($translations)){
-                foreach ($translations as $key => $value) {
+            if(is_array($current_translations)){
+                foreach ($current_translations as $key => $value) {
                     $this->data->$key = $value;
+                }
+            }
+            
+            // If the fallback language exists, but the current locale does not.
+            if(is_array($fallback_translations)){
+                $current_keys = array_keys($current_translations);
+                foreach ($fallback_translations as $key => $value) {
+                    if(!in_array($key, $current_keys)){
+                        $this->data->$key = $value;
+                    }
                 }
             }
         }

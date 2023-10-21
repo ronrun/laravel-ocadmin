@@ -21,11 +21,20 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('taxonomy_translations', function (Blueprint $table) {
+        // Schema::create('taxonomy_translations', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedInteger('taxonomy_id');
+        //     $table->string('locale',10)->index();
+        //     $table->string('name');
+        // });
+
+        Schema::create('taxonomy_metas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('taxonomy_id');
-            $table->string('locale',10)->index();
-            $table->string('name');
+            $table->foreignId('taxonomy_id')->constrained()->onDelete('cascade');
+            $table->string('locale',10)->nullable();
+            $table->string('meta_key');
+            $table->longText('meta_value')->default('');
+            $table->index(['taxonomy_id','meta_key']);
         });
     }
 
@@ -36,7 +45,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('taxonomy_translations');
+        Schema::dropIfExists('taxonomy_metas');
         Schema::dropIfExists('taxonomies');
     }
 };

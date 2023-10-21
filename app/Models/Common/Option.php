@@ -14,7 +14,7 @@ class Option extends Term
     protected $guarded = [];
     protected $appends = ['name','content','slug'];
 
-    public $translated_attributes = ['name', 'content', 'slug',];
+    public $translation_attributes = ['name', 'content', 'slug',];
 
     public function option_values()
     {

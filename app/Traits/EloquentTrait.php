@@ -115,7 +115,7 @@ trait EloquentTrait
         }
 
         // With translation relation
-        if(!empty($this->model->translated_attributes)){
+        if(!empty($this->model->translation_attributes)){
             $query->with('translation');
         }
 
@@ -174,7 +174,7 @@ trait EloquentTrait
         }
 
         //  - Sort
-        if(in_array($data['sort'], $this->model->translated_attributes)){
+        if(!empty($this->model->translation_attributes) && in_array($data['sort'], $this->model->translation_attributes)){
             $translationTable = $this->getTranslationTable();
             $master_key = $this->getTranslationMasterKey();
 
@@ -249,7 +249,7 @@ trait EloquentTrait
 
     private function setFiltersQuery($query, $data, $debug=0)
     {
-        $translated_attributes = $this->model->translated_attributes ?? [];
+        $translation_attributes = $this->model->translation_attributes ?? [];
         
         // Ignore is_active if -1
         if(isset($data['filter_is_active'] ) && $data['filter_is_active'] == -1){
@@ -276,7 +276,7 @@ trait EloquentTrait
             }
 
             // Translated column is not processed here
-            if(in_array($column, $translated_attributes)){
+            if(in_array($column, $translation_attributes)){
                 continue;
             }
 
@@ -306,7 +306,7 @@ trait EloquentTrait
         }
 
         // set translated whereHas then return data
-        $translated_attributes = $this->model->translated_attributes ?? [];
+        $translation_attributes = $this->model->translation_attributes ?? [];
 
         foreach ($data as $key => $value) {
             if(!str_starts_with($key, 'filter_')){
@@ -315,7 +315,7 @@ trait EloquentTrait
                 $column = str_replace('filter_', '', $key);
             }
 
-            if(in_array($column, $translated_attributes)){
+            if(in_array($column, $translation_attributes)){
                 $data['whereHas']['translation'][$key] = $data[$key];
                 unset($data[$key]);
             }
@@ -642,10 +642,10 @@ trait EloquentTrait
         return new $translation_model_name();
     }
 
-    public function saveTranslationData($masterModel, $data, $translated_attributes=null)
+    public function saveTranslationData($masterModel, $data, $translation_attributes=null)
     {
-        if(empty($translated_attributes)){
-            $translated_attributes = $this->model->translated_attributes;
+        if(empty($translation_attributes)){
+            $translation_attributes = $this->model->translation_attributes;
         }
 
         $translationModel = $this->getTranslationModel();
@@ -663,7 +663,7 @@ trait EloquentTrait
             $row_data_keys = []; //用於檢查非鍵的欄位是否有資料
 
             //設定語言表全部欄位，若無值則給空值，確保每一個欄位都有值。這是為了讓欄位數量一致，才能做批次upsert()。
-            foreach ($translated_attributes as $column) {
+            foreach ($translation_attributes as $column) {
                 if(!empty($row[$column])){
                     $arr[$column] = $row[$column];
 

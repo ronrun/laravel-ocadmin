@@ -4,6 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use App\Models\Common\Term;
+use App\Models\Common\TermMeta;
+use App\Imports\TermsImport;
+use App\Imports\TermMetasImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TermSeeder extends Seeder
 {
@@ -14,40 +20,17 @@ class TermSeeder extends Seeder
      */
     public function run()
     {
+        Schema::disableForeignKeyConstraints();
+        
+        TermMeta::truncate();
+        Term::truncate();
+
         // terms
-        $filename = 'database/imports/terms.csv';
+        Excel::import(new TermsImport, 'database/imports/terms.xlsx');
 
-        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE terms
-            FIELDS TERMINATED BY ','
-            ENCLOSED BY '\"'
-            LINES TERMINATED BY '\r\n'
-            IGNORE 1 LINES
-            (id,parent_id,taxonomy_code,is_active,created_at,updated_at);";
-             
-        DB::unprepared($query);
+        // term meta
+        //Excel::import(new TermMetasImport, 'database/imports/term_metas.xlsx');
 
-        // term_translations
-        $filename = 'database/imports/term_translations.csv';
-
-        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE term_translations
-            FIELDS TERMINATED BY ','
-            ENCLOSED BY '\"'
-            LINES TERMINATED BY '\r\n'
-            IGNORE 1 LINES
-            (id,term_id,locale,name);";
-             
-        DB::unprepared($query);
-
-        // term_metas
-        $filename = 'database/imports/term_metas.csv';
-
-        $query = "LOAD DATA LOCAL INFILE '".$filename."' INTO TABLE term_metas
-            FIELDS TERMINATED BY ','
-            ENCLOSED BY '\"'
-            LINES TERMINATED BY '\r\n'
-            IGNORE 1 LINES
-            (id,term_id,meta_key,meta_value);";
-             
-        DB::unprepared($query);
+        Schema::enableForeignKeyConstraints();
     }
 }

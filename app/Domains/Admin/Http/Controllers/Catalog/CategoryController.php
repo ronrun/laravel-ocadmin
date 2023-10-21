@@ -10,7 +10,6 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class CategoryController extends Controller
 {
-    private $lang;
     private $request;
     private $CategoryService;
 

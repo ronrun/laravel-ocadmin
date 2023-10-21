@@ -55,7 +55,7 @@
 </div>
 @endsection
 
-@section('buttom')
+@section('bottom')
 <script type="text/javascript"><!--
 
 $('#role').on('click', 'thead a, .pagination a', function(e) {

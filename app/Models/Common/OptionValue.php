@@ -9,5 +9,5 @@ use Carbon\Carbon;
 
 class OptionValue extends Model
 {
-    public $translated_attributes = ['name', 'content', 'slug',];
+    public $translation_attributes = ['name', 'content', 'slug',];
 }

@@ -23,5 +23,5 @@
 			</tbody>
 		</table>
 	</div>
-	{!! $rows->links('ocadmin.common.pagination', ['rows' => $rows]) !!}
+	{!! $rows->links('ocadmin.common.pagination') !!}
 </form>

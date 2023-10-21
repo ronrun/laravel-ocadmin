@@ -49,7 +49,7 @@
 </div>
 @endsection
 
-@section('buttom')
+@section('bottom')
 <script type="text/javascript"><!--
 $('#term').on('click', 'thead a, .pagination a', function(e) {
 	e.preventDefault();

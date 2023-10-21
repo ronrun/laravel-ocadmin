@@ -1,6 +1,7 @@
 <?php
 
 return [
+
 // Locale
 'code' => 'en',
 'direction' => 'ltr',
@@ -12,6 +13,7 @@ return [
 'thousand_point' => ',',
 
 // Tab
+'tab_trans' => 'Translations',
 'tab_general' => 'General',
 'tab_data' => 'Data',
 

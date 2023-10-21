@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Catalog\Product;
 use App\Models\Catalog\ProductMeta;
 use App\Imports\ProductsImport;
 use App\Imports\ProductMetasImport;
-use Illuminate\Support\Facades\Schema;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductSeeder extends Seeder
 {

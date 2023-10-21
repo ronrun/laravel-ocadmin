@@ -174,7 +174,7 @@ class LayoutComposer
          * System
          */
 
-        // 
+        // Taxonomies and Terms
         $admin = [];
 
         if (1) {
@@ -206,6 +206,33 @@ class LayoutComposer
                 'name'	   => 'Admins', // user
                 'icon'	   => ' ',
                 'children' => $admin
+            ];
+        }
+
+        // Admin users
+        $term = [];
+
+        if (1) {
+            $term[] = [
+                'name'	   => $this->lang->text_term_taxonomy,
+                'href'     => route('lang.admin.system.term.taxonomies.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        if (1) {
+            $term[] = [
+                'name'	   => $this->lang->text_term_term,
+                'href'     => route('lang.admin.system.term.terms.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        if ($term) {
+            $system[] = [
+                'name'	   => $this->lang->text_term,
+                'icon'	   => ' ',
+                'children' => $term
             ];
         }
 

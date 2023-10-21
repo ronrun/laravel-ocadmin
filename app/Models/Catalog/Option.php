@@ -13,7 +13,7 @@ class Option extends Model
     protected $table = 'terms';
     protected $guarded = [];
     protected $appends = ['name','slug',];
-    public $translated_attributes = ['name', 'slug',];
+    public $translation_attributes = ['name', 'slug',];
 
     public function option_values()
     {

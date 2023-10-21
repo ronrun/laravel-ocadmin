@@ -40,10 +40,11 @@
               <div class="tab-content">
                 @foreach($supportedLocales as $locale => $localeContent)
                   <div id="language-{{ $locale }}" class="tab-pane @if($loop->first) active @endif">
+                    
                     <div class="row mb-3 required">
                       <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-name-{{ $locale }}" name="translations[{{ $locale }}][name]" value="{{ !empty($translations[$locale]['name']) ? $translations[$locale]['name'] : '' }}" class="form-control">
+                        <input type="text" id="input-name-{{ $locale }}" name="translations[{{ $locale }}][name]" value="{{ $translations[$locale]['name'] ?? '' }}" class="form-control">
                         <div id="error-name" class="invalid-feedback"></div>
                       </div>
                     </div>

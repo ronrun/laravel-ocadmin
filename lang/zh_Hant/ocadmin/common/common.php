@@ -1,6 +1,7 @@
 <?php
 
 return array (
+
 // Locale
 'code' => 'zh_TW',
 'direction' => 'ltr',
@@ -12,8 +13,8 @@ return array (
 'thousand_point' => ',',
 
 // Tab
-'tab_general' => '基本資料1',
-'tab_data' => '基本資料2',
+'tab_trans' => '語言資料',
+'tab_data' => '基本資料',
 
 // Text
 'text_yes' => '是',
@@ -79,6 +80,8 @@ return array (
 'column_date_modified' => '修改日期',
 'column_is_active' => '是否啟用',
 'column_action' => '操作',
+'column_enable' => '啟用',
+'column_disable' => '停用',
 
 // Entry
 'entry_enable' => '啟用',

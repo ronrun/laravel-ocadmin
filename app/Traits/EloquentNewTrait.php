@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Common\Taxonomy;
 
 /**
  * $model_name
@@ -59,12 +60,45 @@ trait EloquentNewTrait
 
         $query = $this->model->query();
 
+        // is_active can only be: 1, 0, -1, *
+        if(in_array('is_active', $this->table_columns)){
+            
+            // - 相容以前的舊寫法
+            if(isset($data['filter_is_active'])){
+                $data['equal_is_active'] = $data['filter_is_active'];
+                unset($data['filter_is_active']);
+            }
+
+            // - 如果 equal_is_active 是 *, 或長度是 0 ，或值小於0，表示不做 is_active 判斷。
+            if(isset($data['equal_is_active']) && ($data['equal_is_active'] == '*' || strlen($data['equal_is_active']) === 0 || $data['equal_is_active'] < 0)){
+                unset($data['equal_is_active']);
+            }
+
+            // - 開始判斷
+            if(isset($data['equal_is_active'])){
+                $equal_is_active = $data['equal_is_active'];
+
+                // -- 變數為值=0，表示不啟用。除了真的是0，把null也算在內。
+                if($equal_is_active == 0){
+                    $query->where('is_active', '<>', 1);
+                    // $query->where(function ($query) use($equal_is_active) {
+                    //     $query->orWhere('is_active', 0);
+                    //     $query->orWhereNull('is_active');
+                    // });
+                }else if($equal_is_active == 1){
+                    $query->where('is_active', 1);
+                }
+
+                unset($data['equal_is_active']);
+            }
+        }
+
+
         // Equals
         $query = $this->setEqualsQuery($query, $data);
 
         // Filters
         $query = $this->setFiltersQuery($query, $data);
-
 
         // Sort & Order
         //  - Order
@@ -226,9 +260,12 @@ trait EloquentNewTrait
     /**
      * modified: 2023-10-21
      */
-    public function saveRow($modelInstance, $post_data)
+    public function saveRow($id, $post_data)
     {
         try{
+
+            $modelInstance = $this->findIdOrFailOrNew($id);
+
             // save basic data
             $result = $this->saveRowBasicData($modelInstance, $post_data);
 
@@ -236,7 +273,7 @@ trait EloquentNewTrait
                 throw new \Exception($result['error']);
             }
 
-            $modelInstance->refresh();
+            //$modelInstance->refresh();
             $result = null;
 
             // save translation data
@@ -257,7 +294,6 @@ trait EloquentNewTrait
 
             return ['data' =>['id' => $modelInstance->id]];
         } catch (\Exception $ex) {
-            DB::rollback();
             $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
             return $result;
         }
@@ -272,6 +308,8 @@ trait EloquentNewTrait
         $this->initialize();
 
         try{
+            DB::beginTransaction();
+
             // If $model->fillable exists, save() then return
             if(!empty($modelInstance->getFillable())){
                 $modelInstance->fill($post_data);
@@ -292,6 +330,8 @@ trait EloquentNewTrait
             }
 
             $modelInstance->save();
+            DB::commit();
+
             return $modelInstance->id;
 
         } catch (\Exception $ex) {

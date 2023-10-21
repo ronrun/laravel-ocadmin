@@ -16,7 +16,7 @@ class OptionValue extends Model
     protected $guarded = [];
     protected $appends = ['name','slug','description',];
 
-    public $translated_attributes = ['name','short_name'];
+    public $translation_attributes = ['name','short_name'];
 
     public function product()
     {

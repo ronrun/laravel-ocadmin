@@ -2,7 +2,6 @@
 
 namespace App\Helpers\Classes;
 
-
 class CollectionHelper
 {
     public static function collectionToStdObj($collection)

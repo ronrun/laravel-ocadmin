@@ -97,6 +97,24 @@ Route::group(
         {
 
             Route::group([
+                'prefix' => 'term',
+                'as' => 'term.',
+            ], function ()
+            {
+                Route::get('taxonomies', 'System\Term\TaxonomyController@index')->name('taxonomies.index');
+                Route::get('taxonomies/list', 'System\Term\TaxonomyController@list')->name('taxonomies.list');
+                Route::get('taxonomies/autocomplete', 'System\Term\TaxonomyController@autocomplete')->name('taxonomies.autocomplete');
+                Route::get('taxonomies/form/{user_id?}', 'System\Term\TaxonomyController@form')->name('taxonomies.form');
+                Route::post('taxonomies/save/{user_id?}', 'System\Term\TaxonomyController@save')->name('taxonomies.save');
+                
+                Route::get('terms', 'System\Term\TermController@index')->name('terms.index');
+                Route::get('terms/list', 'System\Term\TermController@list')->name('terms.list');
+                Route::get('terms/autocomplete', 'System\Term\TermController@autocomplete')->name('terms.autocomplete');
+                Route::get('terms/form/{role_id?}', 'System\Term\TermController@form')->name('terms.form');
+                Route::post('terms/save/{role_id?}', 'System\Term\TermController@save')->name('terms.save');
+            }); 
+
+            Route::group([
                 'prefix' => 'admin',
                 'as' => 'admin.',
             ], function ()

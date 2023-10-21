@@ -12,7 +12,7 @@ use App\Imports\ProductsImport;
 
 class ProductController extends Controller
 {
-    private $lang;
+    protected $lang;
 
     public function __construct(private Request $request, private ProductService $ProductService)
     {

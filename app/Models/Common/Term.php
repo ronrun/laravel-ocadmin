@@ -9,12 +9,12 @@ use App\Traits\ModelTrait;
 class Term extends Model
 {
     use ModelTrait;
-    
+
+    public $translation_model_name = 'TermMeta';
+    public $translation_attributes = ['name',];
+    public $meta_attributes = ['name'];
     protected $guarded = [];
     protected $appends = ['name','slug','description',];
-
-    public $translated_attributes = ['name', 'description', 'slug',];
-    public $translationForeignKey = 'term_id';
 
 
     protected function name(): Attribute

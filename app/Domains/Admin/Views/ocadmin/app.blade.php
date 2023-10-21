@@ -107,7 +107,7 @@
       @yield('content')
       <footer id="footer"><a href="https://www.opencart.com">OpenCart</a> &copy; 2009-2023 All Rights Reserved.<br/>Version 4.0.2.1</footer>
     </div>
-    @yield('buttom')
+    @yield('bottom')
     <script src="{{ asset('assets/backend/ocadmin/javascript/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>
   </body>
 </html>

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('locale',10)->nullable();
             $table->string('meta_key');
             $table->longText('meta_value')->default('');
-            $table->index(['product_id','meta_key']);
+            $table->index(['product_id','locale','meta_key']);
         });
     }
 
