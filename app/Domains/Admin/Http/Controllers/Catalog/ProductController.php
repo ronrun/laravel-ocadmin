@@ -7,14 +7,14 @@ use App\Http\Controllers\Controller;
 use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\Catalog\ProductService;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductsImport;
 
 class ProductController extends Controller
 {
     private $lang;
-    private $request;
-    private $ProductService;
 
-    public function __construct(Request $request, ProductService $ProductService)
+    public function __construct(private Request $request, private ProductService $ProductService)
     {
         $this->request = $request;
         $this->ProductService = $ProductService;
@@ -64,6 +64,7 @@ class ProductController extends Controller
     {
         $data['lang'] = $this->lang;
 
+        
         // Prepare link for action
         $queries = [];
 
@@ -95,8 +96,11 @@ class ProductController extends Controller
             }
         }
 
+        $filter_data = $queries;
+
         // Rows
-        $rows = $this->ProductService->getProducts($queries);
+        $filter_data['select'] = ['id', 'model'];
+        $rows = $this->ProductService->getProducts($filter_data);
 
         if(!empty($rows)){
             foreach ($rows as $row) {
@@ -223,9 +227,10 @@ class ProductController extends Controller
             $result = $this->ProductService->saveProduct($post_data);
 
             if(empty($result['error'])){
-                $json['product_id'] = $result['data']['record_id'];
+
+                $json['product_id'] = $result['data']['id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replace_url'] = route('lang.admin.catalog.products.form', $result['data']['record_id']);
+                $json['replace_url'] = route('lang.admin.catalog.products.form', $result['data']['id']);
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];
@@ -237,6 +242,4 @@ class ProductController extends Controller
 
        return response(json_encode($json))->header('Content-Type','application/json');
     }
-
-
 }

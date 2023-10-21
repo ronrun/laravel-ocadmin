@@ -50,6 +50,15 @@ return new class extends Migration
             $table->string('meta_key');
             $table->longText('meta_value')->default('');
             $table->unique(['term_id','meta_key']);
+        });
+
+        Schema::create('term_paths', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('term_id');
+            $table->unsignedInteger('path_id')->nullable();
+            $table->unsignedSmallInteger('level');
+            
+            $table->unique(['term_id','path_id']);
         }); 
     }
 

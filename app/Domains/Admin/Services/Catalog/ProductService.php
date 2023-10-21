@@ -2,31 +2,14 @@
 
 namespace App\Domains\Admin\Services\Catalog;
 
-use App\Traits\EloquentNewTrait;
 use App\Repositories\Catalog\ProductRepository;
+//use App\Http\Resources\ProductCollection;
+use App\Services\Service;
 
-class ProductService
+class ProductService extends Service
 {
-    use EloquentNewTrait;
-
-    public $model_name = "\App\Models\Catalog\Product";
-    public $model;
-    public $table;
-    public $lang;
-
-    public function __construct(private ProductRepository $ProductRepository)
-    {}
-
-
-    public function getProducts($data, $debug=0)
+    public function __construct(ProductRepository $repository)
     {
-        return $this->ProductRepository->getProducts($data, $debug);
+        $this->repository = $repository;
     }
-
-
-    public function saveProduct($data, $debug = 0)
-    {
-        return $this->ProductRepository->saveProduct($data, $debug);
-    }
-
 }

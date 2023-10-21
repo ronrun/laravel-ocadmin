@@ -5,11 +5,9 @@ namespace App\Models\Catalog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\ModelTrait;
-use App\Traits\TranslatableTrait;
 
 class Option extends Model
 {
-    use TranslatableTrait;
     use ModelTrait;
 
     protected $table = 'terms';

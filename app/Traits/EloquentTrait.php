@@ -629,17 +629,17 @@ trait EloquentTrait
      * Translation
      */
 
-     public function getTranslationModel($translationModelName = null)
+     public function getTranslationModel($translation_model_name = null)
     {
-        if(empty($translationModelName)){
-            $translationModelName = get_class($this->model) . 'Translation';
+        if(empty($translation_model_name)){
+            $translation_model_name = get_class($this->model) . 'Translation';
         }
 
-        if(empty($translationModelName) && !empty($this->model->translationModelName)){ // Customized
-            $translationModelName = $this->model->translationModelName;
+        if(empty($translation_model_name) && !empty($this->model->translationModelName)){ // Customized
+            $translation_model_name = $this->model->translationModelName;
         }
 
-        return new $translationModelName();
+        return new $translation_model_name();
     }
 
     public function saveTranslationData($masterModel, $data, $translated_attributes=null)

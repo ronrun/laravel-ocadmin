@@ -13,11 +13,12 @@ class Product extends Model
     use HasFactory;
     use ModelTrait;
 
+    public $translation_model_name = 'ProductMeta';
     public $translation_attributes = ['name','description', 'meta_title', 'meta_description', 'meta_keyword',];
     public $meta_attributes = ['name','description', 'meta_title', 'meta_description', 'meta_keyword'];
 
     protected $fillable = [
-        'model', 'is_active',
+        'code', 'model', 'is_active',
     ];
 
 

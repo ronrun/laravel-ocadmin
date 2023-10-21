@@ -18,14 +18,14 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('product_translations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('locale',10);
-            $table->string('name')->index()->default('');
-            $table->string('slug')->default('');
-            $table->longtext('content')->index()->default('');
-        });
+        // Schema::create('product_translations', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('product_id')->constrained()->onDelete('cascade');
+        //     $table->string('locale',10);
+        //     $table->string('name')->index()->default('');
+        //     $table->string('slug')->default('');
+        //     $table->longtext('content')->index()->default('');
+        // });
 
         Schema::create('product_metas', function (Blueprint $table) {
             $table->id();
@@ -42,8 +42,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_meta');
-        Schema::dropIfExists('product_translations');
+        Schema::dropIfExists('product_metas');
+        //Schema::dropIfExists('product_translations');
         Schema::dropIfExists('products');
     }
 };

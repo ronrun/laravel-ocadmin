@@ -4,37 +4,33 @@ namespace App\Repositories\Catalog;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Catalog\Product;
-use App\Traits\EloquentNewTrait;
+use App\Repositories\Repository;
 
-class ProductRepository
+class ProductRepository extends Repository
 {
-    use EloquentNewTrait;
-
     protected $model_name = 'App\Models\Catalog\Product';
     
-    public function getProducts($data = [], $debug = 0)
+    public function getProducts($data = [], $debug = 0): mixed
     {
-        $rows = $this->getRows($data, $debug);
-        $rows = $this->setTranslationToRows($rows,['name']);
-
-        return $rows;
+        return parent::getRows($data, $debug);
     }
 
-    public function saveProduct($data, $debug)
+    public function saveProduct($post_data, $debug = 0)
     {
         DB::beginTransaction();
 
         try {
-            $row = $this->findIdOrFailOrNew($data['product_id']);
-            $this->save($row, $data);
+            if(empty($post_data['product_id']) && !empty($post_data['id'])){
+                $post_data['product_id'] = $post_data['id'];
+            }
+            $product = $this->findIdOrFailOrNew($post_data['product_id']);
+            $result = $this->saveRow($product, $post_data);
 
-            if(!empty($data['translations'])){
-                $this->saveTranslationMeta($row, $data['translations']);
+            if(!empty($result['error'])){
+                throw new \Exception($result['error']);
             }
 
             DB::commit();
-
-            $result['data']['record_id'] = $row->id;
     
             return $result;
 

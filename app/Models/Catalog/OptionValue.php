@@ -4,14 +4,12 @@ namespace App\Models\Catalog;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Traits\TranslatableTrait;
 use App\Traits\ModelTrait;
 use App\Models\Catalog\Product;
 use Carbon\Carbon;
 
 class OptionValue extends Model
 {
-    use TranslatableTrait;
     use ModelTrait;
 
     protected $table = 'terms';

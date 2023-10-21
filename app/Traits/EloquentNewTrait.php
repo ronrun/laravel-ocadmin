@@ -5,17 +5,26 @@ namespace App\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
+/**
+ * $model_name
+ */
 trait EloquentNewTrait
 {
     public function initialize($data = null)
     {
+        if(isset($this->eloquent_trait_initialized) && $this->eloquent_trait_initialized == true){
+            return;
+        }
+
         $this->model = new $this->model_name;
         $this->table = $this->model->getTable();
-        $this->connection  = $this->model->getConnectionName();
-        $this->table_columns = $this->getTableColumns($this->connection);
+        $this->table_columns = $this->getTableColumns();
+        $this->translation_table = $this->model->getTranslationTable();
         $this->locale = app()->getLocale();
         $this->is_mapping_zh_hant_hans = false;
+        $this->eloquent_trait_initialized = true;
     }
 
     public function newModel()
@@ -34,7 +43,6 @@ trait EloquentNewTrait
         //find
         if(!empty(trim($id))){
             $query = $this->newModel()->where('id', $id);
-
             $row = $query->firstOrFail();
         }
         //new
@@ -44,23 +52,11 @@ trait EloquentNewTrait
 
         return $row;
     }
-    // public function findOrFailOrNew($id, $model)
-    // {
-    //     //find
-    //     if(!empty($id)){
-    //         $row = $model->where('id', $id)->firstOrFail();
-    //     }
-    //     //new
-    //     else{
-    //         $row = $model;
-    //     }
-
-    //     return $row;
-    // }
 
     public function getRows($data = [], $debug = 0): mixed
     {
         $this->initialize();
+
         $query = $this->model->query();
 
         // Equals
@@ -81,17 +77,17 @@ trait EloquentNewTrait
 
         //  - Sort
         if(!empty($this->model->translation_attributes) && in_array($data['sort'], $this->model->translation_attributes)){
-            $translationTable = $this->getTranslationTable();
+            $translation_table = $this->getTranslationTable();
             $master_key = $this->getTranslationMasterKey();
             $sort = $data['sort'];
 
-            $query->join($translationTable, function ($join) use ($translationTable, $master_key, $sort){
-                $join->on("{$this->table}.id", '=', "{$translationTable}.{$master_key}")
-                     ->where("{$translationTable}.locale", '=', $this->locale)
-                     ->where("{$translationTable}.meta_key", '=', $sort);
+            $query->join($translation_table, function ($join) use ($translation_table, $master_key, $sort){
+                $join->on("{$this->table}.id", '=', "{$translation_table}.{$master_key}")
+                     ->where("{$translation_table}.locale", '=', $this->locale)
+                     ->where("{$translation_table}.meta_key", '=', $sort);
             });
 
-            $query->orderBy("{$translationTable}.meta_value", $order);
+            $query->orderBy("{$translation_table}.meta_value", $order);
 
             $query->select("{$this->table}.*");
         }else{
@@ -107,17 +103,17 @@ trait EloquentNewTrait
 
         // see the sql statement
         if(!empty($debug)){
-            $this->getQueries($query);
+            $this->getQueryDebug($query);
         }
 
 
         // get result
-        $result = [];
 
         // single row
         if(isset($data['first']) && $data['first'] = true){
-            $result = $query->first();
+            $row = $query->first();
             //$result = $this->getMetas($result);
+            return $row;
         }
         // multi rows
         else{
@@ -137,28 +133,29 @@ trait EloquentNewTrait
                 $pagination = true;
             }
     
+            $rows = [];
+
             if($pagination == true && $limit != 0){
-                $result = $query->paginate($limit); // Get some rows per page
+                $rows = $query->paginate($limit); // Get some rows per page
             }
             else if($pagination == false && $limit != 0){
-                $result = $query->limit($limit)->get(); // Get some rows without pagination
+                $rows = $query->limit($limit)->get(); // Get some rows without pagination
             }
             else if($pagination == false && $limit == 0){
-                $result = $query->get(); // Get all
+                $rows = $query->get(); // Get all
             }
 
-            if(count($result) > 0){
-                foreach ($result as $row) {
-                    //$row = $this->getMetas($row);
-                    //$row = $this->setTranslationToRow($row);
+            // translation to rows
+            foreach ($rows as $row) {
+                foreach ($row->translation ?? [] as $translation) {
+                    $row->{$translation->meta_key} = $translation->meta_value;
+                    unset($row->translation);
                 }
-
-
-
             }
+
+            return $rows;
         }
 
-        return $result;
     }
 
     public function getRow($data, $debug=0)
@@ -172,16 +169,14 @@ trait EloquentNewTrait
     public function setTranslationToRow($row, $columns = [])
     {
         foreach ($row->translation as $translation) {
-            // 未指定欄位
+            // 未指定欄位, 全抓
             if(empty($columns)){
                 $row->{$translation->meta_key} = $translation->meta_value;
             }
             // 有指定欄位
-            else if(!empty($columns)){
+            else{
                 if(in_array($translation->meta_key, $columns)){
                     $row->{$translation->meta_key} = $translation->meta_value;
-                }else{
-                    continue;
                 }
             }
             
@@ -228,74 +223,227 @@ trait EloquentNewTrait
         return $rows;
     }
 
-    public function save($row, $data)
+    /**
+     * modified: 2023-10-21
+     */
+    public function saveRow($modelInstance, $post_data)
+    {
+        try{
+            // save basic data
+            $result = $this->saveRowBasicData($modelInstance, $post_data);
+
+            if(!empty($result['error'])){
+                throw new \Exception($result['error']);
+            }
+
+            $modelInstance->refresh();
+            $result = null;
+
+            // save translation data
+            if(!empty($post_data['translations'])){
+                if (substr($this->model->translation_model_name, -4) === 'Meta') {
+                    $result = $this->saveRowTranslationMetaData($modelInstance, $post_data['translations']);
+                }else{
+                    $result = $this->saveRowTranslationData($modelInstance, $post_data['translations']);
+                }
+
+                if(!empty($result['error'])){
+                    throw new \Exception($result['error']);
+                }
+            }
+
+            // save meta data
+            $this->saveRowMetaData($modelInstance, $post_data);
+
+            return ['data' =>['id' => $modelInstance->id]];
+        } catch (\Exception $ex) {
+            DB::rollback();
+            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
+            return $result;
+        }
+
+    }
+
+    /**
+     * modified: 2023-10-21
+     */
+    public function saveRowBasicData($modelInstance, $post_data)
     {
         $this->initialize();
 
-        if(!empty($row->getFillable())){
-            $row->fill($data);
-            return $row->save();
-        }
-        
-        $table_columns = $this->table_columns;
-        $form_columns = array_keys($data);
+        try{
+            // If $model->fillable exists, save() then return
+            if(!empty($modelInstance->getFillable())){
+                $modelInstance->fill($post_data);
+                $modelInstance->save();
+                return $modelInstance->id;
+            }
+            
+            // Save matched columns
+            $table_columns = $this->table_columns;
+            $form_columns = array_keys($post_data);
 
-        foreach ($table_columns as $column) {
-            if(!in_array($column, $form_columns)){
-                continue;
+            foreach ($form_columns as $column) {
+                if(!in_array($column, $table_columns)){
+                    continue;
+                }
+
+                $modelInstance->$column = $post_data[$column];
             }
 
-            $row->$column = $data[$column];
-        }
+            $modelInstance->save();
+            return $modelInstance->id;
 
-        return $row->save;
+        } catch (\Exception $ex) {
+            DB::rollback();
+            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
+            return $result;
+        }
     }
 
-    public function getMetaModel()
+    /**
+     * modified: 2023-10-21
+     */
+    public function saveRowTranslationMetaData($masterModelInstance, $translation_data)
     {
-        if(!empty($this->model->meta_model_name)){
-            $meta_model_name = $this->model->meta_model_name;
-        }else{
-            $meta_model_name = get_class($this->model) . 'Meta';
-        }
+        $this->initialize();
 
-        return new $meta_model_name();
+        try {
+            $translation_model = $this->model->getTranslationModel();
+
+            // Keys
+            $master_key = $translation_model->master_key ?? $masterModelInstance->getForeignKey();
+            $master_key_value = $masterModelInstance->id;
+
+            $upsert_data = [];
+            
+            foreach($translation_data as $locale => $row){
+                $arr = [];
+                foreach ($row as $column => $value) {
+                    
+                    if(!in_array($column, $this->model->translation_attributes)){
+                        continue;
+                    }
+                    $arr[$master_key] = $master_key_value;
+                    $arr['locale'] = $locale;
+                    $arr['meta_key'] = $column;
+                    $arr['meta_value'] = $value;
+                    $upsert_data[] = $arr;
+                }
+            }
+
+            DB::beginTransaction();
+            $translation_model->upsert($upsert_data,[$master_key, 'locale', 'meta_key']);
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
+            return $result;
+        }
     }
 
-    public function saveTranslationMeta($masterRow, $data)
+    /**
+     * modified: 2023-10-21
+     */
+    public function saveRowTranslationData($masterModelInstance, $translation_data)
     {
-        $meta_keys = $masterRow->meta_keys;
-        $meta_model = $this->getMetaModel();
+        $this->initialize();
 
-        // Keys
-        $master_key = $meta_model->master_key ?? $masterRow->getForeignKey();
-        $master_key_value = $masterRow->id;
+        try{
+            $translation_model = $this->model->getTranslationModel();
 
-        $upsert_data = [];
+            // master
+            $master_key = $translation_model->master_key ?? $masterModelInstance->getForeignKey();
+            $master_key_value = $masterModelInstance->id;
 
-        foreach($data as $locale => $row){
-            $arr = [];
-            foreach ($row as $key => $value) {
-                $arr[$master_key] = $master_key_value;
+            foreach($translation_data as $locale => $value){
+                $arr = [];
+                if(!empty($value['id'])){
+                    $arr['id'] = $value['id'];
+                }
                 $arr['locale'] = $locale;
-                $arr['meta_key'] = $key;
-                $arr['meta_value'] = $value;
+                $arr[$master_key] = $master_key_value;
+                foreach ($this->model->translation_attributes as $column) {
+                    if(!empty($value[$column])){
+                        $arr[$column] = $value[$column];
+                    }
+                }
+
+                $arrs[] = $arr;
             }
-            $upsert_data[] = $arr;
+
+            $this->translation_model->upsert($arrs,['id', $master_key, 'locale']);
+        } catch (\Exception $ex) {
+            DB::rollback();
+            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
+            return $result;
+        }
+    }
+
+    /**
+     * modified: 2023-10-21
+     */
+    public function saveRowMetaData($masterModelInstance, $post_data)
+    {
+        $this->initialize();
+
+        try {
+            $meta_model = $this->model->getMetanModel();
+            $meta_table = $meta_model->getTable();
+
+            // Keys
+            $master_key = $meta_model->master_key ?? $masterModelInstance->getForeignKey();
+            $master_key_value = $masterModelInstance->id;
+
+            $upsert_data = [];
+            foreach($post_data as $column => $value){
+                if(!in_array($column, $this->model->meta_attributes)){
+                    continue;
+                }
+
+                $locale_is_nullable = Schema::getConnection()->getDoctrineColumn($meta_table, $column)->getNotnull() == false;
+
+                $arr[$master_key] = $master_key_value;
+                $arr['locale'] = $locale_is_nullable ? null : '';
+                $arr['meta_key'] = $column;
+                $arr['meta_value'] = $value;
+                $upsert_data[] = $arr;
+            }
+
+            DB::beginTransaction();
+            $meta_model->upsert($upsert_data,[$master_key, 'locale', 'meta_key']);
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollback();
+            $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
+            return $result;
+        }
+    }
+
+
+    // Private functions
+
+
+    private function getConnection()
+    {
+        // if model file defines connection
+        if(!empty($this->model->connection)){
+            $connection =$this->model->connection;
+        }
+        // use default connection
+        else{
+            $connection  = $this->model->getConnectionName();
         }
 
-        $meta_model->upsert($upsert_data,[$master_key, 'locale', 'meta_key']);
+        return $connection;
     }
 
     private function getTableColumns()
     {
-        $table_columns = $this->model->getFillable();
+        $table = $this->model->getTable();
+        $connection_name = $this->model->getConnectionName(); // if default, this value is empty
 
-        if(empty($table_columns)){
-            $table_columns = $this->model->getConnection()->getSchemaBuilder()->getColumnListing($this->model->getTable());
-        }
-
-        return $table_columns;
+        return DB::connection($connection_name)->getSchemaBuilder()->getColumnListing($table);
     }
 
 
@@ -478,19 +626,6 @@ trait EloquentNewTrait
         return $query;
     }
 
-    private function getTranslationModel()
-    {
-        if(empty($translationModelName)){
-            $translationModelName = get_class($this->model) . 'Meta';
-        }
-
-        if(empty($translationModelName) && !empty($this->model->translationModelName)){ // Customized
-            $translationModelName = $this->model->translationModelName;
-        }
-
-        return new $translationModelName();
-    }
-
     private function getTranslationMasterKey()
     {
         $translationModel = $this->getTranslationModel();
@@ -502,12 +637,6 @@ trait EloquentNewTrait
         }else{
             return $this->model->getForeignKey();
         }
-    }
-
-    private function getTranslationTable()
-    {
-        $translation_model = $this->getTranslationModel();
-        return $translation_model->getTable();      
     }
 
     private function setWhereQuery($query, $column, $value, $type='where')
@@ -705,7 +834,7 @@ trait EloquentNewTrait
         });
     }
 
-    private function getQueries(Builder $builder)
+    private function getQueryDebug(Builder $builder)
     {
         $addSlashes = str_replace('?', "'?'", $builder->toSql());
 
@@ -747,4 +876,25 @@ trait EloquentNewTrait
 
         return [];
     }
+
+
+
+    // public function optimizeRow($row)
+    // {
+    //     if(!empty($this->repository)){
+    //         return $this->repository->optimizeRow($row);
+    //     }
+
+    //     return $row;
+    // }
+
+
+    // public function sanitizeRow($row)
+    // {
+    //     if(!empty($this->repository)){
+    //         return $this->repository->sanitizeRow($row);
+    //     }
+
+    //     return $row;
+    // }
 }

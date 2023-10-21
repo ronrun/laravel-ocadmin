@@ -9,7 +9,7 @@
  *  
  */
 
-namespace App\Helpers;
+namespace App\Helpers\Classes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -473,15 +473,15 @@ class EloquentHelper
 
     private static function getTranslationModel()
     {
-        if(empty($translationModelName)){
-            $translationModelName = get_class(self::$model) . 'Translation';
+        if(empty($translation_model_name)){
+            $translation_model_name = get_class(self::$model) . 'Translation';
         }
 
-        if(empty($translationModelName) && !empty(self::$model->translationModelName)){ // Customized
-            $translationModelName = self::$model->translationModelName;
+        if(empty($translation_model_name) && !empty(self::$model->translationModelName)){ // Customized
+            $translation_model_name = self::$model->translationModelName;
         }
 
-        return new $translationModelName();
+        return new $translation_model_name();
     }
 
     private static function getTranslationMasterKey()
