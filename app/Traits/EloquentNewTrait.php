@@ -51,6 +51,8 @@ trait EloquentNewTrait
             $row = $this->newModel();
         }
 
+        $this->setTranslationToRow($row);
+
         return $row;
     }
 
@@ -92,7 +94,6 @@ trait EloquentNewTrait
                 unset($data['equal_is_active']);
             }
         }
-
 
         // Equals
         $query = $this->setEqualsQuery($query, $data);
@@ -181,10 +182,7 @@ trait EloquentNewTrait
 
             // translation to rows
             foreach ($rows as $row) {
-                foreach ($row->translation ?? [] as $translation) {
-                    $row->{$translation->meta_key} = $translation->meta_value;
-                    unset($row->translation);
-                }
+                $this->setTranslationToRow($row);
             }
 
             return $rows;
@@ -215,6 +213,7 @@ trait EloquentNewTrait
             }
             
             $row->setRelation('translation',null);
+            unset($row->translation);
         }
 
         return $row;

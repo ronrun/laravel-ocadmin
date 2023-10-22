@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domains\Admin\Http\Controllers\System\Term;
+namespace App\Domains\Admin\Http\Controllers\Common;
 
 use Illuminate\Http\Request;
 use App\Domains\Admin\Http\Controllers\BackendController;
 use App\Http\Controllers\Controller;
-use App\Domains\Admin\Services\System\Term\TaxonomyService;
+use App\Domains\Admin\Services\Common\TaxonomyService;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Helpers\Classes\UrlHelper;
 
@@ -44,17 +44,18 @@ class TaxonomyController extends BackendController
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.system.term.taxonomies.index'),
+            'href' => route('lang.admin.common.taxonomies.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
-        $data['add_url'] = route('lang.admin.system.term.taxonomies.form');
-        $data['list_url'] = route('lang.admin.system.term.taxonomies.list');
+        $data['add_url'] = route('lang.admin.common.taxonomies.form');
+        $data['list_url'] = route('lang.admin.common.taxonomies.list');
+        $data['delete_url'] = route('lang.admin.common.taxonomies.delete');
         
         $data['list'] = $this->getList();
 
-        return view('ocadmin.system.term.taxonomy', $data);
+        return view('ocadmin.common.taxonomy', $data);
     }
 
     public function list()
@@ -76,15 +77,15 @@ class TaxonomyController extends BackendController
 
         if(!empty($taxonomies)){
             foreach ($taxonomies as $row) {
-                $row->edit_url = route('lang.admin.system.term.taxonomies.form', array_merge([$row->id], $query_data));
+                $row->edit_url = route('lang.admin.common.taxonomies.form', array_merge([$row->id], $query_data));
             }
         }
 
-        $data['save_url'] = route('lang.admin.system.term.taxonomies.save');
-        $data['back_url'] = route('lang.admin.system.term.taxonomies.index', $queries);
-        $data['list_url'] = route('lang.admin.system.term.taxonomies.list');
+        $data['save_url'] = route('lang.admin.common.taxonomies.save');
+        $data['back_url'] = route('lang.admin.common.taxonomies.index', $queries);
+        $data['list_url'] = route('lang.admin.common.taxonomies.list');
 
-        $taxonomies = $taxonomies->withPath(route('lang.admin.system.term.taxonomies.list'))->appends($query_data);
+        $taxonomies = $taxonomies->withPath(route('lang.admin.common.taxonomies.list'))->appends($query_data);
         
         $data['taxonomies'] = $taxonomies;
 
@@ -108,14 +109,14 @@ class TaxonomyController extends BackendController
 
 
         // link of table header for sorting        
-        $route = route('lang.admin.system.term.taxonomies.list');
+        $route = route('lang.admin.common.taxonomies.list');
 
         $data['sort_id'] = $route . "?sort=id&order=$order" .$url;
         $data['sort_code'] = $route . "?sort=code&order=$order" .$url;
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_taxonomy'] = $route . "?sort=taxonomy&order=$order" .$url;
         
-        return view('ocadmin.system.term.taxonomy_list', $data);
+        return view('ocadmin.common.taxonomy_list', $data);
     }
 
     public function form($taxonomy_id = null)
@@ -139,7 +140,7 @@ class TaxonomyController extends BackendController
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.system.term.taxonomies.index'),
+            'href' => route('lang.admin.common.taxonomies.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
@@ -175,8 +176,8 @@ class TaxonomyController extends BackendController
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save_url'] = route('lang.admin.system.term.taxonomies.save');
-        $data['back_url'] = route('lang.admin.system.term.taxonomies.index', $queries);
+        $data['save_url'] = route('lang.admin.common.taxonomies.save');
+        $data['back_url'] = route('lang.admin.common.taxonomies.index', $queries);
 
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
@@ -191,7 +192,7 @@ class TaxonomyController extends BackendController
 
         $data['translations'] = $taxonomy->sortedTranslations();
         
-        return view('ocadmin.system.term.taxonomy_form', $data);
+        return view('ocadmin.common.taxonomy_form', $data);
     }
 
     public function save()
@@ -223,4 +224,46 @@ class TaxonomyController extends BackendController
        return response(json_encode($json))->header('Content-Type','application/json');
     }
 
+
+    public function delete()
+    {
+        $post_data = $this->request->post();
+
+		$json = [];
+
+        // Permission
+        // if($this->acting_username !== 'admin'){
+        //     $json['error'] = $this->lang->error_permission;
+        // }
+
+        // Selected
+		if (isset($post_data['selected'])) {
+			$selected = $post_data['selected'];
+		} else {
+			$selected = [];
+		}
+
+		if (!$json) {
+
+			foreach ($selected as $id) {
+				$result = $this->TaxonomyService->deleteTaxonomy($id);
+
+                if(!empty($result['error'])){
+                    if(config('app.debug')){
+                        $json['error'] = $result['error'];
+                    }else{
+                        $json['error'] = $this->lang->text_fail;
+                    }
+
+                    break;
+                }
+			}
+		}
+        
+        if(empty($json['error'] )){
+            $json['success'] = $this->lang->text_success;
+        }
+
+        return response(json_encode($json))->header('Content-Type','application/json');
+    }
 }

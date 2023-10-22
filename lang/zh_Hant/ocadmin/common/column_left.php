@@ -24,8 +24,8 @@ return [
 'text_system' => '系統管理',
 'text_setting' => '設定',
 
-'text_term' => '詞語',
-'text_term_taxonomy' => '詞語屬性',
-'text_term_term' => '詞語',
+'text_common' => '通用設定',
+'text_common_taxonomy' => '詞語屬性',
+'text_common_term' => '詞語',
 
 ];

@@ -170,11 +170,46 @@ class LayoutComposer
             ];
         }
 
+
+
+        /**
+         * Common
+         */
+        if(1) {
+            $common[] = [
+                'name'	   => $this->lang->text_common_taxonomy,
+                'icon'	   => '',
+                'href'     => route('lang.admin.common.taxonomies.index'),
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $common[] = [
+                'name'	   => $this->lang->text_common_term,
+                'icon'	   => '',
+                'href'     => route('lang.admin.common.terms.index'),
+                'children' => []
+            ];
+        }
+
+        if(!empty($common)) {
+            $menus[] = [
+                'id'       => 'menu-catalog',
+                'icon'	   => 'fas fa-cog',
+                'name'	   => $this->lang->text_common,
+                'href'     => '',
+                'children' => $common
+            ];
+        }
+
+
+
         /**
          * System
          */
 
-        // Taxonomies and Terms
+
         $admin = [];
 
         if (1) {
@@ -206,33 +241,6 @@ class LayoutComposer
                 'name'	   => 'Admins', // user
                 'icon'	   => ' ',
                 'children' => $admin
-            ];
-        }
-
-        // Admin users
-        $term = [];
-
-        if (1) {
-            $term[] = [
-                'name'	   => $this->lang->text_term_taxonomy,
-                'href'     => route('lang.admin.system.term.taxonomies.index'),
-                'icon'	   => ' ',
-            ];
-        }
-
-        if (1) {
-            $term[] = [
-                'name'	   => $this->lang->text_term_term,
-                'href'     => route('lang.admin.system.term.terms.index'),
-                'icon'	   => ' ',
-            ];
-        }
-
-        if ($term) {
-            $system[] = [
-                'name'	   => $this->lang->text_term,
-                'icon'	   => ' ',
-                'children' => $term
             ];
         }
 

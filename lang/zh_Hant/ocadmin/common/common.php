@@ -67,6 +67,7 @@ return array (
 'button_search' => '搜尋',
 'button_view' => '檢視',
 'button_filter' => '篩選',
+'button_reset' => '重設',
 
 // Column
 'column_id' => 'ID',

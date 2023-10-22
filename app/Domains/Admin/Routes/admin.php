@@ -91,28 +91,30 @@ Route::group(
         });
 
         Route::group([
+            'prefix' => 'common',
+            'as' => 'common.',
+        ], function ()
+        {
+            Route::get('taxonomies', 'Common\TaxonomyController@index')->name('taxonomies.index');
+            Route::get('taxonomies/list', 'Common\TaxonomyController@list')->name('taxonomies.list');
+            Route::get('taxonomies/autocomplete', 'Common\TaxonomyController@autocomplete')->name('taxonomies.autocomplete');
+            Route::get('taxonomies/form/{user_id?}', 'Common\TaxonomyController@form')->name('taxonomies.form');
+            Route::post('taxonomies/save/{user_id?}', 'Common\TaxonomyController@save')->name('taxonomies.save');
+            Route::post('taxonomies/delete', 'Common\TaxonomyController@delete')->name('taxonomies.delete');
+            //Route::get('taxonomies/autocomplete', 'Common\TaxonomyController@autocomplete')->name('taxonomies.autocomplete');
+            
+            Route::get('terms', 'Common\TermController@index')->name('terms.index');
+            Route::get('terms/list', 'Common\TermController@list')->name('terms.list');
+            Route::get('terms/autocomplete', 'Common\TermController@autocomplete')->name('terms.autocomplete');
+            Route::get('terms/form/{role_id?}', 'Common\TermController@form')->name('terms.form');
+            Route::post('terms/save/{role_id?}', 'Common\TermController@save')->name('terms.save');
+        }); 
+
+        Route::group([
             'prefix' => 'system',
             'as' => 'system.',
         ], function ()
         {
-
-            Route::group([
-                'prefix' => 'term',
-                'as' => 'term.',
-            ], function ()
-            {
-                Route::get('taxonomies', 'System\Term\TaxonomyController@index')->name('taxonomies.index');
-                Route::get('taxonomies/list', 'System\Term\TaxonomyController@list')->name('taxonomies.list');
-                Route::get('taxonomies/autocomplete', 'System\Term\TaxonomyController@autocomplete')->name('taxonomies.autocomplete');
-                Route::get('taxonomies/form/{user_id?}', 'System\Term\TaxonomyController@form')->name('taxonomies.form');
-                Route::post('taxonomies/save/{user_id?}', 'System\Term\TaxonomyController@save')->name('taxonomies.save');
-                
-                Route::get('terms', 'System\Term\TermController@index')->name('terms.index');
-                Route::get('terms/list', 'System\Term\TermController@list')->name('terms.list');
-                Route::get('terms/autocomplete', 'System\Term\TermController@autocomplete')->name('terms.autocomplete');
-                Route::get('terms/form/{role_id?}', 'System\Term\TermController@form')->name('terms.form');
-                Route::post('terms/save/{role_id?}', 'System\Term\TermController@save')->name('terms.save');
-            }); 
 
             Route::group([
                 'prefix' => 'admin',

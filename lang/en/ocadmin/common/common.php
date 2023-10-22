@@ -84,6 +84,7 @@ return [
 'button_clear' => 'Clear',
 'button_close' => 'Close',
 'button_backup' => 'Backup',
+'button_reset' => 'Reset',
 
 // Column
 'column_id' => 'ID',
