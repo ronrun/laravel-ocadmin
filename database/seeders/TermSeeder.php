@@ -29,7 +29,7 @@ class TermSeeder extends Seeder
         Excel::import(new TermsImport, 'database/imports/terms.xlsx');
 
         // term meta
-        //Excel::import(new TermMetasImport, 'database/imports/term_metas.xlsx');
+        Excel::import(new TermMetasImport, 'database/imports/term_metas.xlsx');
 
         Schema::enableForeignKeyConstraints();
     }

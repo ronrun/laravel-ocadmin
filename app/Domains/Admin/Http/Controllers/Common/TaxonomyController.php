@@ -73,7 +73,7 @@ class TaxonomyController extends BackendController
         $query_data = UrlHelper::getUrlQueries($queries);
 
         // Rows
-        $taxonomies = $this->TaxonomyService->getTaxonomy($query_data);
+        $taxonomies = $this->TaxonomyService->getTaxonomies($query_data);
 
         if(!empty($taxonomies)){
             foreach ($taxonomies as $row) {
@@ -186,11 +186,13 @@ class TaxonomyController extends BackendController
 
         $data['taxonomy']  = $taxonomy;
         
-        $data['taxonomy_id'] = $taxonomy_id ?? null;
+        $data['taxonomy_id'] = $taxonomy->id ?? null;
 
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
-        $data['translations'] = $taxonomy->sortedTranslations();
+        if(!empty($taxonomy->id)){
+            $data['translations'] = $taxonomy->sortedTranslations();
+        }
         
         return view('ocadmin.common.taxonomy_form', $data);
     }
@@ -262,6 +264,41 @@ class TaxonomyController extends BackendController
         
         if(empty($json['error'] )){
             $json['success'] = $this->lang->text_success;
+        }
+
+        return response(json_encode($json))->header('Content-Type','application/json');
+    }
+
+
+    public function autocomplete()
+    {
+        $data['lang'] = $this->lang;
+
+        $queries = $this->request->query();
+
+        // Prepare query_data for records
+        $query_data = UrlHelper::getUrlQueries($queries);
+
+        if(!empty($query_data['equal_code'])){
+            if (strpos($query_data['equal_code'], ',') !== false) {
+                $arr = explode(',', $query_data['equal_code']);
+                $query_data['whereIn'] = ['code' => $arr];
+                unset($query_data['equal_code']);
+            }
+        }
+
+        $rows = $this->TaxonomyService->getTaxonomies($query_data);
+
+        $json = [];
+
+        foreach ($rows as $row) {
+            $json[] = array(
+                'label' => $row->code . ' ' . $row->name,
+                'value' => $row->id,
+                'id' => $row->id,
+                'code' => $row->code,
+                'name' => $row->name,
+            );
         }
 
         return response(json_encode($json))->header('Content-Type','application/json');

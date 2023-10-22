@@ -1,10 +1,10 @@
-@extends('admin.app')
+@extends('ocadmin.app')
 
 @section('pageJsCss')
 @endsection
 
 @section('columnLeft')
-  @include('admin.common.column_left')
+    @include('ocadmin.common.column_left')
 @endsection
 
 @section('content')
@@ -18,7 +18,7 @@
         <a href="{{ $back_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_back }}" class="btn btn-light"><i class="fas fa-reply"></i></a>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
-      @include('admin.common.breadcumb')
+      @include('ocadmin.common.breadcumb')
     </div>
   </div>
     <div class="container-fluid">
@@ -36,34 +36,22 @@
             <div class="tab-content">
               <div id="tab-trans" class="tab-pane active" >
                 <ul class="nav nav-tabs">
-                  @foreach($languages as $language)
-                  <li class="nav-item"><a href="#language-{{ $language->code }}" data-bs-toggle="tab" class="nav-link @if ($loop->first)active @endif">{{ $language->native_name }}</a></li>
+                  @foreach($supportedLocales as $locale => $localeContent)
+                  <li class="nav-item"><a href="#language-{{ $locale }}" data-bs-toggle="tab" class="nav-link @if($loop->first) active @endif"> {{ $localeContent['native'] }}</a></li>
                   @endforeach
                 </ul>
                 <div class="tab-content">
-                  @foreach($languages as $language)
-                  <div id="language-{{ $language->code }}" class="tab-pane @if ($loop->first)active @endif">
-                    <input type="hidden" name="translations[{{ $language->code }}][id]" value="{{ $translations[$language->code]['id'] ?? '' }}" >
+                  @foreach($supportedLocales as $locale => $localeContent)
+                  <div id="language-{{ $locale }}" class="tab-pane @if($loop->first) active @endif">
 
                     <div class="row mb-3 required">
-                      <label for="input-name-{{ $language->code }}" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
-                      <div class="col-sm-10" >
-                        <div class="input-group">
-                          <input type="text" id="input-name-{{ $language->code }}" name="translations[{{ $language->code }}][name]" value="{{ $translations[$language->code]['name'] ?? '' }}" class="form-control">
-                        </div>
-                        <div id="error-name-{{ $language->code }}" class="invalid-feedback"></div>
+                      <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
+                      <div class="col-sm-10">
+                        <input type="text" id="input-name-{{ $locale }}" name="translations[{{ $locale }}][name]" value="{{ $translations[$locale]['name'] ?? '' }}" class="form-control">
+                        <div id="error-name" class="invalid-feedback"></div>
                       </div>
                     </div>
 
-                    <div class="row mb-3">
-                      <label for="input-short_name-{{ $language->code }}" class="col-sm-2 col-form-label">{{ $lang->column_short_name }}</label>
-                      <div class="col-sm-10">
-                        <div class="input-group">
-                          <input type="text" id="input-short_name-{{ $language->code }}" name="translations[{{ $language->code }}][short_name]" value="{{ $translations[$language->code]['short_name'] ?? '' }}" class="form-control">
-                        </div>
-                        <div id="error-short_name-{{ $language->code }}" class="invalid-feedback"></div>
-                      </div>
-                    </div>
                   </div>
                   @endforeach
                 </div>
@@ -90,6 +78,7 @@
                       <input type="text" id="input-taxonomy_name" name="taxonomy_name" value="{{ $term->taxonomy_name }}" data-oc-target="autocomplete-taxonomy" class="form-control" />
                     </div>
                     <div id="error-taxonomy_name" class="invalid-feedback"></div>
+                    <input type="hidden" id="input-taxonomy_id" name="taxonomy_id" value="{{ $term->taxonomy_id }}" />
                     <input type="hidden" id="input-taxonomy_code" name="taxonomy_code" value="{{ $term->taxonomy_code }}" />
                     <ul id="autocomplete-taxonomy" class="dropdown-menu"></ul>
                     <div class="form-text">(自動查找)</div>
@@ -151,21 +140,18 @@
 $('#input-taxonomy_name').autocomplete({
   'source': function (request, response) {
     $.ajax({
-      url: "{{ route('lang.admin.common.taxonomies.autocomplete') }}?filter_name=" + encodeURIComponent(request) + '&equal_code=' + encodeURIComponent('{{ $taxonomy_code ?? "" }}'),
+      url: "{{ route('lang.admin.common.taxonomies.autocomplete') }}?filter_keyword=" + encodeURIComponent(request),
       dataType: 'json',
       success: function (json) {
-        response($.map(json, function (item) {
-          return {
-            value: item['code'],
-            label: item['name']
-          }
-        }));
-      }
+          response(json);
+        }
     });
   },
   'select': function (item) {
     $('#input-taxonomy_name').val(item.label);
-    $('#input-taxonomy_code').val(item.value);
+    $('#input-taxonomy_id').val(item.value);
+    $('#input-taxonomy_code').val(item.code);
+
   }
 });
 

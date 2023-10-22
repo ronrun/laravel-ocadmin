@@ -1,10 +1,10 @@
-@extends('admin.app')
+@extends('ocadmin.app')
 
 @section('pageJsCss')
 @endsection
 
 @section('columnLeft')
-	@include('admin.common.column_left')
+    @include('ocadmin.common.column_left')
 @endsection
 
 @section('content')
@@ -17,7 +17,7 @@
         <button type="submit" form="form-term" formaction="{{ $delete_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_delete }}" onclick="return confirm('{{ $lang->text_confirm }}');" class="btn btn-danger"><i class="fa-regular fa-trash-can"></i></button>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
-      @include('admin.common.breadcumb')
+      @include('ocadmin.common.breadcumb')
     </div>
   </div>
   <div class="container-fluid">

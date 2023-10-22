@@ -21,8 +21,19 @@ class TaxonomyRepository extends Repository
         $this->getLang(['ocadmin/common/common','ocadmin/common/taxonomy']);
     }
 
-    public function getTaxonomy($data = [], $debug = 0): mixed
+    public function getTaxonomies($data = [], $debug = 0): mixed
     {
+        if(!empty($data['filter_keyword'])){
+            $data['filter_code'] = $data['filter_keyword'];
+
+            $data['translations'][] = ['orWhereHas', 'orWhere', [
+                'filter_name' => $data['filter_keyword'],
+                'filter_short_name' => $data['filter_keyword'],  
+            ]];
+            
+            unset($data['filter_keyword']);
+        }
+        
         return parent::getRows($data, $debug);
     }
 
@@ -30,7 +41,7 @@ class TaxonomyRepository extends Repository
     public function saveTaxonomy($post_data, $debug = 0)
     {
         try {
-            $taxonomy_id = $post_data['taxonomy_id'] ?? $post_data['id'];
+            $taxonomy_id = $post_data['taxonomy_id'] ?? $post_data['id'] ?? null;
 
             // 這裡不能用 DB::beginTransaction(); 否則 saveRow 無效
             $result = $this->saveRow($taxonomy_id, $post_data);

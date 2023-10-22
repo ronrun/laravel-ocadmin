@@ -14,12 +14,13 @@ class TermsImport implements ToModel,WithStartRow,ToCollection
     {
         return new Term([
             'id' => $row[0],
-            'parent_id' => $row[1],
-            'taxonomy_id' => $row[2],
-            'taxonomy_code' => $row[3],
-            'is_active' => $row[4],
-            'created_at' => $row[5],
-            'updated_at' => $row[6],
+            'code' => $row[1],
+            'parent_id' => $row[2],
+            'taxonomy_id' => $row[3],
+            'taxonomy_code' => $row[4],
+            'is_active' => $row[5],
+            'created_at' => $row[6],
+            'updated_at' => $row[7],
         ]);
     }
 

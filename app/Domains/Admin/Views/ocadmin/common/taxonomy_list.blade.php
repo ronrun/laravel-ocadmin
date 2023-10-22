@@ -29,6 +29,6 @@
       </tbody>
     </table>
   </div>
-    {!! $taxonomies->links('ocadmin.common.pagination', ['taxonomies' => $taxonomies]) !!}
+    {!! $taxonomies->links('ocadmin.common.pagination') !!}
 
 </form>

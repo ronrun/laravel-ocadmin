@@ -5,6 +5,7 @@ namespace App\Models\Common;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\ModelTrait;
+use App\Models\Common\Taxonomy;
 
 class Term extends Model
 {
@@ -14,28 +15,11 @@ class Term extends Model
     public $translation_attributes = ['name',];
     public $meta_attributes = ['name'];
     protected $guarded = [];
-    protected $appends = ['name','slug','description',];
 
 
-    protected function name(): Attribute
+    public function taxonomy()
     {
-        return Attribute::make(
-            get: fn () => $this->translation->name ?? '',
-        );
-    }
-
-    protected function description(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->translation->description ?? '',
-        );
-    }
-
-    protected function slug(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->translation->slug ?? '',
-        );
+        return $this->belongsTo(Taxonomy::class, 'taxonomy_id');
     }
 
 }

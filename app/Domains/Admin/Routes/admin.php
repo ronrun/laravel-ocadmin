@@ -108,6 +108,7 @@ Route::group(
             Route::get('terms/autocomplete', 'Common\TermController@autocomplete')->name('terms.autocomplete');
             Route::get('terms/form/{role_id?}', 'Common\TermController@form')->name('terms.form');
             Route::post('terms/save/{role_id?}', 'Common\TermController@save')->name('terms.save');
+            Route::post('terms/delete', 'Common\TermController@delete')->name('terms.delete');
         }); 
 
         Route::group([
