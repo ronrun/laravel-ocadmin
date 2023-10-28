@@ -9,6 +9,11 @@ use App\Domains\Admin\Services\Common\TermService;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Helpers\Classes\UrlHelper;
 
+
+use App\Models\Common\Term;
+use App\Models\Common\TermPath;
+
+
 class TermController extends BackendController
 {
     protected $lang;
@@ -29,7 +34,6 @@ class TermController extends BackendController
             'href' => route('lang.admin.dashboard'),
         ];
 
-        //echo '<pre>', print_r($this->lang, 1), "</pre>"; exit;
         $breadcumbs[] = (object)[
             'text' => $this->lang->text_system,
             'href' => 'javascript:void(0)',
@@ -71,9 +75,8 @@ class TermController extends BackendController
 
         // Prepare query_data for records
         $query_data = UrlHelper::getUrlQueries($queries);
-
-        // Rows
         
+        // Rows
         $query_data['extra_columns'] = ['taxonomy_name'];
         $terms = $this->TermService->getTerms($query_data);
 
@@ -101,11 +104,11 @@ class TermController extends BackendController
         $data['sort'] = strtolower($query_data['sort']);
         $data['order'] = strtolower($order);
 
-        //$query_data = $this->unsetUrlQueryData($query_data,['whereIn']);
+        $query_data = UrlHelper::unsetUrlQueryData($queries,['sort','order']);
 
         $url = '';
 
-        foreach($queries as $key => $value){
+        foreach($query_data as $key => $value){
             $url .= "&$key=$value";
         }
 
@@ -202,6 +205,8 @@ class TermController extends BackendController
         $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         $data['translations'] = $term->sortedTranslations();
+
+        $data['term_paths'] = $this->TermService->getGroupedPathByTermId($term_id);
         
         return view('ocadmin.common.term_form', $data);
     }
@@ -273,6 +278,32 @@ class TermController extends BackendController
         
         if(empty($json['error'] )){
             $json['success'] = $this->lang->text_success;
+        }
+
+        return response(json_encode($json))->header('Content-Type','application/json');
+    }
+
+
+    public function autocomplete ()
+    {
+
+        $query_data = $this->request->query();
+
+        // Prepare query_data for records
+        $filter_data = UrlHelper::getUrlQueries($query_data);
+
+        $rows = $this->TermService->getGroupedPath($filter_data);
+
+        $json = [];
+
+        foreach ($rows as $row) {
+            $json[] = array(
+                'value' => $row['id'] ?? '',
+                'label' => $row['name'] ?? '',
+                'term_path_id' => $row['id'] ?? '',
+                'name' => $row['name'] ?? '',
+                'group_id' => $row['group_id'] ?? '',
+            );
         }
 
         return response(json_encode($json))->header('Content-Type','application/json');

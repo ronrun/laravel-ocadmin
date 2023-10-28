@@ -74,7 +74,7 @@ $('#term').on('click', 'thead a, .pagination a', function(e) {
 });
 
 $('#button-filter').on('click', function() {
-	url = '?';
+	url = '';
 
   var filter_taxonomy_name = $('#input-taxonomy_name').val();
 
@@ -100,7 +100,7 @@ $('#button-filter').on('click', function() {
     url += '&equal_is_active=' + encodeURIComponent(equal_is_active);
   }
 
-	list_url = "{{ $list_url }}" + url;
+	list_url = "{{ $list_url }}?" + url;
 
 	$('#term').load(list_url);
 

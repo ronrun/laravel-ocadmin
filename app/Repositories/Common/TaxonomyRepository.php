@@ -24,13 +24,18 @@ class TaxonomyRepository extends Repository
     public function getTaxonomies($data = [], $debug = 0): mixed
     {
         if(!empty($data['filter_keyword'])){
-            $data['filter_code'] = $data['filter_keyword'];
-
-            $data['translations'][] = ['orWhereHas', 'orWhere', [
-                'filter_name' => $data['filter_keyword'],
-                'filter_short_name' => $data['filter_keyword'],  
-            ]];
-            
+            $data['andWhere'][] = [ // where 條件第一層，跟主表 is_active 同層。一般情況下都使用 and
+                'sub_type' => 'orWhere', // 同層的篩選使用 or
+                'filter_code' => $data['filter_keyword'],
+                'orWhere' => [[
+                        'sub_type' => 'orWhere',
+                        'filter_name' => $data['filter_keyword'],
+                    ],[
+                        'sub_type' => 'orWhere',
+                        'filter_short_name' => $data['filter_keyword'], 
+                    ],
+                ],
+            ];
             unset($data['filter_keyword']);
         }
         

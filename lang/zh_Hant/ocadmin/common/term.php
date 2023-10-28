@@ -12,7 +12,7 @@ return [
 'column_code' => '識別碼',
 'column_name' => '名稱',
 'column_short_name' => '簡稱',
-'column_parent_name' => '上層分類',
+'column_parent_name' => '上層語詞',
 'column_taxonomy_name' => '詞語屬性',
 'column_comment' => '備註',
 

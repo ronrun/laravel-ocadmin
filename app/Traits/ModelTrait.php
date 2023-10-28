@@ -38,10 +38,10 @@ trait ModelTrait
 
     public function getMetaModel()
     {
-        if(!empty($this->model->meta_model_name)){
-            $meta_model_name = $this->model->meta_model_name;
+        if(!empty($this->meta_model_name)){
+            $meta_model_name = $this->meta_model_name;
         }else{
-            $meta_model_name = get_class($this->model) . 'Meta';
+            $meta_model_name = get_class($this) . 'Meta';
         }
 
         return new $meta_model_name();

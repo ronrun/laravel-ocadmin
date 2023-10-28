@@ -274,20 +274,20 @@ class TaxonomyController extends BackendController
     {
         $data['lang'] = $this->lang;
 
-        $queries = $this->request->query();
+        $query_data = $this->request->query();
 
         // Prepare query_data for records
-        $query_data = UrlHelper::getUrlQueries($queries);
+        $filter_data = UrlHelper::getUrlQueries($query_data);
 
-        if(!empty($query_data['equal_code'])){
-            if (strpos($query_data['equal_code'], ',') !== false) {
-                $arr = explode(',', $query_data['equal_code']);
-                $query_data['whereIn'] = ['code' => $arr];
-                unset($query_data['equal_code']);
+        if(!empty($filter_data['equal_code'])){
+            if (strpos($filter_data['equal_code'], ',') !== false) {
+                $arr = explode(',', $filter_data['equal_code']);
+                $filter_data['whereIn'] = ['code' => $arr];
+                unset($filter_data['equal_code']);
             }
         }
 
-        $rows = $this->TaxonomyService->getTaxonomies($query_data);
+        $rows = $this->TaxonomyService->getTaxonomies($filter_data);
 
         $json = [];
 

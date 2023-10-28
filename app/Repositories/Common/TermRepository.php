@@ -4,6 +4,8 @@ namespace App\Repositories\Common;
 
 use App\Repositories\Repository;
 use App\Models\Common\Term;
+use App\Models\Common\TermPath;
+use Illuminate\Support\Facades\DB;
 
 class TermRepository extends Repository
 {
@@ -36,6 +38,15 @@ class TermRepository extends Repository
 
     public function getTerms($data = [], $debug = 0): mixed
     {
+        if(!empty($data['filter_keyword'])){
+            $data['translations'][] = ['andWhereHas', 'orWhere', [
+                'filter_name' => $data['filter_keyword'],
+                //'filter_short_name' => $data['filter_keyword'],  
+            ]];
+            
+            unset($data['filter_keyword']);
+        }
+
         $rows = parent::getRows($data, $debug);
 		$extra_columns = $data['extra_columns'] ?? [];
 
@@ -65,13 +76,111 @@ class TermRepository extends Repository
             if(!empty($result['error'])){
                 throw new \Exception($result['error']);
             }
-    
+
+
+            // term_paths 執行期間應該要鎖住資料表
+            if(!empty($post_data['term_paths'])){
+
+                // - delete
+                DB::beginTransaction();
+                //echo '<pre>term_paths ', print_r($post_data['term_paths'], 1), "</pre>"; exit;
+
+                $existed_group_ids = TermPath::where('term_id', $term_id)->groupBy('group_id')->pluck('group_id')->toArray();
+                $new_group_ids = array_column($post_data['term_paths'], 'group_id');
+                $same_group_ids = array_intersect($existed_group_ids, $new_group_ids);
+
+                $delete_group_ids = array_diff($existed_group_ids, $new_group_ids);
+
+                TermPath::where('group_id', $delete_group_ids)->delete();
+                
+                // - upsert
+                $new_group_id = TermPath::max('group_id') + 1;
+
+                foreach ($post_data['term_paths'] as $term_path) {
+
+                    if(in_array($term_path['group_id'] , $same_group_ids)){
+                        continue;
+                    }
+                    
+                    $refrence_term_paths = TermPath::where('group_id', $term_path['group_id'])->get();
+
+                    $arr = [];
+                    $level = 0;
+
+                    // -- 產生歷代祖先資料
+                    foreach ($refrence_term_paths as $path) {
+                        $arr = [
+                            'term_id' => $term_id,
+                            'path_id' => $path->path_id,
+                            'level' => $level,
+                            'group_id' => $new_group_id,
+                        ];
+
+                        $term_path_rows[] = $arr;
+
+                        $level ++;
+                    }
+                    // -- 產生當代資料
+                    $arr = [
+                        'term_id' => $term_id,
+                        'path_id' => $term_id,
+                        'level' => $level,
+                        'group_id' => $new_group_id,
+                    ];
+                    $term_path_rows[] = $arr;
+                    $new_group_id ++;
+                }
+
+                if(!empty($term_path_rows)){
+                    TermPath::upsert($term_path_rows,['id']);
+                }
+
+                DB::commit();
+            }
+
             return $result;
 
         } catch (\Exception $ex) {
             $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
             return $result;
         }
+    }
+
+    public function getGroupedPathByTermId($term_id = [], $debug = 0)
+    {
+        $termPaths = TermPath::with('path')->where('term_id', $term_id)->orderBy('group_id')->orderBy('level')->get();
+
+        $groupedTermPaths = $termPaths->groupBy('group_id');
+        
+        $result = [];
+        foreach ($groupedTermPaths as $groupId => $paths) {
+            $row = $paths->last()->toArray();
+            $row['name'] = $paths->sortBy('level')->pluck('path.name')->implode(' > ');
+            //$row['name'] = $paths->sortBy('level')->pluck('path.name')->implode(' > ') . ': id='.$row['id'].', group_id=' . $row['group_id'];
+            unset($row['path']);
+
+            $result[] = (object) $row;
+        }
+
+        return $result;
+    }
+
+    public function getGroupedPath($query_data = [], $debug = 0)
+    {
+        $termPaths = TermPath::with('path')->orderBy('group_id')->orderBy('level')->get();
+
+        $groupedTermPaths = $termPaths->groupBy('group_id');
+        
+        $result = [];
+        foreach ($groupedTermPaths as $groupId => $paths) {
+            $row = $paths->last()->toArray();
+            $row['name'] = $paths->sortBy('level')->pluck('path.name')->implode(' > ');
+            unset($row['path']);
+
+            $result[] = $row;
+        }
+
+        return $result;
     }
 
 }

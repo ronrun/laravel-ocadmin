@@ -13,6 +13,9 @@ use App\Models\Common\Taxonomy;
  */
 trait EloquentNewTrait
 {
+    private $filter_data;
+    private $equal_data;
+
     public function initialize($data = null)
     {
         if(isset($this->eloquent_trait_initialized) && $this->eloquent_trait_initialized == true){
@@ -26,6 +29,39 @@ trait EloquentNewTrait
         $this->locale = app()->getLocale();
         $this->is_mapping_zh_hant_hans = false;
         $this->eloquent_trait_initialized = true;
+        $this->translation_attributes = $this->model->translation_attributes ?? [];
+        $this->meta_attributes = $this->model->meta_attributes ?? [];
+
+        // $this->filter_data, $this->equal_data
+        $this->resetFilterAndEqualData($data);
+    }
+
+    private function resetFilterAndEqualData($data)
+    {
+        foreach ($data as $key => $value) {
+            if(empty($value)){
+                continue;
+            }
+
+            // Must Start with filter_
+            if(str_starts_with($key, 'filter_') && !empty($value)){
+                $column = str_replace('filter_', '', $key);
+                $this->filter_data[$column] = $value;
+            }
+            else if(str_starts_with($key, 'equal_') && !empty($value)){
+                $column = str_replace('equal_', '', $key);
+                $this->equal_data[$column] = $value;
+                unset($data[$key]);
+            }
+        }
+
+        if(empty($this->filter_data)){
+            $this->filter_data = [];
+        }
+
+        if(empty($this->equal_data)){
+            $this->equal_data = [];
+        }
     }
 
     public function newModel()
@@ -56,9 +92,16 @@ trait EloquentNewTrait
         return $row;
     }
 
+    public function getRow($data, $debug=0)
+    {
+        $data['first'] = true;
+        $row = $this->getRows($data, $debug);
+        return $row;
+    }
+
     public function getRows($data = [], $debug = 0): mixed
     {
-        $this->initialize();
+        $this->initialize($data);
 
         $query = $this->model->query();
 
@@ -91,11 +134,22 @@ trait EloquentNewTrait
             }
         }
 
-        // Equals
-        $query = $this->setEqualsQuery($query, $data);
+        // columns
+        $query = $this->setColumnsQuery($query, $data);
 
-        // Filters
-        $query = $this->setFiltersQuery($query, $data);
+        // translations
+        $query = $this->setTranslationsQuery($query, $data);
+
+        // Sub query
+        $query = $this->setSubQuery($query, $data);
+
+        // where has
+        $query = $this->setWhereHasQuery($query, $data);
+
+        // with
+        if(!empty($data['with'])){
+            $this->setWith($query, $data['with']);
+        }
 
         // Sort & Order
         //  - Order
@@ -108,7 +162,7 @@ trait EloquentNewTrait
 
         //  - Sort
         if(!empty($data['sort']) && !empty($this->model->translation_attributes) && in_array($data['sort'], $this->model->translation_attributes)){
-            $translation_table = $this->getTranslationTable();
+            $translation_table = $this->model->getTranslationTable();
             $master_key = $this->getTranslationMasterKey();
             $sort = $data['sort'];
 
@@ -142,9 +196,7 @@ trait EloquentNewTrait
 
         // single row
         if(isset($data['first']) && $data['first'] = true){
-            $row = $query->first();
-            //$result = $this->getMetas($result);
-            return $row;
+            return $query->first();
         }
         // multi rows
         else{
@@ -185,15 +237,155 @@ trait EloquentNewTrait
 
             return $rows;
         }
-
     }
 
-    public function getRow($data, $debug=0)
+
+    /**
+     * modified: 2023-10-29
+     */
+    private function setColumnsQuery($query, $data)
     {
-        $data['first'] = true;
-        $row = $this->getRows($data, $debug);
-        return $row;
+        $translation_attributes = $this->model->translation_attributes ?? [];
+        $meta_attributes = $this->model->meta_attributes ?? [];
+
+        foreach ($data as $key => $value) {
+            // $key has prifix 'filter_' or 'equal_'
+            // $column is the name of database table's column
+
+            $column = null;
+
+            if($value == ''|| is_array($value)){
+                continue;
+            }
+
+            if(str_starts_with($key, 'filter_')){
+                $column = str_replace('filter_', '', $key);
+
+                // translation or meta column is not processed here, Has to be the table's columns
+                if(in_array($column, $translation_attributes) || in_array($column, $meta_attributes) || !in_array($column, $this->table_columns)){
+                    continue;
+                }
+
+                $query = $this->setFilterWhereQuery($query, $column, $value, 'where');
+
+            }else if(str_starts_with($key, 'equal')){
+                $column = str_replace('equal', '', $key);
+
+                // translation or meta column is not processed here, Has to be the table's columns
+                if(in_array($column, $translation_attributes) || in_array($column, $meta_attributes) || !in_array($column, $this->table_columns)){
+                    continue;
+                }
+
+                $query->where($query, $value);
+
+            }
+        }
+
+        return $query;
     }
+
+    private function setTranslationsQuery($query, $data, $flag = 1)
+    {
+        $standard_translation = [];
+        $meta_translation = [];
+
+        foreach ($data as $key => $value) {
+            $column = null;
+            if(str_starts_with($key, 'filter_')){
+                $column = str_replace('filter_', '', $key);
+            }else{
+                continue;
+            }
+
+            //FooTranslation
+            if(in_array($column, $this->translation_attributes) && !in_array($column, $this->meta_attributes)){
+                $standard_translation[$column] = $value;
+            }
+
+            // meta translation
+            if(in_array($column, $this->translation_attributes) && in_array($column, $this->meta_attributes)){
+                $meta_translation[$column] = $value;
+            }
+        }
+
+        if(!empty($standard_translation)){
+            $this->filterStandardTranslations($query, $standard_translation);
+        }
+
+        if(!empty($meta_translation)){
+            $this->filterMetaTranslations($query, $meta_translation);
+        }
+
+        return $query;
+    }
+
+    // setTranslationsQuery, use setWhereHas()
+    private function filterStandardTranslations($query, $standard_whereHas)
+    {
+        $this->setWhereHas($query, $standard_whereHas);
+    }
+
+    private function filterMetaTranslations($query, $meta_data)
+    {
+        foreach ($meta_data as $column => $value) {
+            $query->whereHas('metas', function($qry) use ($column, $value) {
+                $qry->where('locale', app()->getLocale());
+                $qry->where('meta_key', $column);
+                $this->setFilterWhereQuery($qry, 'meta_value', $value, 'where');
+            });
+        }
+    }
+
+    /**
+     * $data 是從 repository 傳來的完整 $data
+     */
+    private function setSubQuery($query, $data, $flag = 1)
+    {
+        if(!empty($data['andWhere'])){
+            $sub_data = $data['andWhere'];
+            $type = 'where';
+        }
+        else if(!empty($data['orWhere'])){
+            $sub_data = $data['orWhere'];
+            $type = 'orWhere';
+        }
+        else{
+            return $query;
+        }
+        
+        foreach ($sub_data as $set) {
+            $query->$type(function ($query) use ($set, $flag) {
+
+                // 處理本輪篩選欄位
+                $this->setColumnsQuery($query, $set, $set['sub_type']);
+                // 多語欄位
+                $query = $this->setTranslationsQuery($query, $set, $flag);
+                
+                // 如果還有下一級
+                if(!empty($set['andWhere'])){
+                    $this->setSubQuery($query, $set);
+                }
+    
+                if(!empty($set['orWhere'])){
+                    $this->setSubQuery($query, $set, $flag);
+                }
+            });
+        }
+
+        return $query;
+    }
+
+    // 暫時沒用到
+    private function setWhereHasQuery($query, $data)
+    {
+        if(empty($data['whereHas'])){
+            return $query;
+        }
+
+        return $query;
+    }
+
+
 
     // Current Language
     public function setTranslationToRow($row, $columns = [])
@@ -426,7 +618,7 @@ trait EloquentNewTrait
         $this->initialize();
 
         try {
-            $meta_model = $this->model->getMetanModel();
+            $meta_model = $this->model->getMetaModel();
             $meta_table = $meta_model->getTable();
 
             // Keys
@@ -484,277 +676,12 @@ trait EloquentNewTrait
         return DB::connection($connection_name)->getSchemaBuilder()->getColumnListing($table);
     }
 
-
-    private function setFiltersQuery($query, $data, $debug = 0)
-    {
-        $translation_attributes = $this->model->translation_attributes ?? [];
-        $meta_attributes = $this->model->meta_attributes ?? [];
-
-        // self table
-        foreach ($data as $key => $value) {
-            // $key has prifix 'filter_'
-            // $column is the name of database table's column
-
-            $column = null;
-
-            // Must Start with filter_
-            if(str_starts_with($key, 'filter_')){
-                $column = str_replace('filter_', '', $key);
-            }else{
-                continue;
-            }
-
-            // Skip emtpy value
-            if($value == ''){
-                continue;
-            }
-
-            // meta column is not processed here
-            if(in_array($column, $translation_attributes) || in_array($column, $meta_attributes)){
-                continue;
-            }
-
-            // Has to be the table's columns
-            if(!in_array($column, $this->table_columns)){
-                continue;
-            }
-
-            if(is_array($value)){ // Filter value can not be array
-                continue;
-            }
-
-            $value = str_replace(' ', '*', trim($value));
-
-            $query = $this->setWhereQuery($query, $column, $value, 'where');
-        }
-
-        // 下面暫時不用。在呼本本檔時，先用 orWhere 或 where 包起來。
-        /*
-        // meta table
-        foreach ($data as $key => $value) {
-            if(!str_starts_with($key, 'filter_')){
-                continue;
-            }else{
-                $column = str_replace('filter_', '', $key);
-            }
-            
-            if(!in_array($column, $meta_attributes)){
-                continue;
-            }
-
-            // not translation
-            if(!in_array($column, $translation_attributes)){
-                $data['whereHas']['metas'][] = [
-                    'locale' => '=',
-                    'meta_key' => '='.$column,
-                    'meta_value' => $data[$key],
-                ];
-                unset($data[$key]);
-            }
-        }
-
-        // whereHas
-        if(!empty($data['whereHas'])){
-            $this->setWhereHas($query, $data['whereHas']);
-        }
-        */
-
-        /* 多語查詢的範例
-        $data['andTranslation'][] = ['where', [
-            'filter_name' => $data['filter_keyword'],
-            'filter_short_name' => $data['filter_keyword'],  
-        ]];
-        $data['andTranslation'][] = ['orWhere', [
-            'filter_name' => $data['filter_keyword'],
-            'filter_short_name' => $data['filter_keyword'],  
-        ]];
-        $data['orTranslation'][] = ['where', [
-            'filter_name' => $data['filter_keyword'],
-            'filter_short_name' => $data['filter_keyword'],  
-        ]];
-        $data['orTranslation'][] = ['orWhere', [
-            'filter_name' => $data['filter_keyword'],
-            'filter_short_name' => $data['filter_keyword'],  
-        ]];
-        */
-        if(!empty($data['translations'])){
-            $this->filterTranslations($query, $data['translations']);
-        }
-        // End
-
-        
-        if(!empty($data['andSubQuery'])){
-            //setSubQuery
-        }
-
-        return $query;
-    }
-
-    private function setEqualsQuery($query, $data, $debug = 0)
-    {
-        $translation_attributes = $this->model->translation_attributes ?? [];
-        $meta_attributes = $this->model->meta_attributes ?? [];
-
-        // self table
-        foreach ($data as $key => $value) {
-
-            $column = null;
-            
-            if(str_starts_with($key, 'equal_')){ // Key must start with equal_
-                $column = str_replace('equal_', '', $key);
-            }else{
-                continue;
-            }
-
-            if(is_array($value) || empty($value)){ // value can not be empty or array
-                continue;
-            }
-
-            // Translated column is not processed here
-            if(in_array($column, $translation_attributes)){
-                continue;
-            }
-
-            // meta_attributes is not processed here
-            if(in_array($column, $meta_attributes)){
-                continue;
-            }
-
-            // Has to be the table's columns
-            if(!in_array($column, $this->table_columns)){
-                continue;
-            }
-
-            $value_array = explode('__or__', $value);
-            if(count($value_array) > 1){
-                $column = $this->table . '.' . $column;
-                $query->whereIn($column, $value_array);
-            }else{
-                $column = $this->table . '.' . $column;
-                $query->where($column, $value);
-            }
-        }
-
-        // meta table for translation
-        foreach ($data as $key => $value) {
-            if(!str_starts_with($key, 'equal_')){
-                continue;
-            }else{
-                $column = str_replace('equal_', '', $key);
-            }
-
-            if(in_array($column, $meta_attributes) && in_array($column, $translation_attributes)){
-                $data['whereHas']['metas'][] = [
-                    'locale' => '='.$this->locale,
-                    'meta_key' => '='.$column,
-                    'meta_value' => $data[$key],
-                ];
-                unset($data[$key]);
-            }
-        }
-
-        // set meta whereHas
-        foreach ($data as $key => $value) {
-            if(!str_starts_with($key, 'equal_')){
-                continue;
-            }else{
-                $column = str_replace('equal_', '', $key);
-            }
-            
-            if(in_array($column, $meta_attributes) && !in_array($column, $translation_attributes)){
-                $data['whereHas']['metas'][] = [
-                    'meta_key' => '='.$column,
-                    'meta_value' => $data[$key],
-                ];
-                unset($data[$key]);
-            }
-        }
-
-        return $query;
-    }
-
-    /**
-     * 2023-10-23
-     * Ron Lee
-     * 
-     * 1. foo = 123 and exists( select woo from sometable where woo = 456 and xoo = 789)    $this->setSubQuery($query, $set, 'where');
-     * 2. foo = 123 and exists( select woo from sometable where woo = 456 or  xoo = 789)    $this->setSubQuery($query, $set, 'orWhere');
-     * 3. foo = 123 or exists( select woo from sometable where woo = 456 and xoo = 789)     $this->setSubQuery($query, $set, 'where');
-     * 4. foo = 123 or exists( select woo from sometable where woo = 456 or  xoo = 789)     $this->setSubQuery($query, $set, 'orWhere');
-     * 
-     * $type1: whereHas, orWhereHas 
-     * $type2: where, orWhere
-     * 
-     * 由於 translation 關聯是由 meta() 關聯而來，會影響到 sql 的 xxx_id, local，經過多次試驗後，只能把 woo, xoo 拆成不同段的 exists()
-     */
-    private function filterTranslations($query, $data)
-    {
-        foreach ($data as $set) {
-            $type1 = $set[0];
-            $type2 = $set[1];
-            $columns_data = $set[2];
-            // case 1
-            if($type1 == 'whereHas' && $type2 == 'where'){
-                foreach ($columns_data as $key => $value) {
-                    $column = $this->stripFilterOrEqual($key);
-                    if(!empty($column)){
-                        $query->whereHas('translation', function ($query) use ($column, $value){
-                            $query->where('meta_key', $column);
-                            $query = $this->setWhereQuery($query, 'meta_value', $value, 'where');
-        
-                        });
-        
-                    };
-                };
-            }
-            
-            // case 2
-            if($type1 == 'whereHas' && $type2 == 'orWhere'){
-                $query->where(function ($query) use ($columns_data){
-                    foreach ($columns_data as $key => $value) {
-                        $column = $this->stripFilterOrEqual($key);
-                        $query->orWhereHas('translation', function ($query) use ($column, $value){
-                            $query->where('meta_key', $column);
-                            $query = $this->setWhereQuery($query, 'meta_value', $value, 'where');        
-                        });
-                    }
-                    
-                });
-            }
-            
-            // case 3
-            if($type1 == 'orWhereHas' && $type2 == 'where'){
-                $query->orWhere(function ($query) use ($columns_data){
-                    foreach ($columns_data as $key => $value) {
-                        $column = $this->stripFilterOrEqual($key);
-                        $query->whereHas('translation', function ($query) use ($column, $value){
-                            $query->where('meta_key', $column);
-                            $query = $this->setWhereQuery($query, 'meta_value', $value, 'where');        
-                        });
-                    }
-                    
-                });
-            }
-    
-            // case 4
-            if($type1 == 'orWhereHas' && $type2 == 'orWhere'){
-                
-                foreach ($columns_data as $key => $value) {
-                    $column = $this->stripFilterOrEqual($key);
-                    if(!empty($column)){
-                        $query->orWhereHas('translation', function ($query) use ($column, $value){
-                            $query->where('meta_key', $column);
-                            $query = $this->setWhereQuery($query, 'meta_value', $value, 'where');
-                        });
-                    };
-                };
-            }
-        }
-    }
+    private function equalTranslations($query, $data)
+    {}
 
     private function getTranslationMasterKey()
     {
-        $translationModel = $this->getTranslationModel();
+        $translationModel = $this->model->getTranslationModel();
 
         if(!empty($translationModel->master_key)){
             return $translationModel->master_key;
@@ -765,7 +692,7 @@ trait EloquentNewTrait
         }
     }
 
-    private function setWhereQuery($query, $column, $value, $type = 'where')
+    private function setFilterWhereQuery($query, $column, $value, $type = 'where')
     {
         if(str_starts_with($column, 'filter_')){
             $column = str_replace('filter_', '', $column);
@@ -776,7 +703,7 @@ trait EloquentNewTrait
         }
 
         if(is_array($value)){
-            echo '<pre>', print_r($value, 1), "</pre>"; exit;
+            return false;
         }
         $value = trim($value);
 
@@ -822,9 +749,7 @@ trait EloquentNewTrait
                 //     $query->orWhere($column, 'REGEXP', $zhcn);
                 // });
             }else{
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, 'REGEXP', $value);
-                });
+                $query->$type($column, 'REGEXP', $value);
             }
 
             return $query;
@@ -848,9 +773,7 @@ trait EloquentNewTrait
                 //     $query->orWhere($column, '=', $zhcn);
                 // });
             }else{
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, '=', $value);
-                });
+                $query->$type($column, '=', $value);
             }
         }
         // '<>' Not empty or not null
@@ -871,47 +794,43 @@ trait EloquentNewTrait
                 //     $query->orWhere($column, '<>', $zhcn);
                 // });
             }else{
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, '<>', $value);
-                });
+                $query->$type($column, '<>', $value);
             }
         }
         // '<123' Smaller than 123
         else if(str_starts_with($value, '<') && strlen($value) > 1){
             $value = (int)substr($value,1);
-            if($type == 'where'){
-                $query->whereRaw("$column < $value");
-            }
-            if($type == 'orWhere'){
-                $query->orWhereRaw("$column < $value");
-            }
+            $query->$type($column, '<', $value);
+
+            // if($type == 'where'){
+            //     $query->whereRaw("$column < $value");
+            // }
+            // if($type == 'orWhere'){
+            //     $query->orWhereRaw("$column < $value");
+            // }
         }
         // '>123' bigger than 123
         else if(str_starts_with($value, '>') && strlen($value) > 1){
             $value = (int)substr($value,1);
-            if($type == 'where'){
-                $query->whereRaw("$column > $value");
-            }
-            if($type == 'orWhere'){
-                $query->orWhereRaw("$column > $value");
-            }
+            $query->$type($column, '>', $value);
+            // if($type == 'where'){
+            //     $query->whereRaw("$column > $value");
+            // }
+            // if($type == 'orWhere'){
+            //     $query->orWhereRaw("$column > $value");
+            // }
         }
         // '*foo woo'
         else if(substr($value,0, 1) == '*' && substr($value,-1) != '*'){
-            $value = str_replace(' ', '(.*)', $value);
             $value = "(.*)".substr($value,1).'$';
             if($this->is_mapping_zh_hant_hans === true){
                 // $query->$type(function ($query) use($column, $zhtw, $zhcn) {
                 //     $query->orWhere($column, 'REGEXP', "$zhtw");
                 //     $query->orWhere($column, 'REGEXP', "$zhcn");
                 // });
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, 'REGEXP', "$value");
-                });
+
             }else{
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, 'REGEXP', "$value");
-                });
+                $query->$type($column, 'REGEXP', $value);
             }
         }
         // 'foo woo*'
@@ -925,145 +844,26 @@ trait EloquentNewTrait
                 //     $query->orWhere($column, 'REGEXP', "$zhtw");
                 //     $query->orWhere($column, 'REGEXP', "$zhcn");
                 // });
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, 'REGEXP', "$value");
-                });
             }else{
-                $query->$type(function ($query) use($column, $value) {
-                    $query->orWhere($column, 'REGEXP', "$value");
-                });
+                $query->$type($column, 'REGEXP', $value);
             }
         }
 
         return $query;
     }
 
-    // foo = 123 and exists( select woo from sometable where ...)
-    // 用到時再重新想邏輯
-    // private function setAndWhereHas($query, $data)
-    // {
-    //     foreach ($data as $rel_name => $relation) {
-    //         $query->whereHas($rel_name, function($query) use ($relation) {
-    //             foreach ($relation as $set) {
-    //                 $this->setSubAndWhereQuery($query, $set);
-    //             }
-    //         }); 
-    //     }
-    // }
-
-    // foo = 123 or exists( select woo from sometable where ...)
-    private function setOrWhereHas($query, $data)
+    /**
+     * $data['whereHas']['translation'][$key] = $data[$key];
+     */
+    private function setWhereHas($query, $data)
     {
         foreach ($data as $rel_name => $relation) {
-            $query->orWhereHas($rel_name, function($query) use ($relation) {
-                foreach ($relation as $set) {
-                    foreach ($set as $set) {
-                    }
-                    //$this->setSubOrWhereQuery($query, $set);
+            $query->whereHas($rel_name, function($query) use ($relation) {
+                foreach ($relation as $key => $value) {
+                    $this->setFilterWhereQuery($query, $key, $value, 'where');
                 }
-            }); 
+            });
         }
-    }
-
-    private function setSubAndWhereQuery($query, $set)
-    {
-        $query->where(function ($query) use($set) {
-            foreach ($set as $key => $value) {
-                $query = $this->setWhereQuery($query, $key, $value,'where');
-            }
-        });
-    }
-
-    private function setSubOrWhereQuery($query, $set)
-    {
-        $query->orWhere(function ($query) use($set) {
-            foreach ($set as $key => $value) {
-                $query = $this->setWhereQuery($query, $key, $value,'orWhere');
-            }
-        });
-    }
-
-    private function setAndSubOrWhere($query, $set)
-    {
-
-        $query->where(function ($query) use($set) {
-            // foreach ($set as $key => $value) {
-            //     $query = $this->setWhereQuery($query, $key, $value,'orWhere');
-            // }
-
-            foreach ($set as $key => $value) {
-                if(!str_starts_with($key, 'filter_')){
-                    continue;
-                }else{
-                    $column = str_replace('filter_', '', $key);
-                }
-
-                // Has to be the table's columns
-                if(!in_array($column, $this->table_columns)){
-                    continue;
-                }
-
-                if(is_array($value)){ // Filter value can not be array
-                    continue;
-                }
-    
-                $value = str_replace(' ', '*', trim($value));
-    
-                $query = $this->setWhereQuery($query, $column, $value, 'where');
-            }
-
-            if(!empty($set['orTranslation'])){
-                
-                foreach ($set['orTranslation'] as $nowSet) {
-                    //echo '<pre>nowSet ', print_r($nowSet, 1), "</pre>"; exit;
-                    $this->setOrTranslationWhereHas($query, $nowSet);
-
-                    // foreach ($nowSet as $nowKey => $nowValue) {
-                    //     $nowColumn = $this->stripFilterOrEqual($nowKey);
-
-                    //     if(!in_array($nowColumn, $this->model->translation_attributes)){
-                    //         continue;
-                    //     }
-
-                    //     $this->setOrTranslationWhereHas($query, $nowData['whereHas']);
-                    // }
-                }
-            }
-           // echo '<pre>', print_r(999, 1), "</pre>"; exit;
-           // echo '<pre>', print_r(999, 1), "</pre>"; exit;
-        });
-        
-        //echo '<pre>setAndSubOrWhere ', print_r($set, 1), "</pre>"; exit;
-
-        //echo '<pre>setAndSubOrWhere ', print_r($column, 1), "</pre>"; exit;
-
-
-
-    }
-
-    private function setOrTranslationWhereHas($query, $data)
-    {
-        foreach ($data as $key => $value) {
-            $column = $this->stripFilterOrEqual($key);
-            if(in_array($column, $this->model->translation_attributes)){
-                //$query = $this->setWhereQuery($query, $column, $value, 'orWhere');
-                $this->setWhereHas($query, $data['whereHas']);
-            }
-        }
-
-    }
-
-    private function stripFilterOrEqual($key)
-    {
-        if(str_starts_with($key, 'filter_')){
-            $column = str_replace('filter_', '', $key);
-        }else if(str_starts_with($key, 'equal_')){
-            $column = str_replace('equal_', '', $key);
-        }else{
-            $column = null;
-        }
-
-        return $column;
     }
 
     private function setWith($query, $funcData)
@@ -1089,7 +889,7 @@ trait EloquentNewTrait
                     // 注意：with 裡面使用Closure函數，只是過濾 with 表，然後附加過來。不會過濾主表
                     $query->with([$key => function($query) use ($key, $filters) {
                         foreach ($filters as $column => $value) {
-                            //$query = $this->setWhereQuery($query, $column, $value, 'where');
+                            //$query = $this->setFilterWhereQuery($query, $column, $value, 'where');
                             $query->where("$key.$column", '=', $value);
                         }
                     }]);
@@ -1097,6 +897,7 @@ trait EloquentNewTrait
             }
         }
     }
+
     private function getQueryDebug(Builder $builder)
     {
         $addSlashes = str_replace('?', "'?'", $builder->toSql());
@@ -1122,7 +923,7 @@ trait EloquentNewTrait
     /**
      * 獲取 meta_data，並根據 meta_keys ，若 meta_key 不存在，設為空值 ''
      */
-    private function getMetas($row)
+    public function getMetas($row)
     {
         $local = app()->getLocale();
 

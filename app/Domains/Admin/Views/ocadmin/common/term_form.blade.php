@@ -85,17 +85,32 @@
                   </div>
                 </div>
 
-                {{-- parent_name --}}
+                {{-- multi parent --}}
                 <div class="row mb-3">
                   <label class="col-sm-2 col-form-label">{{ $lang->column_parent_name }}</label>
                   <div class="col-sm-10">
-                    <div class="input-group">
-                      <input type="text" id="input-parent_name" name="parent_name" value="{{ $term->parent->name ?? ''}}" data-oc-target="autocomplete-parent_name" class="form-control" />
-                    </div>
-                    <div id="error-parent_name" class="invalid-feedback"></div>
-                    <input type="hidden" id="input-parent_id" name="parent_id" value="{{ $term->parent_id }}" />
+                    <input type="text" id="input-parent_name" name="parent_name" value="" data-oc-target="autocomplete-parent_name" class="form-control" autocomplete="off"/>
                     <ul id="autocomplete-parent_name" class="dropdown-menu"></ul>
-                    <div class="form-text"></div><?php /* help text */ ?>
+                    <div class="input-group">
+                      <div class="form-control p-0" style="height: 150px; overflow: auto;">
+                        <table id="term-path" class="table table-sm m-0">
+                          <tbody>
+                            @php $term_path_row = 0; @endphp
+                            @foreach($term_paths as $term_path)
+                              <tr id="term-path-{{ $term_path->term_id }}">
+                                <td>{{ $term_path->name }}
+                                  <input type="hidden" name="term_paths[{{ $term_path_row }}][term_path_id]" value="{{ $term_path->id }}"/>
+                                  <input type="hidden" name="term_paths[{{ $term_path_row }}][group_id]" value="{{ $term_path->group_id }}"/>
+                                </td>
+                                <td class="text-end"><button type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-minus-circle"></i></button></td>
+                              </tr>
+                              @php $term_path_row++; @endphp
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="form-text"></div>
                   </div>
                 </div>
 
@@ -137,14 +152,15 @@
 
 @section('bottom')
 <script type="text/javascript">
+// taxonomy
 $('#input-taxonomy_name').autocomplete({
   'source': function (request, response) {
     $.ajax({
       url: "{{ route('lang.admin.common.taxonomies.autocomplete') }}?filter_keyword=" + encodeURIComponent(request),
       dataType: 'json',
       success: function (json) {
-          response(json);
-        }
+        response(json);
+      }
     });
   },
   'select': function (item) {
@@ -155,6 +171,10 @@ $('#input-taxonomy_name').autocomplete({
   }
 });
 
+
+var term_path_row = {{ $term_path_row }};
+
+// parent term
 $('#input-parent_name').autocomplete({
   'source': function (request, response) {
     var self_id = $('#input-term_id').val();
@@ -164,28 +184,33 @@ $('#input-parent_name').autocomplete({
       return;
     }
 
-    $.ajax({
-      url: "{{ $autocomplete_url }}?filter_name=" + encodeURIComponent(request) + '&equal_taxonomy_code=' + taxonomy_code + '&exclude_id=' + self_id,
-      dataType: 'json',
-      success: function (json) {
-        json.unshift({
-            term_id: '',
-            name: '-- 無 --'
-        });
 
-        response($.map(json, function (item) {
-          return {
-            value: item['term_id'],
-            label: item['name']
-          }
-        }));
+    $.ajax({
+      url: "{{ $autocomplete_url }}?filter_keyword=" + encodeURIComponent(request) + '&equal_taxonomy_code=' + taxonomy_code,
+      dataType: 'json',
+      success: function(json) {
+        response(json);
       }
     });
   },
   'select': function (item) {
-    $('#input-parent_name').val(item.label);
-    $('#input-parent_id').val(item.value);
+        $('#input-path_id').val('');
+
+        $('#term-path-' + item['term_path_id']).remove();
+
+        html = '<tr id="term-path-' + item['term_path_id'] + '">';
+        html += '  <td>' + item['label'];
+        html += '    <input type="hidden" name="term_paths['+term_path_row+'][term_path_id]" value="' + item['term_path_id'] + '"/>';
+        html += '    <input type="hidden" name="term_paths['+term_path_row+'][group_id]" value="' + item['group_id'] + '"/>';
+        html += '  </td>';
+        html += '  <td class="text-end"><button type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+
+        $('#term-path tbody').append(html);
   }
+});
+$('#term-path').on('click', '.btn', function () {
+    $(this).parent().parent().remove();
 });
 </script>
 @endsection

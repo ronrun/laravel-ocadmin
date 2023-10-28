@@ -72,4 +72,15 @@ class UrlHelper
         
         return $query_data;
     }
+
+    public static function unsetUrlQueryData($queries, $unset_keys)
+    {
+        foreach ($queries as $key => $value) {
+            if(in_array($key, $unset_keys)){
+                unset($queries[$key]);
+            }
+        }
+        
+        return $queries;
+    }
 }
