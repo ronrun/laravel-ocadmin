@@ -12,8 +12,8 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="float-end">
-        <button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-permission').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
-        <a href="{{ route('lang.admin.user.permission.form') }}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+        <button type="button" data-bs-toggle="tooltip" title="{{ $lang->button_filter }}" onclick="$('#filter-permission').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
+        <a href="{{ $add_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
       @include('ocadmin.common.breadcumb')
@@ -32,7 +32,7 @@
                 <datalist id="list-name"></datalist>
               </div>
               <div class="text-end">
-                <button type="button" id="button-filter" class="btn btn-light"><i class="fas fa-filter"></i> Filter</button>
+                <button type="button" id="button-filter" class="btn btn-light"><i class="fas fa-filter"></i> {{ $lang->button_filter }}</button>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ $('#button-filter').on('click', function() {
 		url += '&filter_name=' + encodeURIComponent(filter_name);
 	}
 
-	url = "{{ route('lang.admin.user.permission.list') }}?" + url;
+	url = "{{ $list_url }}?" + url;
 
 	$('#permission').load(url);
 });

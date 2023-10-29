@@ -17,6 +17,11 @@ return array (
 'tab_data' => '基本資料',
 
 // Text
+'text_menu_system' => '系統管理',
+'text_menu_system_user' => '管理者',
+'text_menu_system_user_permission' => '權限',
+
+
 'text_yes' => '是',
 'text_no' => '否',
 'text_enabled' => '啟用',

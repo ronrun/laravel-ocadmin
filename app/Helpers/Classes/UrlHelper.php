@@ -47,19 +47,10 @@ class UrlHelper
         }
 
         // is_active
-        if(!isset($queries['equal_is_active'])){
-            $query_data['equal_is_active'] = 1;
-        }else{
+        if(isset($queries['equal_is_active'])){
             $query_data['equal_is_active'] = $queries['equal_is_active'];
-        }
-
-
-        if(isset($queries['with'])){
-            $multi_with = explode(',',$queries['with']);
-
-            foreach ($multi_with as $chained_with) {
-                $query_data['with'][] = $chained_with;
-            }
+        }else{
+            $query_data['equal_is_active'] = 1;
         }
 
         if(!empty($queries['extra_columns'])){
@@ -68,6 +59,14 @@ class UrlHelper
 
         if(!empty($queries['simplelist'])){
             $query_data['simplelist'] = $queries['simplelist'];
+        }
+
+        if(isset($queries['with'])){
+            $multi_with = explode(',',$queries['with']);
+
+            foreach ($multi_with as $chained_with) {
+                $query_data['with'][] = $chained_with;
+            }
         }
         
         return $query_data;

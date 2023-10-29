@@ -118,8 +118,8 @@ Route::group(
         {
 
             Route::group([
-                'prefix' => 'admin',
-                'as' => 'admin.',
+                'prefix' => 'user',
+                'as' => 'user.',
             ], function ()
             {
                 Route::get('users', 'User\UserController@index')->name('users.index');
@@ -139,6 +139,8 @@ Route::group(
                 Route::get('permissions/list', 'User\PermissionController@list')->name('permissions.list');
                 Route::get('permissions/autocomplete', 'User\PermissionController@autocomplete')->name('permissions.autocomplete');
                 Route::put('permissions/save/{permission_id?}', 'User\PermissionController@save')->name('permissions.save');
+                Route::post('permissions/delete/{permission_id?}', 'User\PermissionController@delete')->name('permissions.delete');
+                Route::post('permissions/deleteMulti/', 'User\PermissionController@deleteMulti')->name('permissions.deleteMulti');
             }); 
 
             Route::group(['prefix' => 'maintenance', 'as' => 'maintenance.'], function (){

@@ -215,7 +215,8 @@ class LayoutComposer
         if (1) {
             $admin[] = [
                 'name'	   => 'Users', // user/users
-                'href'     => route('lang.admin.system.admin.users.index'),
+                //'href'     => route('lang.admin.system.admin.users.index'),
+                'href'     => '',
                 'icon'	   => ' ',
             ];
         }
@@ -223,7 +224,7 @@ class LayoutComposer
         if (1) {
             $admin[] = [
                 'name'	   => 'Permissions', // user/permissions
-                'href'     => route('lang.admin.system.admin.permissions.index'),
+                'href'     => route('lang.admin.system.user.permissions.index'),
                 'icon'	   => ' ',
             ];
         }
@@ -231,7 +232,8 @@ class LayoutComposer
         if (1) {
             $admin[] = [
                 'name'	   => 'Roles',  // user/roles
-                'href'     => route('lang.admin.system.admin.roles.index'),
+                //'href'     => route('lang.admin.system.admin.roles.index'),
+                'href'     => '',
                 'icon'	   => ' ',
             ];
         }

@@ -9,10 +9,8 @@ use App\Domains\Admin\Services\Common\TermService;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Helpers\Classes\UrlHelper;
 
-
 use App\Models\Common\Term;
 use App\Models\Common\TermPath;
-
 
 class TermController extends BackendController
 {
@@ -86,13 +84,17 @@ class TermController extends BackendController
             }
         }
 
+        $terms = $terms->withPath(route('lang.admin.common.terms.list'))->appends($queries);
+
+        // maybe do something
+
+        $data['terms'] = $terms;
+
         $data['save_url'] = route('lang.admin.common.terms.save');
         $data['back_url'] = route('lang.admin.common.terms.index', $queries);
         $data['list_url'] = route('lang.admin.common.terms.list');
 
-        $terms = $terms->withPath(route('lang.admin.common.terms.list'))->appends($queries);
 
-        $data['terms'] = $terms;
 
         // Prepare links for list table's header
         if($query_data['order'] == 'ASC'){

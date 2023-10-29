@@ -4,21 +4,20 @@ namespace App\Domains\Admin\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Domains\Admin\Http\Controllers\BackendController;
 use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\User\PermissionService;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\Classes\UrlHelper;
 
-class PermissionController extends Controller
+class PermissionController extends BackendController
 {
-    private $lang;
-    private $request;
-    private $PermissionService;
+    protected $lang;
 
-    public function __construct(Request $request, PermissionService $PermissionService)
+    public function __construct(private Request $request, private PermissionService $PermissionService)
     {
-        $this->request = $request;
-        $this->PermissionService = $PermissionService;
-        $this->lang = (new TranslationLibrary())->getTranslations(['ocadmin/common/common','ocadmin/user/permission']);
+        parent::__construct();
+        $this->getLang(['ocadmin/common/common','ocadmin/user/permission']);
     }
 
 
@@ -33,29 +32,38 @@ class PermissionController extends Controller
         ];
 
         $breadcumbs[] = (object)[
-            'text' => $this->lang->text_users,
+            'text' => $this->lang->text_menu_system,
+            'href' => 'javascript:void(0)',
+            'cursor' => 'default',
+        ];
+
+        $breadcumbs[] = (object)[
+            'text' => $this->lang->text_menu_system_user,
             'href' => 'javascript:void(0)',
             'cursor' => 'default',
         ];
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.permission.index'),
+            'href' => route('lang.admin.system.user.permissions.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
+        $data['add_url'] = route('lang.admin.system.user.permissions.form');
+        $data['list_url'] = route('lang.admin.system.user.permissions.list');
+        $data['delete_url'] = route('lang.admin.system.user.permissions.delete');
+        
         $data['list'] = $this->getList();
 
         return view('ocadmin.user.permission', $data);
     }
 
-
     public function list()
     {
         $data['lang'] = $this->lang;
 
-        $data['form_action'] = route('lang.admin.user.permission.list');
+        $data['form_action'] = route('lang.admin.system.user.permissions.list');
 
         return $this->getList();
     }
@@ -65,75 +73,54 @@ class PermissionController extends Controller
     {
         $data['lang'] = $this->lang;
 
-        // Prepare link for action
-        $queries = [];
+        $queries = $this->request->query();
 
-        if(!empty($this->request->query('page'))){
-            $page = $queries['page'] = $this->request->input('page');
-        }else{
-            $page = $queries['page'] = 1;
-        }
-
-        if(!empty($this->request->query('sort'))){
-            $sort = $queries['sort'] = $this->request->input('sort');
-        }else{
-            $sort = $queries['sort'] = 'id';
-        }
-
-        if(!empty($this->request->query('order'))){
-            $order = $queries['order'] = $this->request->query('order');
-        }else{
-            $order = $queries['order'] = 'DESC';
-        }
-
-        if(!empty($this->request->query('limit'))){
-            $limit = $queries['limit'] = $this->request->query('limit');
-        }
-
-        foreach($this->request->all() as $key => $value){
-            if(strpos($key, 'filter_') !== false){
-                $queries[$key] = $value;
-            }
-        }
-
-        //$data['action'] = route('lang.admin.user.permission.massDelete');
-
+        // Prepare query_data for records
+        $query_data = UrlHelper::getUrlQueries($queries);
+        
         // Rows
-        $users = $this->PermissionService->getRows($queries);
+        $permissions = $this->PermissionService->getPermissions($query_data);
 
-        if(!empty($users)){
-            foreach ($users as $row) {
-                $row->edit_url = route('lang.admin.user.permission.form', array_merge([$row->id], $queries));
+        if(!empty($permissions)){
+            foreach ($permissions as $row) {
+                $row->edit_url = route('lang.admin.system.user.permissions.form', array_merge([$row->id], $queries));
             }
         }
 
-        $data['records'] = $users->withPath(route('lang.admin.user.permission.list'))->appends($queries);
+        $data['permissions'] = $permissions->withPath(route('lang.admin.system.user.permissions.list'))->appends($queries);
+
+        $data['save_url'] = route('lang.admin.common.terms.save');
+        $data['back_url'] = route('lang.admin.common.terms.index', $queries);
+        $data['list_url'] = route('lang.admin.common.terms.list');
+
 
         // Prepare links for list table's header
-        if($order == 'ASC'){
+        if($query_data['order'] == 'ASC'){
             $order = 'DESC';
         }else{
             $order = 'ASC';
         }
-
-        $data['sort'] = strtolower($sort);
+        
+        $data['sort'] = strtolower($query_data['sort']);
         $data['order'] = strtolower($order);
 
-        unset($queries['sort']);
-        unset($queries['order']);
+        $query_data = UrlHelper::unsetUrlQueryData($queries,['sort','order']);
 
         $url = '';
 
-        foreach($queries as $key => $value){
+        foreach($query_data as $key => $value){
             $url .= "&$key=$value";
         }
 
-        //link of table header for sorting
-        $route = route('lang.admin.user.permission.list');
-        $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
-        $data['sort_email'] = $route . "?sort=email&order=$order" .$url;
-        $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
+        // link of table header for sorting        
+        $route = route('lang.admin.system.user.permissions.list');
+
+        $data['sort_id'] = $route . "?sort=id&order=$order" .$url;
+        $data['sort_code'] = $route . "?sort=code&order=$order" .$url;
+        $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
+        $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
+        
         return view('ocadmin.user.permission_list', $data);
     }
 

@@ -1,4 +1,4 @@
-<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ route('lang.admin.user.role.list') }}" data-oc-target="#role">
+<form id="form-list" method="post" data-oc-toggle="ajax" data-oc-load="{{ $list_url }}" data-oc-target="#role">
 	@csrf
 	@method('POST')
 	<div class="table-responsive">
@@ -12,7 +12,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach($records as $record)
+				@foreach($permissions as $record)
 				<tr>
 					<td class="text-end">{{ $record->id }}</td>
 					<td class="text-start">{{ $record->name }}</td>
@@ -23,5 +23,5 @@
 			</tbody>
 		</table>
 	</div>
-	{!! $records->links('ocadmin.common.pagination', ['roles' => $records]) !!}
+	{!! $permissions->links('ocadmin.common.pagination') !!}
 </form>

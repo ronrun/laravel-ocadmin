@@ -1,42 +1,17 @@
 <?php
 
-namespace App\Repositories\Common;
+namespace App\Repositories\User;
 
 use App\Repositories\Repository;
-use App\Models\Common\Term;
+use App\Models\User\Permission;
 use App\Models\Common\TermPath;
 use Illuminate\Support\Facades\DB;
 
-class TermRepository extends Repository
+class PermissionRepository extends Repository
 {
-    protected $model_name = "\App\Models\Common\Term";
+    protected $model_name = "\App\Models\User\Permission";
 
-    public function __construct()
-    {
-        if (method_exists(get_parent_class($this), '__construct')) {
-            parent::__construct();
-        }
-
-        $this->getLang(['ocadmin/common/common','ocadmin/common/taxonomy']);
-    }
-
-    public function getTerm($data = [], $debug = 0): mixed
-    {
-        $row = parent::getRows($data, $debug);
-		$extra_columns = $data['extra_columns'] ?? [];
-
-        foreach ($extra_columns as $column) {
-            if ($column === 'taxonomy_name' && !empty($row->taxonomy_id)) {
-                $row->load('taxonomy.translation');
-                $row->taxonomy_name = $row->taxonomy->translation[0]->meta_value;
-                unset($row->taxonomy);
-            }
-        }
-        
-        return $row;
-    }
-
-    public function getTerms($data = [], $debug = 0): mixed
+    public function getPermissions($data = [], $debug = 0): mixed
     {
         if(!empty($data['filter_keyword'])){
             $data['andWhere'][] = [ // where 條件第一層，跟主表 is_active 同層。一般情況下都使用 and
@@ -51,19 +26,20 @@ class TermRepository extends Repository
             unset($data['filter_keyword']);
         }
 
+
         $rows = parent::getRows($data, $debug);
 		$extra_columns = $data['extra_columns'] ?? [];
 
         $rows->load('taxonomy.translation');
 
-        foreach ($rows as $row) {
-            foreach ($extra_columns as $column) {
-                if ($column === 'taxonomy_name' && !empty($row->taxonomy_id)) {
-                    $row->taxonomy_name = $row->taxonomy->translation[0]->meta_value;
-                    unset($row->taxonomy);
-                }
-            }
-        }
+        // foreach ($rows as $row) {
+        //     foreach ($extra_columns as $column) {
+        //         if ($column === 'taxonomy_name' && !empty($row->taxonomy_id)) {
+        //             $row->taxonomy_name = $row->taxonomy->translation[0]->meta_value;
+        //             unset($row->taxonomy);
+        //         }
+        //     }
+        // }
 
         return $rows;
     }

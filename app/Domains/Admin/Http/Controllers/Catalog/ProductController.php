@@ -131,6 +131,8 @@ class ProductController extends Controller
 
         //link of table header for sorting
         $route = route('lang.admin.catalog.products.list');
+        
+        $data['sort_id'] = $route . "?sort=id&order=$order" .$url;
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
         $data['sort_date_added'] = $route . "?sort=created_at&order=$order" .$url;
 
