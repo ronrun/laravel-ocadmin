@@ -27,4 +27,14 @@ class Term extends Model
         return $this->hasMany(TermPath::class, 'term_id', 'id');
     }
 
+
+    
+
+    // public function name(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn ($value) => $this->translation->meta_value,
+    //     );
+    // }
+
 }

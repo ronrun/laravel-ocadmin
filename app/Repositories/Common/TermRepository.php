@@ -169,16 +169,23 @@ class TermRepository extends Repository
         return $result;
     }
 
+    
     public function getGroupedPath($query_data = [], $debug = 0)
     {
-        $termPaths = TermPath::with('path')->orderBy('group_id')->orderBy('level')->get();
+        $termPaths = TermPath::with('path.translation')->orderBy('group_id')->orderBy('level')->get();
 
         $groupedTermPaths = $termPaths->groupBy('group_id');
-        
+
         $result = [];
         foreach ($groupedTermPaths as $groupId => $paths) {
+            foreach ($paths as $key => $path) {
+                foreach ($path->path->translation as $translation) {
+                    $column = $translation->meta_key;
+                    $path->$column = $translation->meta_value;
+                }
+            }
             $row = $paths->last()->toArray();
-            $row['name'] = $paths->sortBy('level')->pluck('path.name')->implode(' > ');
+            $row['name'] = $paths->sortBy('level')->pluck('name')->implode(' > ');
             unset($row['path']);
 
             $result[] = $row;

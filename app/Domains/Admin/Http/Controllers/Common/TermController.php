@@ -294,7 +294,7 @@ class TermController extends BackendController
         // Prepare query_data for records
         $filter_data = UrlHelper::getUrlQueries($query_data);
 
-        $rows = $this->TermService->getGroupedPath($filter_data);
+        $rows = $this->TermService->getGroupedPath($filter_data,1);
 
         $json = [];
 

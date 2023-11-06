@@ -58,10 +58,10 @@ return new class extends Migration
             $table->unsignedBigInteger('term_id');
             $table->unsignedBigInteger('path_id');
             $table->unsignedTinyInteger('level');
-            $table->unsignedBigInteger('relation_id')->index(); // no refrence
+            $table->unsignedBigInteger('group_id')->index(); // no refrence
             $table->foreign('term_id')->references('id')->on('terms');
             $table->foreign('path_id')->references('id')->on('terms');
-            $table->unique(['term_id', 'path_id', 'relation_id']);
+            $table->unique(['term_id', 'path_id', 'group_id']);
         });
     }
 

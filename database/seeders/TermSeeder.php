@@ -9,6 +9,7 @@ use App\Models\Common\Term;
 use App\Models\Common\TermMeta;
 use App\Imports\TermsImport;
 use App\Imports\TermMetasImport;
+use App\Imports\TermPathsImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TermSeeder extends Seeder
@@ -30,6 +31,9 @@ class TermSeeder extends Seeder
 
         // term meta
         Excel::import(new TermMetasImport, 'database/imports/term_metas.xlsx');
+
+        // term paths
+        Excel::import(new TermPathsImport, 'database/imports/term_paths.xlsx');
 
         Schema::enableForeignKeyConstraints();
     }

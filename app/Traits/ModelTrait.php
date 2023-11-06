@@ -83,6 +83,7 @@ trait ModelTrait
         // Using SomeMeta 
         if (isset($this->translation_model_name) && substr($this->translation_model_name, -4) === 'Meta') {
             return $this->metas()->whereNotNull('locale')->where('locale', '<>', '');
+           // return $this->metas()->whereNotNull('locale')->where('locale', '<>', '')->first();
         }
         // Using SomeTranslation
         else{
