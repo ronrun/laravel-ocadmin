@@ -16,7 +16,7 @@ trait EloquentNewTrait
     private $filter_data;
     private $equal_data;
 
-    public function initialize($data = null)
+    public function initialize($data = [])
     {
         if(isset($this->eloquent_trait_initialized) && $this->eloquent_trait_initialized == true){
             return;
@@ -25,20 +25,25 @@ trait EloquentNewTrait
         $this->model = new $this->model_name;
         $this->table = $this->model->getTable();
         $this->table_columns = $this->getTableColumns();
-        $this->translation_table = $this->model->getTranslationTable();
         $this->locale = app()->getLocale();
         $this->is_mapping_zh_hant_hans = false;
         $this->eloquent_trait_initialized = true;
-        $this->translation_attributes = $this->model->translation_attributes ?? [];
         $this->meta_attributes = $this->model->meta_attributes ?? [];
+
+        if(!empty($this->model->translation_attributes)){
+            $this->translation_table = $this->model->getTranslationTable();
+            $this->translation_attributes = $this->model->translation_attributes ?? [];
+        }
 
         // $this->filter_data, $this->equal_data
         $this->resetFilterAndEqualData($data);
     }
 
-    private function resetFilterAndEqualData($data)
+    private function resetFilterAndEqualData($params = [])
     {
-        foreach ($data as $key => $value) {
+        $params = is_null($params) ? [] : $params;
+
+        foreach ($params as $key => $value) {
             if(empty($value)){
                 continue;
             }
@@ -51,7 +56,7 @@ trait EloquentNewTrait
             else if(str_starts_with($key, 'equal_') && !empty($value)){
                 $column = str_replace('equal_', '', $key);
                 $this->equal_data[$column] = $value;
-                unset($data[$key]);
+                unset($params[$key]);
             }
         }
 
@@ -138,7 +143,9 @@ trait EloquentNewTrait
         $query = $this->setColumnsQuery($query, $data);
 
         // translations
-        $query = $this->setTranslationsQuery($query, $data);
+        if(!empty($this->model->translation_attributes)){
+            $query = $this->setTranslationsQuery($query, $data);
+        }
 
         // Sub query
         $query = $this->setSubQuery($query, $data);
@@ -229,14 +236,11 @@ trait EloquentNewTrait
             }
 
             // translation to rows
-            $rows->load('translation');
-            
-            foreach ($rows as $row) {
-                $this->setTranslationToRow($row);
-            }
+            $this->setTranslationToRows($rows);
 
             return $rows;
         }
+        
     }
 
 
@@ -390,6 +394,10 @@ trait EloquentNewTrait
     // Current Language
     public function setTranslationToRow($row, $columns = [])
     {
+        if(empty($this->model->translation_attributes)){
+            return false;
+        }
+
         foreach ($row->translation as $translation) {
             // 未指定欄位, 全抓
             if(empty($columns)){
@@ -411,8 +419,20 @@ trait EloquentNewTrait
 
     public function setTranslationToRows($rows, $columns = [])
     {
-        foreach ($rows as $row) {
-            $row = $this->setTranslationToRow($row, $columns);
+        if(!empty($this->model->translation_attributes)){
+
+            // check if not loaded
+            $rowToLoad = $rows->first(function ($row) {
+                return !$row->relationLoaded('translation');
+            });
+            
+            if ($rowToLoad) {
+                $rows->load('translation');
+            }
+            
+            foreach ($rows as $row) {
+                $this->setTranslationToRows($row);
+            }
         }
 
         return $rows;
@@ -479,9 +499,12 @@ trait EloquentNewTrait
             }
 
             // save meta data
-            $this->saveRowMetaData($modelInstance, $post_data);
+            if(!empty($this->model->meta_attributes)){
+                $this->saveRowMetaData($modelInstance, $post_data);
+            }
 
             return ['data' =>['id' => $modelInstance->id]];
+            
         } catch (\Exception $ex) {
             $result['error'] = 'Error code: ' . $ex->getCode() . ', Message: ' . $ex->getMessage();
             return $result;
@@ -505,14 +528,12 @@ trait EloquentNewTrait
                 $modelInstance->save();
                 return $modelInstance->id;
             }
-            
+
             // Save matched columns
             $table_columns = $this->table_columns;
             $form_columns = array_keys($post_data);
-
             foreach ($form_columns as $column) {
                 if(!in_array($column, $table_columns)){
-                    unset($modelInstance->name);
                     continue;
                 }
 

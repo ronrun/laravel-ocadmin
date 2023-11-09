@@ -9,6 +9,7 @@ use App\Libraries\TranslationLibrary;
 use App\Domains\Admin\Services\User\PermissionService;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\Classes\UrlHelper;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class PermissionController extends BackendController
 {
@@ -145,7 +146,7 @@ class PermissionController extends BackendController
 
         $breadcumbs[] = (object)[
             'text' => $this->lang->heading_title,
-            'href' => route('lang.admin.user.permission.index'),
+            'href' => route('lang.admin.system.user.permissions.index'),
         ];
 
         $data['breadcumbs'] = (object)$breadcumbs;
@@ -181,14 +182,16 @@ class PermissionController extends BackendController
             $queries['limit'] = $this->request->query('limit');
         }
 
-        $data['save_url'] = route('lang.admin.user.permission.save');
-        $data['back_url'] = route('lang.admin.user.permission.index', $queries);
+        $data['save_url'] = route('lang.admin.system.user.permissions.save');
+        $data['back_url'] = route('lang.admin.system.user.permissions.index', $queries);
 
         // Get Record
-        $permission = $this->PermissionService->findOrFailOrNew(id:$permission_id);
+        $permission = $this->PermissionService->findIdOrFailOrNew(id:$permission_id);
 
         $data['permission']  = $permission;
         $data['permission_id'] = $permission_id ?? null;
+
+        $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
 
         return view('ocadmin.user.permission_form', $data);
     }
@@ -196,23 +199,24 @@ class PermissionController extends BackendController
 
     public function save()
     {
-        $data = $this->request->all();
+        $post_data = $this->request->post();
 
         $json = [];
 
         // validator
 
         if(!$json) {
-            $result = $this->PermissionService->updateOrCreate($data);
+            $result = $this->PermissionService->savePermission($post_data);
 
             if(empty($result['error'])){
-                $json['permission_id'] = $result['data']['permission_id'];
-                $json['success'] = $this->lang->text_success;
-            }else{
-                $user = Auth::user();
 
-                $permission_id = auth()->user()->id;
-                if($permission_id == 1){
+                $json['permission_'] = $result['data']['id'];
+                $json['success'] = $this->lang->text_success;
+                $json['replace_url'] = route('lang.admin.system.user.permissions.form', $result['data']['id']); // only change url
+                // $json['redirect'] = ... // redirect to new page
+                
+            }else{
+                if(config('app.debug')){
                     $json['error'] = $result['error'];
                 }else{
                     $json['error'] = $this->lang->text_fail;

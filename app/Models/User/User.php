@@ -46,6 +46,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    
+    protected function getDefaultGuardName(): string { return 'web'; }
+
     protected function name(): Attribute
     {
         return Attribute::make(

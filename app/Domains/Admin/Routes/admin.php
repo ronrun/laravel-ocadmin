@@ -126,19 +126,19 @@ Route::group(
                 Route::get('users/list', 'User\UserController@list')->name('users.list');
                 Route::get('users/autocomplete', 'User\UserController@autocomplete')->name('users.autocomplete');
                 Route::get('users/form/{user_id?}', 'User\UserController@form')->name('users.form');
-                Route::put('users/save/{user_id?}', 'User\UserController@save')->name('users.save');
+                Route::post('users/save/{user_id?}', 'User\UserController@save')->name('users.save');
                 
                 Route::get('roles', 'User\RoleController@index')->name('roles.index');
                 Route::get('roles/list', 'User\RoleController@list')->name('roles.list');
                 Route::get('roles/autocomplete', 'User\RoleController@autocomplete')->name('roles.autocomplete');
                 Route::get('roles/form/{role_id?}', 'User\RoleController@form')->name('roles.form');
-                Route::put('roles/save/{role_id?}', 'User\RoleController@save')->name('roles.save');
+                Route::post('roles/save/{role_id?}', 'User\RoleController@save')->name('roles.save');
     
                 Route::get('permissions', 'User\PermissionController@index')->name('permissions.index');
                 Route::get('permissions/form/{permission_id?}', 'User\PermissionController@form')->name('permissions.form');
                 Route::get('permissions/list', 'User\PermissionController@list')->name('permissions.list');
                 Route::get('permissions/autocomplete', 'User\PermissionController@autocomplete')->name('permissions.autocomplete');
-                Route::put('permissions/save/{permission_id?}', 'User\PermissionController@save')->name('permissions.save');
+                Route::post('permissions/save/{permission_id?}', 'User\PermissionController@save')->name('permissions.save');
                 Route::post('permissions/delete/{permission_id?}', 'User\PermissionController@delete')->name('permissions.delete');
                 Route::post('permissions/deleteMulti/', 'User\PermissionController@deleteMulti')->name('permissions.deleteMulti');
             }); 

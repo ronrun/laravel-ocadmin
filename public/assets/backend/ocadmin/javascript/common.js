@@ -229,13 +229,16 @@ $(document).on('submit', 'form[data-oc-toggle=\'ajax\']', function (e) {
             $(element).find('.is-invalid').removeClass('is-invalid');
             $(element).find('.invalid-feedback').removeClass('d-block');
 
+
+            //20230520 ronrun
+
+            // redirect
             if (json['redirect']) {
                 location = json['redirect'];
             }
-
-            //20230520 ronrun
-            if (json['replaceUrl']) {
-                window.history.pushState(null, null, json['replaceUrl']);
+            // only change url
+            if (json['replace_url']) {
+                window.history.pushState(null, null, json['replace_url']);
             }
             //
 

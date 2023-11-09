@@ -186,19 +186,17 @@ class TermController extends BackendController
 
         $data['save_url'] = route('lang.admin.common.terms.save');
         $data['back_url'] = route('lang.admin.common.terms.index', $queries);
-        $data['autocomplete_url'] = route('lang.admin.common.terms.autocomplete');   
-
-        $data['supportedLocales'] = LaravelLocalization::getLocalesOrder();
+        $data['autocomplete_url'] = route('lang.admin.common.terms.autocomplete');
 
         // Get Record
-        //$term = $this->TermService->findIdOrFailOrNew(id:$term_id);
-        $filter_data = [
-            'equal_id' => $term_id,
-            'first' => true,
-            'extra_columns' => ['taxonomy_name'],
+        $term = $this->TermService->findIdOrFailOrNew(id:$term_id);
+        // $filter_data = [
+        //     'equal_id' => $term_id,
+        //     'first' => true,
+        //     'extra_columns' => ['taxonomy_name'],
 
-        ];
-        $term = $this->TermService->getTerm($filter_data);
+        // ];
+        // $term = $this->TermService->getTerm($filter_data,1);
 
         $data['term']  = $term;
         
@@ -220,7 +218,16 @@ class TermController extends BackendController
 
         $json = [];
 
-        // validator
+        // validate
+        foreach ($post_data['translations'] as $locale => $translation) {
+            if(empty($translation['name']) || mb_strlen($translation['name']) > 60){
+                $json['error']['name-' . $locale] = $this->lang->error_name;
+            }
+        }
+
+        if(empty($post_data['taxonomy_id']) || empty($post_data['taxonomy_code'])){
+            $json['error']['taxonomy_name'] = $this->lang->error_taxonomy_name;
+        }
 
         if(!$json) {
             $result = $this->TermService->saveTerm($post_data);
@@ -229,7 +236,9 @@ class TermController extends BackendController
 
                 $json['product_id'] = $result['data']['id'];
                 $json['success'] = $this->lang->text_success;
-                $json['replace_url'] = route('lang.admin.catalog.products.form', $result['data']['id']);
+                $json['replace_url'] = route('lang.admin.common.terms.form', $result['data']['id']); // only change url
+                // $json['redirect'] = route('lang.admin.common.terms.form', $result['data']['id']); // redirect to new page
+                
             }else{
                 if(config('app.debug')){
                     $json['error'] = $result['error'];
@@ -239,7 +248,7 @@ class TermController extends BackendController
             }
         }
 
-       return response(json_encode($json))->header('Content-Type','application/json');
+        return response(json_encode($json))->header('Content-Type','application/json');
     }
 
 

@@ -9,4 +9,7 @@ class Permission extends SpatiePermission
 {
     use ModelTrait;
     
+    protected $guarded = [];
+
+    
 }

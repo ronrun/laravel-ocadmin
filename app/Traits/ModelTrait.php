@@ -104,7 +104,7 @@ trait ModelTrait
                 $arr[$locale][$key] = $translation->meta_value;
             }
     
-            return $arr;
+            return $arr ?? [];
         }
         // Using SomeTranslation
         else{
@@ -147,6 +147,18 @@ trait ModelTrait
     {
         return Attribute::make(
             get: fn ($value) => Carbon::parse($value)->format('Y-m-d'),
+        );
+    }
+
+    public function isActive(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if(empty($value) && $value != 0){
+                    $value = 1;
+                }
+                return $value;
+            },
         );
     }
     

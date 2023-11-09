@@ -24,5 +24,6 @@ return [
 
 
 // Error
-
+'error_taxonomy_name' => '請選擇詞語屬性',
+'error_name' => '名稱請輸入 1-20 個字',
 ];

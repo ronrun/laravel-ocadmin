@@ -48,7 +48,7 @@
                       <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
                       <div class="col-sm-10">
                         <input type="text" id="input-name-{{ $locale }}" name="translations[{{ $locale }}][name]" value="{{ $translations[$locale]['name'] ?? '' }}" class="form-control">
-                        <div id="error-name" class="invalid-feedback"></div>
+                        <div id="error-name-{{ $locale }}" class="invalid-feedback"></div>
                       </div>
                     </div>
 
@@ -71,7 +71,7 @@
                 </div>
 
                 {{-- taxonomy_code --}}
-                <div class="row mb-3">
+                <div class="row mb-3 required">
                   <label class="col-sm-2 col-form-label">{{ $lang->column_taxonomy_name }}</label>
                   <div class="col-sm-10">
                     <div class="input-group">

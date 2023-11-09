@@ -81,7 +81,6 @@ class TermRepository extends Repository
                 throw new \Exception($result['error']);
             }
 
-
             // term_paths 執行期間應該要鎖住資料表
             if(!empty($post_data['term_paths'])){
 

@@ -2,8 +2,8 @@
 
 namespace App\Domains\Admin\Services\Common;
 
-use App\Repositories\Common\TermRepository;
 use App\Services\Service;
+use App\Repositories\Common\TermRepository;
 
 class TermService extends Service
 {
