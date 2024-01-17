@@ -185,4 +185,7 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'admin_url' => env('ADMIN_URL', 'http://localhost/admin'),
+    'admin_dir' => env('ADMIN_DIR', 'admin'),
+
 ];
