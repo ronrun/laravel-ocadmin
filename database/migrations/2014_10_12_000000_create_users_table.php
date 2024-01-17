@@ -28,6 +28,16 @@ return new class extends Migration
             $table->boolean('is_admin')->default('0');
             $table->timestamps();
         });
+
+        Schema::create('user_metas', function (Blueprint $table) {
+            $table->id();
+            $table->string('locale',10);
+            $table->unsignedInteger('user_id');
+            $table->string('meta_key');
+            $table->longText('meta_value')->default('');
+            $table->unique(['locale', 'user_id','meta_key']);
+        });
+
     }
 
     /**
@@ -35,6 +45,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_metas');
         Schema::dropIfExists('users');
     }
 };

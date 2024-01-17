@@ -13,15 +13,12 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        $data['lang'] = $this->lang;
 
-        return 'This is Dashboard';
-    }
+        //$data['sales_chart_url'] = asset('assets-admin/test/dashboard-chart-sales.html');
+        $data['sales_chart_url'] = asset('assets-admin/ocadmin/view4024/dashboard-chart-sales.html');
 
-    public function setLanguage($lang_code)
-    {
-        $locale = \App::getLocale();
-        $url = str_replace($locale, $lang_code, \URL::previous());
-        //echo $url;
-        return redirect($url);
+        return view('admin.dashboard', $data);
     }
+    
 }

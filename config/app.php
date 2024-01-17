@@ -168,6 +168,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        
+        App\Providers\ViewServiceProvider::class,
+
+        
     ])->toArray(),
 
     /*
@@ -187,5 +191,6 @@ return [
 
     'admin_url' => env('ADMIN_URL', 'http://localhost/admin'),
     'admin_dir' => env('ADMIN_DIR', 'admin'),
+    'translatoin_driver' => env('TRANSLATION_DRIVER', 'file'),
 
 ];

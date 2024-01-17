@@ -21,6 +21,12 @@ use Illuminate\Support\Facades\Route;
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+
+
+Route::get('refresh-token', function() {
+    return csrf_token();
+})->name('getToken');
+
 Route::group(  
     [  
     'prefix' => LaravelLocalization::setLocale(),  
@@ -30,7 +36,6 @@ Route::group(
 {
     // 後台
     Route::prefix('admin')
-        ->as('admin.')
         ->group(function () {
             include base_path('routes/admin.php');
         });
