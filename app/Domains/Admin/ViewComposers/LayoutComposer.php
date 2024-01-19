@@ -23,7 +23,7 @@ class LayoutComposer
     {
         $this->auth_user = auth()->user();
         $this->acting_user = auth()->user();
-        $this->lang = (new TranslationLibrary())->getTranslations(['common/common','common/column_left']);
+        $this->lang = (new TranslationLibrary())->getTranslations(['admin/common/common','admin/common/column_left']);
     }
 
     /**
@@ -37,7 +37,7 @@ class LayoutComposer
         $view->with('auth_user', $this->auth_user);
         $view->with('acting_user', $this->acting_user);
         $view->with('navigation', $this->lang->text_navigation);
-
+        
         $leftMenus = $this->getColumnLeft();
         $view->with('menus', $leftMenus);
 
@@ -54,6 +54,92 @@ class LayoutComposer
         ];
 
         
+        /**
+         * 商品管理
+         */
+        if(1) {
+            $product[] = [
+                'name'	   => '屬性',
+                'icon'	   => '',
+                'href'     => 'javascript:void(0)',
+                'children' => []
+            ];
+        }
+        
+        if(1) {
+            $product[] = [
+                'name'	   => '選項',
+                'icon'	   => '',
+                'href'     => 'javascript:void(0)',
+                'children' => []
+            ];
+        }
+
+        if(1) {
+            $product[] = [
+                'name'	   => '商品',
+                'icon'	   => '',
+                'href'     => route('lang.admin.catalog.products.index', ['equal_is_active' => 1]),
+                'children' => []
+            ];
+        }
+
+        if(1){
+            $menus[] = [
+                'id'       => 'menu-product',
+                'icon'	   => 'fas fa-cog',
+                'name'	   => '商品管理',
+                'href'     => '',
+                'children' => $product
+            ];
+        }
+
+
+
+        
+        /**
+         * 帳號權限
+         */
+        // L2
+        if(1) {
+            $example[] = [
+                'name'	   => '帳號',
+                'icon'	   => '',
+                'href'     => route('lang.admin.user.users.index'),
+                'children' => []
+            ];
+        }
+        if(1) {
+            $example[] = [
+                'name'	   => '權限',
+                'icon'	   => '',
+                'href'     => '/',
+                'children' => []
+            ];
+        }
+        if(1) {
+            $example[] = [
+                'name'	   => '角色',
+                'icon'	   => '',
+                'href'     => '/',
+                'children' => []
+            ];
+        }
+
+        //
+        $level_2 = [];
+
+        if(1){
+            $menus[] = [
+                'id'       => 'menu-account',
+                'icon'	   => 'fas fa-cog',
+                'name'	   => '帳號權限',
+                'href'     => '',
+                'children' => $example
+            ];
+        }
+
+
 
         /**
          * Example

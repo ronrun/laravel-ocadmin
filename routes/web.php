@@ -37,7 +37,7 @@ Route::group(
     // 後台
     Route::prefix('admin')
         ->group(function () {
-            include base_path('routes/admin.php');
+            include base_path('app/Domains/Admin/Routes/admin.php');
         });
 
     // 前台

@@ -6,13 +6,11 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use App\Libraries\TranslationLibrary;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    protected $lang;
     protected $acting_user;
     protected $acting_username;
 
@@ -22,7 +20,6 @@ class Controller extends BaseController
             return null;
         }
     }
-
 
     public function getQueries($data)
     {
@@ -76,10 +73,6 @@ class Controller extends BaseController
 
         if(!empty($data['extra_columns'])){
             $query_data['extra_columns'] = $data['extra_columns'];
-        }
-
-        if(!empty($data['simplelist'])){
-            $query_data['simplelist'] = $data['simplelist'];
         }
         
 

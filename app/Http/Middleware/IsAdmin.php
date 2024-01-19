@@ -15,10 +15,8 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        //return $next($request);
-
         $user = auth()->user();
-        //echo "<pre>".print_r($user, true)."</pre>"; exit;
+
         $is_admin = 0;
 
         if($user){
@@ -28,13 +26,9 @@ class IsAdmin
                 ->exists();
         }
 
-
-
-
         if($is_admin){
             return $next($request);
         }else{
-            //$route = route('lang.home') . "?prev_url=" . url()->current();
             $route = route('lang.home');
             return redirect($route)->with('error_warning',"您沒有後台權限");
         }

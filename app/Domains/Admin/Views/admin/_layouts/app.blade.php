@@ -95,5 +95,7 @@ $('#nav-language .dropdown-item').on('click', function (e) {
 
 
 <footer id="footer"><a href="https://www.opencart.com">OpenCart</a> &copy; 2009-2024 All Rights Reserved.<br/>Version 4.0.2.4</footer></div>
-<script src="/assets-admin/ocadmin/view4024/javascript/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+<script src="{{ asset('/assets-admin/ocadmin/view4024/javascript/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>
+@yield('buttom')
+
 </body></html>

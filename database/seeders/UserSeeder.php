@@ -29,7 +29,8 @@ class UserSeeder extends Seeder
             'id' => 1,
             'username' => 'admin',     //帳號
             'name' => 'Administrator', //姓名
-            'short_name' => 'ShortName',   //暱稱(顯示名稱)
+            'first_name' => 'John',
+            'last_name' => 'Doe',
             'email' => 'admin@example.org',
             'password' => bcrypt('12345678'),
             'mobile' => $this->faker->phoneNumber(),

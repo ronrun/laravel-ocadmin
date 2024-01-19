@@ -1,8 +1,9 @@
 <?php
 
-return array (
-
+return [
     
+'path' => 'admin/common/common',
+
 // Tab
 'tab_trans' => '語言資料',
 // 'tab_general' => '基本資料',
@@ -114,4 +115,4 @@ return array (
 'error_permission' => '您沒有權限！',
 'error_warning' => '資料未正確輸入！',
 
-);
+];

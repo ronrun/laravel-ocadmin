@@ -8,10 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\User\UserMeta;
+use App\Traits\ModelTrait;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use ModelTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -19,6 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
@@ -44,7 +47,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-
+    public $meta_keys = [
+        'is_admin',
+    ];
 
     public function metas()
     {
