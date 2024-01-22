@@ -12,9 +12,9 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="float-end">
-        <button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-user').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
+        <button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-permission').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
         <a href="{{ $add_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i></a>
-        <button type="submit" form="form-user" formaction="{{ $delete_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_delete }}" onclick="return confirm('是否真的要刪除？');" class="btn btn-danger"><i class="fa-regular fa-trash-can"></i></button>
+        <button type="submit" form="form-permission" formaction="{{ $delete_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_delete }}" onclick="return confirm('只會移除管理者身份，不會完全刪除資料。是否移除？');" class="btn btn-danger"><i class="fa-regular fa-trash-can"></i></button>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
       @include('admin._layouts.breadcumb')
@@ -22,7 +22,7 @@
   </div>
   <div class="container-fluid">
   <div class="row">
-    <div id="filter-user" class="col-lg-3 col-md-12 order-lg-last d-none d-lg-block mb-3">
+    <div id="filter-permission" class="col-lg-3 col-md-12 order-lg-last d-none d-lg-block mb-3">
     <form id="filter-form">
     <div class="card">
       <div class="card-header"><i class="fas fa-filter"></i> Filter</div>
@@ -76,7 +76,7 @@
     <div class="col-lg-9 col-md-12">
     <div class="card">
       <div class="card-header"><i class="fas fa-list"></i> {{ $lang->text_list }}</div>
-      <div id="user" class="card-body">{!! $list !!}</div>
+      <div id="permission" class="card-body">{!! $list !!}</div>
     </div>
     </div>
   </div>
@@ -86,10 +86,10 @@
 
 @section('buttom')
 <script type="text/javascript">
-$('#user').on('click', 'thead a, .pagination a', function(e) {
+$('#permission').on('click', 'thead a, .pagination a', function(e) {
   e.preventDefault();
 
-  $('#user').load(this.href);
+  $('#permission').load(this.href);
 });
 
 $('#button-filter').on('click', function() {
@@ -122,7 +122,7 @@ $('#button-filter').on('click', function() {
   
   url = "{{ $list_url }}?" + url;
 
-  $('#user').load(url);
+  $('#permission').load(url);
 });
 </script>
 @endsection

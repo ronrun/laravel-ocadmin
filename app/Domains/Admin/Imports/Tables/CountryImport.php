@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Admin\Imports;
+namespace App\Domains\Admin\Imports\Tables;
 
 use App\Models\Sysdata\Country;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -8,7 +8,7 @@ use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 
-class CountriesImport implements ToModel,WithStartRow,ToCollection
+class CountryImport implements ToModel,WithStartRow,ToCollection
 {
     public function model(array $row)
     {

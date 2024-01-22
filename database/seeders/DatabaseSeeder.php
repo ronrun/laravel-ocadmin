@@ -8,6 +8,11 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
+     * Laravel 官網慣例使用單數+Seeder，例如 UserSeeder
+     */
+    
+
+    /**
      * Seed the application's database.
      */
     public function run(): void
@@ -21,8 +26,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UserSeeder::class,    
-            //CountryCsvSeeder::class,
+            //CountriesCsvSeeder::class,
             CountryXlsxSeeder::class,
+            PermissionXlsxSeeder::class,
                   
             ProductSeeder::class,           
         ]);

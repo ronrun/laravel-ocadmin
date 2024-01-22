@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 //use Illuminate\Support\Facades\DB;
 use App\Models\Sysdata\Country;
-use App\Domains\Admin\Imports\CountriesImport;
+use App\Domains\Admin\Imports\Tables\CountryImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CountryXlsxSeeder extends Seeder
@@ -22,9 +22,8 @@ class CountryXlsxSeeder extends Seeder
         
         Country::truncate();
 
-        // products
         $filename = 'database/imports/countries.xlsx';
-        Excel::import(new CountriesImport, $filename);
+        Excel::import(new CountryImport, $filename);
 
         Schema::enableForeignKeyConstraints();
     }

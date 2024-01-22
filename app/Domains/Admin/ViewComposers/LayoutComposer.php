@@ -102,24 +102,24 @@ class LayoutComposer
          */
         // L2
         if(1) {
-            $example[] = [
-                'name'	   => '帳號',
+            $userParent[] = [
+                'name'	   => $this->lang->columnleft_user_user,
                 'icon'	   => '',
                 'href'     => route('lang.admin.user.users.index'),
                 'children' => []
             ];
         }
         if(1) {
-            $example[] = [
-                'name'	   => '權限',
+            $userParent[] = [
+                'name'	   => $this->lang->columnleft_permission,
                 'icon'	   => '',
-                'href'     => '/',
+                'href'     => route('lang.admin.user.permissions.index'),
                 'children' => []
             ];
         }
         if(1) {
-            $example[] = [
-                'name'	   => '角色',
+            $userParent[] = [
+                'name'	   => $this->lang->columnleft_role,
                 'icon'	   => '',
                 'href'     => '/',
                 'children' => []
@@ -133,9 +133,9 @@ class LayoutComposer
             $menus[] = [
                 'id'       => 'menu-account',
                 'icon'	   => 'fas fa-cog',
-                'name'	   => '帳號權限',
+                'name'	   => $this->lang->columnleft_user,
                 'href'     => '',
-                'children' => $example
+                'children' => $userParent
             ];
         }
 

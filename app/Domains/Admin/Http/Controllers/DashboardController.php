@@ -3,6 +3,7 @@
 namespace App\Domains\Admin\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Libraries\TranslationLibrary;
 
 class DashboardController extends Controller
 {
@@ -13,7 +14,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $data['lang'] = $this->lang;
+        $data['lang'] = (new TranslationLibrary())->getTranslations(['admin/common/common']);
 
         $data['sales_chart_url'] = asset('assets-admin/ocadmin/view4024/dashboard-chart-sales.html');
 

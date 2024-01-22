@@ -5,6 +5,11 @@ return [
 'text_navigation' => '導覽',
 'text_dashboard' => '資訊總覽',
 
+'columnleft_user' => '帳號權限',
+'columnleft_user_user' => '使用者',
+'columnleft_permission' => '權限',
+'columnleft_role' => '角色',
+
 'text_catalog' => '商品管理',
 'text_catalog_category' => '分類',
 'text_catalog_tag' => '標籤',
