@@ -12,8 +12,10 @@ class Permission extends Model
     use ModelTrait;
 
     protected $guarded = [];
-    protected $appends = ['name',];
+    //protected $appends = ['name',];
     public $translation_attributes = ['name',];
+    public $translation_model_name = 'PermissionMeta';
+    public $meta_model_name = 'PermissionMeta';
 
 
     public $meta_keys = [

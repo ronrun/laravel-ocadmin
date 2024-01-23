@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,    
             //CountriesCsvSeeder::class,
             CountryXlsxSeeder::class,
+            LanguageSeeder::class,
             PermissionXlsxSeeder::class,
                   
             ProductSeeder::class,           

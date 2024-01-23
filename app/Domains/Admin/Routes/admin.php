@@ -18,15 +18,15 @@ Route::group([
     ], function ()
     {
         Route::get('users', 'User\UserController@index')->name('users.index');
-        Route::get('users/form/{user_id?}', 'User\UserController@form')->name('users.form');
+        Route::get('users/form/{id?}', 'User\UserController@form')->name('users.form');
         Route::get('users/list', 'User\UserController@list')->name('users.list');
-        Route::post('users/save/{user_id?}', 'User\UserController@save')->name('users.save');
+        Route::post('users/save/{id?}', 'User\UserController@save')->name('users.save');
         Route::post('users/destroy', 'User\UserController@destroy')->name('users.destroy');
         
         Route::get('permissions', 'User\PermissionController@index')->name('permissions.index');
-        Route::get('permissions/form/{user_id?}', 'User\PermissionController@form')->name('permissions.form');
+        Route::get('permissions/form/{id?}', 'User\PermissionController@form')->name('permissions.form');
         Route::get('permissions/list', 'User\PermissionController@list')->name('permissions.list');
-        Route::post('permissions/save/{user_id?}', 'User\PermissionController@save')->name('permissions.save');
+        Route::post('permissions/save/{id?}', 'User\PermissionController@save')->name('permissions.save');
         Route::post('permissions/destroy', 'User\PermissionController@destroy')->name('permissions.destroy');
 
     });

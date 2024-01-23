@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('meta_key');
             $table->longText('meta_value',30)->default('');
             $table->softDeletes();
-            $table->index(['locale','permission_id','meta_key']);
+            $table->unique(['permission_id','locale','meta_key']);
         });
     }
 

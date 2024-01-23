@@ -56,35 +56,33 @@ class DataHelper
      * @return array
      * @last-modified-by Elon Lee
      */
-    public static function addToArray($src, $dst = null)
+    public static function addToArray($input, $array = null)
     {
-        $dst = [];
-
         // $dst is empty
-        if(empty($dst)){
-            if(is_string($src)){
-                $dst[] = $src;
-            }else if(is_array($src)){
-                $dst = $src;
+        if(empty($array)){
+            if(is_string($input)){
+                $array[] = $input;
+            }else if(is_array($input)){
+                $array = $input;
             }
         }
         // $dst not empty
         else{
-            if(is_string($dst)){
-                $dst = [$dst];
+            if(is_string($array)){
+                $array = [$array];
             }
-            $dst = $dst;
+            $array = $array;
 
-            if(is_string($src)){
-                $dst[] = $src;
-            }else if(is_array($src)){
-                foreach ($src as $value) {
-                    $dst[] = $value;
+            if(is_string($input)){
+                $array[] = $input;
+            }else if(is_array($input)){
+                foreach ($input as $value) {
+                    $array[] = $value;
                 }
             }
         }
 
-        return array_unique($dst);
+        return array_unique($array);
     }
 
 

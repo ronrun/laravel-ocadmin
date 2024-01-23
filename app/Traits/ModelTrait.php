@@ -74,18 +74,17 @@ trait ModelTrait
         if(empty($this->translation_attributes)){
             return false;
         }
+
+        $translations = $this->metas()->whereNotNull('locale')->where('locale', '<>', '')->get();
+
+        $result = [];
+
+        foreach($translations as $translation){
+            $result[$translation->locale] = (object) [];
+            $result[$translation->locale]->{$translation->meta_key} = $translation->meta_value;
+        }
         
-        // Using SomeTranslation
-        if(!isset($this->translation_model_name) || str_ends_with($this->translation_model_name, 'Translation')){
-            $translation_model_name = get_class($this) . 'Translation';
-            $translation_model = new $translation_model_name();
-    
-            return $this->hasMany($translation_model::class);
-        }
-        // Using SomeMeta 
-        else if (isset($this->translation_model_name) && substr($this->translation_model_name, -4) === 'Meta') {
-            return $this->metas()->whereNotNull('locale')->where('locale', '<>', '');
-        }
+        return $result;
     }
 
     public function getMetaModel()
@@ -226,5 +225,17 @@ trait ModelTrait
 
         return (object) $result;
     }
+
+
+    /**
+     * Scopes
+     */
+    
+    public function scopeActive($query)
+    {
+        $query->where('is_active', 1);
+    }
+
+
 
 }

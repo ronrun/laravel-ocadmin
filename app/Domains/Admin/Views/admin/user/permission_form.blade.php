@@ -26,82 +26,46 @@
         <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ $lang->text_form }}</div>
         <div class="card-body">
           <ul class="nav nav-tabs">
-              <li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active">{{ $lang->tab_general }}</a></li>
+              <li class="nav-item"><a href="#tab-data" data-bs-toggle="tab" class="nav-link active">{{ $lang->tab_data }}</a></li>
               <!--<li class="nav-item"><a href="#tab-address" data-bs-toggle="tab" class="nav-link">{{ $lang->tab_address }}</a></li>-->
           </ul>
           <form id="form-permission" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
             @csrf
             @method('POST')
             <div class="tab-content">
-              <div id="tab-general" class="tab-pane active">
+              <div id="tab-data" class="tab-pane active">
 
                   <fieldset>
-                    <legend>{{ $lang->trans('text_permission_details') }}</legend>
+                    <legend>{{ $lang->tab_data }}</legend>
 
                     <div class="row mb-3 required">
-                      <label for="input-permissionname" class="col-sm-2 col-form-label">{{ $lang->column_permissionname }}</label>
+                      <label for="input-code" class="col-sm-2 col-form-label">{{ $lang->column_code }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-permissionname" name="permissionname" value="{{ $permission->permissionname }}" class="form-control"/>
-                        <div id="error-permissionname" class="invalid-feedback"></div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="input-email" class="col-sm-2 col-form-label">{{ $lang->column_email }}</label>
-                      <div class="col-sm-10">
-                        <input type="text" id="input-email" name="email" value="{{ $permission->email }}" class="form-control"/>
-                        <div id="error-email" class="invalid-feedback"></div>
+                        <input type="text" id="input-code" name="code" value="{{ $permission->code }}" class="form-control"/>
+                        <div id="error-code" class="invalid-feedback"></div>
                       </div>
                     </div>
 
                     <div class="row mb-3 required">
-                      <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
+                      <label class="col-sm-2 col-form-label">{{ $lang->column_name }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-name" name="name" value="{{ $permission->name }}" class="form-control"/>
-                        <div id="error-name" class="invalid-feedback"></div>
+                        @foreach($languages as $language)
+                          <input type="hidden" name="translations[{{ $language->locale }}]" value="{{ $translations[$language->locale]->name ?? ''  }}" >
+
+                          <div class="input-group">
+                            <div class="input-group-text">{{ $language->name }} {{ $language->native_name }}</div>
+                            <input type="text" id="input-name-{{ $language->locale }}" name="translations[{{ $language->locale }}][name]" value="{{ $translations[$language->locale]->name ?? '' }}" class="form-control"/>
+                          </div>
+                          <div id="error-name-{{ $language->locale }}" class="invalid-feedback"></div>
+                        @endforeach
                       </div>
                     </div>
 
                     <div class="row mb-3">
-                      <label for="input-mobile" class="col-sm-2 col-form-label">{{ $lang->column_mobile }}</label>
+                      <label for="input-comment" class="col-sm-2 col-form-label">{{ $lang->column_comment }}</label>
                       <div class="col-sm-10">
-                        <input type="text" name="mobile" value="{{ $permission->mobile }}" id="input-mobile" class="form-control"/>
-                        <div id="error-mobile" class="invalid-feedback"></div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="input-telephone" class="col-sm-2 col-form-label">{{ $lang->column_telephone }}</label>
-                      <div class="col-sm-10">
-                        <input type="text" name="telephone" value="{{ $permission->telephone }}" id="input-telephone" class="form-control"/>
-                        <div id="error-telephone" class="invalid-feedback"></div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="input-is_admin" class="col-sm-2 col-form-label">{{ $lang->column_is_admin }}</label>
-                      <div class="col-sm-10">
-                        <div class="form-check form-switch form-switch-lg">
-                          <input type="hidden" name="is_admin" value="0"/>
-                          <input type="checkbox" id="input-is_admin" name="is_admin" value="1" class="form-check-input" @if($permission->is_admin) checked @endif/>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <legend>密碼</legend>
-                    <div class="row mb-3">
-                      <label for="input-payment_company" class="col-sm-2 col-form-label">{{ $lang->column_password }}</label>
-                      <div class="col-sm-10">
-                        <input type="text" name="password" value="" id="input-password" class="form-control"/>
-                        <div id="error-password" class="invalid-feedback"></div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="input-password_confirmation" class="col-sm-2 col-form-label">{{ $lang->column_password_confirm }}</label>
-                      <div class="col-sm-10">
-                        <input type="text" name="password_confirmation" value="{{ $permission->password_confirmation }}" id="input-password_confirmation" class="form-control"/>
-                        <div id="error-password_confirmation" class="invalid-feedback"></div>
+                        <input type="text" id="input-comment" name="comment" value="{{ $permission->comment }}" class="form-control"/>
+                        <div id="error-comment" class="invalid-feedback"></div>
                       </div>
                     </div>
                     

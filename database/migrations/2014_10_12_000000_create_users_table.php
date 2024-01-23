@@ -42,12 +42,13 @@ return new class extends Migration
         });
 
         Schema::create('user_metas', function (Blueprint $table) {
-            $table->id();
-            $table->string('locale',10);
+            //$table->id();
             $table->unsignedInteger('user_id');
+            $table->string('locale',10);
             $table->string('meta_key');
             $table->longText('meta_value')->default('')->nullable();
-            $table->unique(['locale', 'user_id','meta_key']);
+            //$table->unique(['locale', 'user_id','meta_key']);
+            $table->primary(['user_id', 'locale', 'meta_key']);
             $table->softDeletes();
         });
 

@@ -42,8 +42,8 @@ class UserSeeder extends Seeder
         User::factory()->count(100)->create();
 
         UserMeta::create([
-            'locale' => 'zh_Hant',
             'user_id' => 1,
+            'locale' => 'zh_Hant',
             'meta_key' => 'is_admin',
             'meta_value' => 1,
             ]);

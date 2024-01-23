@@ -90,26 +90,16 @@ class UserRepository extends Repository
         DB::beginTransaction();
 
         try {
-            //比對資料表欄位
-            $user_data = $this->setSaveData($data['user_id'], $data);
 
             //額外處理
-            if($id === null && empty($user_data['password'])){ // 新增若無密碼，則設為空值
-                $user_data['password'] = '';
-            }else if(empty($user_data['password'])){ //修改若無密碼，則不處理password
-                unset($user_data['password']);
+            if($id == null && empty($data['password'])){ // 新增時若無密碼，則設為空值
+                $data['password'] = '';
+            }else if(!empty($id) && empty($data['password'])){ //修改時若無密碼，則不處理password
+                unset($data['password']);
             }
 
-            $user = $this->findIdOrNew($id);
-
-            foreach ($user_data as $column => $value) {
-                $user->{$column} = $value;
-            }
-
-            //有異動才更新
-            if($user->isDirty()){
-                $user->save();
-            }
+            //儲存
+            $user = $this->saveRow($data['user_id'], $data);
 
             DB::commit();
 

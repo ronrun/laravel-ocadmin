@@ -70,6 +70,7 @@ class UserService extends Service
             $user = $result['data'];
 
             //save user meta
+            //$result = $this->UserMetaRepository->save($user, $post_data);
             $result = $this->UserMetaRepository->save($user, $post_data);
 
             if(!empty($result['error'])){

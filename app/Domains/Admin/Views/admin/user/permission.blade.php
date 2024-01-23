@@ -29,39 +29,13 @@
       <div class="card-body">
 
         <div class="mb-3">
-          <label class="form-label">{{ $lang->column_keyword }}</label>
-          <input type="text" id="input-filter_keyword"  name="filter_keyword" value="{{ $filter_keyword ?? '' }}" placeholder="{{ $lang->column_keyword }}" list="list-keyword" class="form-control"/>
-          <datalist id="list-keyword"></datalist>
+          <label class="form-label">{{ $lang->column_code }}</label>
+          <input type="text" id="input-filter_code"  name="filter_code" value="{{ $filter_code ?? '' }}" placeholder="{{ $lang->column_code }}" class="form-control"/>
         </div>
 
         <div class="mb-3">
-          <label class="form-label">{{ $lang->column_email }}</label>
-          <input type="text" id="input-filter_email"  name="filter_email" value="{{ $filter_email ?? '' }}" placeholder="{{ $lang->column_email }}" list="list-email" class="form-control"/>
-          <datalist id="list-email"></datalist>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">{{ $lang->column_phone }}</label>
-          <input type="text" name="filter_phone" value="{{ $filter_phone ?? '' }}" placeholder="{{ $lang->placeholder_phone }}" id="input-phone" list="list-phone" class="form-control"/>
-          <datalist id="list-phone"></datalist>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">{{ $lang->column_is_admin }}</label>
-          <select name="equal_is_admin" id="input-equal_is_admin" class="form-select">
-          <option value="*">{{ $lang->text_select }}</option>
-            <option value="1"@if($equal_is_admin==1) selected @endif>{{ $lang->text_yes }}</option>
-            <option value="0"@if($equal_is_admin==0) selected @endif>{{ $lang->text_no }}</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">{{ $lang->column_is_active }}</label>
-          <select name="equal_is_active" id="input-equal_is_active" class="form-select">
-          <option value="*">{{ $lang->text_select }}</option>
-            <option value="1" @if($equal_is_active==1) selected @endif>{{ $lang->text_yes }}</option>
-            <option value="0" @if($equal_is_active==0) selected @endif>{{ $lang->text_no }}</option>
-          </select>
+          <label class="form-label">{{ $lang->column_name }}</label>
+          <input type="text" id="input-filter_name"  name="filter_name" value="{{ $filter_name ?? '' }}" placeholder="{{ $lang->column_name }}" class="form-control"/>
         </div>
 
         <div class="text-end">
@@ -95,31 +69,16 @@ $('#permission').on('click', 'thead a, .pagination a', function(e) {
 $('#button-filter').on('click', function() {
   url = '';
 
-  var filter_keyword = $('#input-filter_keyword').val();
-  if (filter_keyword) {
-    url += '&filter_keyword=' + encodeURIComponent(filter_keyword);
+  var filter_code = $('#input-filter_code').val();
+  if (filter_code) {
+    url += '&filter_code=' + encodeURIComponent(filter_code);
   }
 
-  var filter_email = $('#input-filter_email').val();
-  if (filter_email) {
-    url += '&filter_email=' + encodeURIComponent(filter_email);
-  }
-  
-  var filter_phone = $('#input-phone').val();
-  if (filter_phone) {
-    url += '&filter_phone=' + encodeURIComponent(filter_phone);
+  var filter_name = $('#input-filter_name').val();
+  if (filter_name) {
+    url += '&filter_name=' + encodeURIComponent(filter_name);
   }
 
-  var equal_is_admin = $('#input-equal_is_admin').val();
-  if (equal_is_admin) {
-    url += '&equal_is_admin=' + encodeURIComponent(equal_is_admin);
-  }
-
-  var equal_is_active = $('#input-equal_is_active').val();
-  if (equal_is_active) {
-    url += '&equal_is_active=' + encodeURIComponent(equal_is_active);
-  }
-  
   url = "{{ $list_url }}?" + url;
 
   $('#permission').load(url);

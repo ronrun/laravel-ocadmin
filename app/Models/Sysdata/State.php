@@ -7,9 +7,9 @@ namespace App\Models\Sysdata;
 //use Illuminate\Database\Eloquent\Model;
 use App\Models\SysData\Country;
 use App\Models\SysData\Division;
-use App\Models\SysData\Division1;
+use App\Models\SysData\City;
 
-class Division2 extends Division
+class State extends Division
 {
     public $timestamps = false;
     public $connection = 'sysdata';
@@ -21,7 +21,7 @@ class Division2 extends Division
         parent::boot();
  
         static::addGlobalScope(function ($query) {
-            $query->where('level', 2);
+            $query->where('level', 1);
         });
     }
 
@@ -30,8 +30,8 @@ class Division2 extends Division
         return $this->belongsTo(Country::class, 'country_code', 'code');
     }
 
-    public function divisions1()
+    public function cities()
     {
-        return $this->belongsTo(Division1::class, 'parent_id', 'id');
+        return $this->hasMany(City::class, 'parent_id', 'id');
     }
 }

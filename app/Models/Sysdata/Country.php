@@ -3,8 +3,8 @@
 namespace App\Models\Sysdata;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\SysData\Division1;
-use App\Models\SysData\Division2;
+use App\Models\SysData\State;
+use App\Models\SysData\City;
 
 class Country extends Model
 {
@@ -13,13 +13,13 @@ class Country extends Model
     protected $table = 'countries';
     protected $guarded = [];
 
-    public function division1s()
+    public function states()
     {
-        return $this->hasMany(Division1::class, 'country_code', 'code');
+        return $this->hasMany(State::class, 'country_code', 'code');
     }
 
-    public function division2s()
+    public function cities()
     {
-        return $this->hasMany(Division2::class, 'country_code', 'code');
+        return $this->hasMany(City::class, 'country_code', 'code');
     }
 }

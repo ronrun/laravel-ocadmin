@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Repositories\User\PermissionRepository;
 use App\Repositories\User\PermissionMetaRepository;
 use App\Services\Service;
+use App\Helpers\Classes\DataHelper;
+
 
 class PermissionService extends Service
 {
@@ -17,15 +19,24 @@ class PermissionService extends Service
         $this->repository = $PermissionRepository;
     }
 
-    public function getPermissions($data, $debug = 0)
+    public function findIdOrFailOrNew($permission_id)
     {
-        $rows = $this->repository->getPermissions($data, $debug);
+        $result = $this->repository->findIdOrFailOrNew($permission_id);
 
-        foreach($rows as $row){
-
+        if(empty($result['error']) && !empty($result['data'])){
+            $permission = $result['data'];
+        }else if(!empty($result['error'])){
+            return response(json_encode(['error' => $result['error']]))->header('Content-Type','application/json');
         }
 
-        return $rows;
+        $permission->code = $permission->name;
+
+        return ['data' => $permission];
+    }
+
+    public function getPermissions($data, $debug = 0)
+    {
+        return $this->repository->getPermissions($data, $debug);
     }
 
     public function addPermissions($data, $debug = 0)
@@ -68,12 +79,11 @@ class PermissionService extends Service
             }
             
             $permission = $result['data'];
-
-            //save permission meta
-            $result = $this->PermissionMetaRepository->save($permission, $post_data);
-
-            if(!empty($result['error'])){
-                throw new \Exception($result['error']); 
+            
+            //save translation meta
+            $result = null;
+            if(!empty($post_data['translations'])){
+                $result = $this->PermissionMetaRepository->saveMetaTranslations($permission, $post_data['translations']);
             }
             
             return ['data' => ['permission_id' => $permission->id]];

@@ -9,25 +9,21 @@ use App\Models\User\UserMeta;
 
 class UserMetaRepository extends Repository
 {
+
     public $modelName = "\App\Models\User\UserMeta";
 
     public function save(User $user, $data)
     {
         try {
-            DB::beginTransaction();   
 
-            $meta_data = $this->setMetaSaveData($user, $data);
+            //要強制刪除的 meta_key
+            if(isset($data['is_admin']) && $data['is_admin'] == 0){
+                $this->forceDeleteMeta($user, ['is_admin']);
+            }
 
-            UserMeta::where('user_id', $user->id)->delete();
-
-            $result = UserMeta::upsert($meta_data, ['locale','user_id','meta_key']);
-            
-            DB::commit();
-
-            return $meta_data;
+            return $this->saveMeta($user, $data);
 
         } catch (\Exception $e) {
-            DB::rollback();
             return ['error' => $e->getMessage()];
         }
     }

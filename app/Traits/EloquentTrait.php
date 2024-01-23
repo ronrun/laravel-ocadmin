@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Classes\DataHelper;
 use App\Helpers\Classes\ChineseCharacterHelper;
+use App\Models\User\PermissionMeta;
 
 trait EloquentTrait
 {
@@ -62,6 +63,8 @@ trait EloquentTrait
 
     public function findIdOrFailOrNew($id, $params = null, $debug = 0)
     {
+        $row = [];
+        
         try{
             //find
             if(!empty(trim($id))){
@@ -97,7 +100,21 @@ trait EloquentTrait
 
         $query = $this->setQuery($data, $debug);
 
-        return $this->getResult($query, $data);
+        $rows = $this->getResult($query, $data);
+        
+        if(empty($data['no_meta_translation'])){
+            foreach($rows as $row){
+                if (isset($row->translation_model_name) && substr($row->translation_model_name, -4) === 'Meta') {
+                    foreach($row->translation as $translation){
+                        $column = $translation->meta_key;
+                        $row->{$column} = $translation->meta_value;
+                        unset($row->translation);
+                    }
+                }
+            }
+        }
+
+        return $rows;
     }
 
 
@@ -870,7 +887,7 @@ trait EloquentTrait
      */
     public function setMetasToRow($row)
     {
-        foreach ($row->meta ?? [] as $meta) {
+        foreach ($row->metas ?? [] as $meta) {
             foreach($this->model->meta_keys ?? [] as $meta_key){
                 $row->{$meta_key} = $meta->meta_value ?? '';
             }
@@ -879,37 +896,67 @@ trait EloquentTrait
         return $row;
     }
 
+    public function setTranslationMetasToRow($row)
+    {
+        $translation = $row->translation;
+
+        foreach ($translation as $meta) {
+            $row->{$meta->meta_key} = $meta->meta_value;
+            unset($row->translation);
+        }
+
+        return $row;
+    }
+
 
     /**
+     * 儲存：用表單欄位，比對資料庫欄位，而且資料有不同。
      * 
+     * last modified: 2024-01-23
      */
-    // public function save($id, $data)
-    // {
-    //     $result = $this->findIdOrFailOrNew(id:$id);
+    public function saveRow($id, $data)
+    {
+        try{
+            DB::beginTransaction();
+            
+            $result = $this->findIdOrFailOrNew(id:$id);
+    
+            if(empty($result['error'])){
+                $row = $result['data'];
+            }else{
+                return $result;
+            }
+    
+            $table_columns = $this->getTableColumns();
+    
+            foreach($data as $column => $value){
+                if(in_array($column, $table_columns)){
+                    $row->{$column} = $value;
+                }
+            }
+    
+            if($row->isDirty()){
+                $row->save();
+            }
 
-    //     if(empty($result['error'])){
-    //         $user = $result['data'];
-    //     }else{
-    //         return $result;
-    //     }
+            DB::commit();
 
-    //     $table_columns = $this->getTableColumns();
+            return $row;
 
-    //     foreach($data as $column => $value){
-    //         if(in_array($column, $table_columns)){
-    //             $user->{$column} = $value;
-    //         }
-    //     }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return ['error' => $e->getMessage()];
+        }
+        
+    }
 
-    //     //額外處理欄位
-    //     //$user->some_column = ...
 
-    //     $user = $this->repository->save(id:$data['user_id']);
-
-    //     $user->save;
-    // }
-
-    public function setSaveData($id, $data)
+    /**
+     * 比對表單欄位是否存在資料表欄位
+     * 
+     * last modified: 2024-01-23
+     */
+    public function setSaveDataByTableColumn($id, $data)
     {
         $result = [];
 
@@ -925,25 +972,125 @@ trait EloquentTrait
     }
 
     /**
-     * 不處理語言。所以 locale = null
+     * 儲存 Meta資料。不包含多語
+     * 
+     * last modified: 2024-01-23
      */
-    public function setMetaSaveData($modelInstance, $data)
+    public function saveMeta($modelInstance, $metas)
     {
-        $meta_array = [];
+        try{
+            DB::beginTransaction(); 
 
+            if(empty($modelInstance->meta_keys)){
+                return false;
+            }
+    
+            $update_data = [];
+    
+            $master_key = $modelInstance->getForeignKey();
+    
+            foreach($metas as $column => $value){
+                if(in_array($column, $modelInstance->meta_keys ?? [])){
+                    $update_data[] = [
+                        $master_key => $modelInstance->id,
+                        'locale' => '',
+                        'meta_key' => $column,
+                        'meta_value' => $value,
+                    ];
+                }
+            }
+            
+            $result = '';
+
+            if(!empty($update_data)){
+                $modelInstance->meta_model_name::where($master_key, $modelInstance->id)->delete();
+                $result = $modelInstance->meta_model_name::upsert($update_data, [$master_key,'locale','meta_key']);
+            }
+            
+            DB::commit();
+
+            return $result;
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return ['error' => $e->getMessage()];
+        }
+    
+    
+    }
+
+    /**
+     * 儲存 Meta 的多語資料
+     * 
+     * last modified: 2024-01-23
+     */
+    public function saveMetaTranslations($modelInstance, $translations)
+    {
+        if(empty($modelInstance->translation_attributes)){
+            return false;
+        }
+
+        $update_date = [];
         $master_key = $modelInstance->getForeignKey();
 
-        foreach($data as $column => $value){
-            if(in_array($column, $modelInstance->meta_keys ?? [])){
-                $meta_array[] = [
-                    $master_key => $modelInstance->id,
-                    'locale' => '',
-                    'meta_key' => $column,
-                    'meta_value' => $value,
-                ];
+        foreach($translations as $locale => $rows){
+            foreach($rows as $column => $value){
+                if(in_array($column, $modelInstance->translation_attributes ?? [])){
+                    $update_date[] = [
+                        $master_key => $modelInstance->id,
+                        'locale' => $locale,
+                        'meta_key' => $column,
+                        'meta_value' => $value,
+                    ];
+                }
             }
         }
 
-        return $meta_array;
+        if(!empty($update_date)){
+            $result = PermissionMeta::upsert($update_date, [$master_key,'locale','meta_key']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * 根據主模型 id 及 meta_key 強制刪除 meta 資料。不處理多語。
+     * 
+     * last modified: 2024-01-23
+     */
+    public function forceDeleteMeta($masterModel, $meta_keys)
+    {
+        try{
+            DB::beginTransaction(); 
+
+            $master_key = $masterModel->getForeignKey();
+            $master_id  = $masterModel->id;
+    
+            $builder = $masterModel->meta_model_name::query();
+            $builder->where($master_key, $masterModel->id);
+
+            //不處理多語。
+            $builder->where(function ($query) {
+                $query->whereNull('locale')
+                      ->orWhere('locale', '=', '');
+            });
+
+    
+            foreach($meta_keys as $meta_key){
+                $builder->where('meta_key', $meta_key);
+            }
+
+            
+            // $result = $builder->get();
+            // echo "<pre>".print_r($result, true)."</pre>"; exit;
+            $result = $builder->forceDelete();
+
+            DB::commit();
+            return $result;
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return ['error' => $e->getMessage()];
+        }
     }
 }

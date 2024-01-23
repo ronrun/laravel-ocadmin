@@ -162,12 +162,14 @@ class UserController extends AdminController
 
         $data['breadcumbs'] = (object)$breadcumbs;
 
+
         // Prepare link for save, back
         $queries = $this->getQueries($this->request->query());
 
         $data['save_url'] = route('lang.admin.user.users.save');
         $data['back_url'] = route('lang.admin.user.users.index', $queries);
 
+        
         // Get Record
         $result = $this->UserService->findIdOrFailOrNew($user_id);
 

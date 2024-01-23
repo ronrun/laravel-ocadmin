@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('divisions', function (Blueprint $table) {
+        Schema::connection('sysdata')->create('divisions', function (Blueprint $table) {
             $table->id();
             $table->string('code',10)->nullable();
             //$table->unsignedInteger('country_id');
@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('parent_id');
             $table->string('name',100)->nullable();
             $table->string('english_name',100)->nullable();
+            $table->string('native_name',100)->nullable();
             $table->string('postal_code',10)->nullable();
             $table->boolean('is_active')->default('1');
             $table->index(['country_code','level','parent_id']);
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('divisions');
+        Schema::connection('sysdata')->dropIfExists('divisions');
     }
 };
