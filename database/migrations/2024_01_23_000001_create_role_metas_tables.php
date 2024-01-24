@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permission_metas', function (Blueprint $table) {
+        Schema::dropIfExists('role_metas');
+
+        Schema::create('role_metas', function (Blueprint $table) {
             $table->id();
             $table->string('locale',10);
-            $table->unsignedInteger('permission_id');
+            $table->unsignedInteger('role_id');
             $table->string('meta_key');
             $table->longText('meta_value',30)->default('');
             $table->softDeletes();
-            $table->unique(['permission_id','locale','meta_key']);
+            $table->unique(['role_id','locale','meta_key']);
         });
     }
 
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permission_metas');
+        Schema::dropIfExists('role_metas');
     }
 };

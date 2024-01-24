@@ -17,6 +17,12 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
+        //後台
+        if(isAdminPanel($request) && Auth::check()){
+            return redirect(route('lang.admin.dashboard'));
+        }
+
+        //原本程式碼
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {

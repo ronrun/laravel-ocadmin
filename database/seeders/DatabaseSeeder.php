@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             CountryXlsxSeeder::class,
             LanguageSeeder::class,
             PermissionXlsxSeeder::class,
+            RoleXlsxSeeder::class,
                   
             ProductSeeder::class,           
         ]);

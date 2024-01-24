@@ -5,7 +5,7 @@ namespace App\Domains\Admin\ViewComposers;
 use Illuminate\View\View;
 use App\Libraries\TranslationLibrary;
 
-class WrapperComposer
+class AppComposer
 {
     private $lang;
     private $auth_user;

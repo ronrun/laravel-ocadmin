@@ -57,7 +57,7 @@ class UserController extends AdminController
         //Filters
         $data['filter_keyname'] = $query_data['filter_keyname'] ?? '';
         $data['filter_phone'] = $query_data['filter_phone'] ?? '';
-        $data['equal_is_admin'] = $query_data['equal_is_admin'] ?? 1;
+        $data['equal_is_admin'] = $query_data['equal_is_admin'] ?? '';
         $data['equal_is_active'] = $query_data['equal_is_active'] ?? 1;
 
         return view('admin.user.user', $data);

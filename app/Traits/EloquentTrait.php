@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Classes\DataHelper;
 use App\Helpers\Classes\ChineseCharacterHelper;
-use App\Models\User\PermissionMeta;
 
 trait EloquentTrait
 {
@@ -134,6 +133,8 @@ trait EloquentTrait
         $this->setDistinct($query, $data);
         $this->setSortOrder($query, $data);
         $this->setSelect($query, $data);
+
+        $this->setTranslationsQuery($query, $data);
 
         $this->showDebugQuery($query, $debug);
 
@@ -266,6 +267,15 @@ trait EloquentTrait
                 }
             });
         }
+    }
+
+    private function setAndSubOrWhereQuery($query, $set)
+    {
+        $query->where(function ($query) use($set) {
+            foreach ($set as $key => $value) {
+                $query = $this->setWhereQuery($query, $key, $value,'orWhere');
+            }
+        });
     }
 
     private function setEqualsQuery($query, $data)
@@ -1047,7 +1057,7 @@ trait EloquentTrait
         }
 
         if(!empty($update_date)){
-            $result = PermissionMeta::upsert($update_date, [$master_key,'locale','meta_key']);
+            $result = $modelInstance->meta_model_name::upsert($update_date, [$master_key,'locale','meta_key']);
         }
 
         return $result;
@@ -1064,7 +1074,6 @@ trait EloquentTrait
             DB::beginTransaction(); 
 
             $master_key = $masterModel->getForeignKey();
-            $master_id  = $masterModel->id;
     
             $builder = $masterModel->meta_model_name::query();
             $builder->where($master_key, $masterModel->id);
@@ -1093,4 +1102,90 @@ trait EloquentTrait
             return ['error' => $e->getMessage()];
         }
     }
+
+
+
+
+
+
+    /**
+     * filter_somecolumn 如果是 meta 表，則去 meta 表查詢。
+     */
+    private function setTranslationsQuery($query, $data, $flag = 1)
+    {
+
+        if(empty($this->model->translation_attributes)){
+            return;
+        }
+
+        //判斷第一層 filter_column 是否存在
+        $basic_translation_filter_data = [];
+
+        foreach ($data as $key => $value) {
+            if(!str_starts_with($key, 'filter_')){
+                continue;
+            }
+
+            $column = str_replace('filter_', '', $key);
+
+            $basic_translation_filter_data[$column] = $value;
+        }
+
+        //判斷進階查詢是否存在
+        $advanced_translation_filter_data = [];
+
+        if(!empty($data['translation'])){
+            $advanced_translation_filter_data = $data['translation'];
+        }
+
+        //既無基本查詢，也無進階查詢
+        if(empty($basic_translation_filter_data) && empty($advanced_translation_filter_data)){
+            return;
+        }
+
+        //開始構建查詢
+        $query->whereHas('metas', function($qry) use ($basic_translation_filter_data, $advanced_translation_filter_data) {
+            $qry->where('locale', app()->getLocale());
+
+            //基本查詢
+            if(!empty($basic_translation_filter_data)){
+                foreach($basic_translation_filter_data as $column => $value){
+                    $qry->where('meta_key', $column);
+                    $this->setWhereQuery($qry, 'meta_value', $value, 'where');
+                }
+            }
+
+            //進階查詢
+            if(!empty($advanced_translation_filter_data)){
+                if(!empty($advanced_translation_filter_data['andOrWhere'])){
+                    foreach($advanced_translation_filter_data['andOrWhere'] as $set){
+                        $qry->where(function($qry) use ($set){
+                            foreach($set as $column => $value){
+                                $qry->orWhere(function($qry) use ($column, $value){
+                                    $qry->where('meta_key', $column);
+                                    $this->setWhereQuery($qry, 'meta_value', $value, 'where');
+                                });
+                            }
+                        });
+                    }
+                }
+            }
+
+        });
+        
+        return $query;
+    }
+
+    // private function setAdvancedTranslationQuery($query, $data)
+    // {
+    //     if(empty($data['translation'])){
+    //         return;
+    //     }
+
+    //     foreach($data['translation'] as $set){
+
+    //     }
+
+
+    // }
 }

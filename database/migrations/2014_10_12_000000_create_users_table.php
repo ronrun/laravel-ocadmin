@@ -38,6 +38,8 @@ return new class extends Migration
             $table->boolean('is_admin')->default('0');
             $table->rememberToken();
             $table->softDeletes();
+            
+            $table->timestamp('last_seen_at')->nullable();
             $table->timestamps();
         });
 

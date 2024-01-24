@@ -12,6 +12,12 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
+        //後台
+        if(isAdminPanel($request)){
+            return $request->expectsJson() ? null : route('lang.admin.login');
+        }
+
+        //前台
         return $request->expectsJson() ? null : route('lang.login');
     }
 }

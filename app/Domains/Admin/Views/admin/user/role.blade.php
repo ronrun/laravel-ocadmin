@@ -14,7 +14,7 @@
       <div class="float-end">
         <button type="button" data-bs-toggle="tooltip" title="Filter" onclick="$('#filter-permission').toggleClass('d-none');" class="btn btn-light d-md-none d-lg-none"><i class="fas fa-filter" style="font-size:18px"></i></button>
         <a href="{{ $add_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_add }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i></a>
-        <button type="submit" form="form-permission" formaction="{{ $delete_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_delete }}" onclick="return confirm('確定？');" class="btn btn-danger"><i class="fa-regular fa-trash-can"></i></button>
+        <button type="submit" form="form-list" formaction="{{ $delete_url }}" data-bs-toggle="tooltip" title="{{ $lang->button_delete }}" onclick="return confirm('確定？');" class="btn btn-danger"><i class="fa-regular fa-trash-can"></i></button>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
       @include('admin._layouts.breadcumb')

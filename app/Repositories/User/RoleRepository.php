@@ -5,20 +5,20 @@ namespace App\Repositories\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Repository;
-use App\Models\User\Permission;
-use App\Models\User\PermissionMeta;
+use App\Models\User\Role;
+use App\Models\User\RoleMeta;
 
 
-class PermissionRepository extends Repository
+class RoleRepository extends Repository
 {
-    public $modelName = "\App\Models\User\Permission";
+    public $modelName = "\App\Models\User\Role";
 
     /**
      * 注意！！
-     * 由於 spatie permission 套件的 name 欄位影響本系統設計原則，因此 translation 要另外處理。
+     * 由於 spatie role 套件的 name 欄位影響本系統設計原則，因此 translation 要另外處理。
      */
 
-    public function getPermissions($data = [], $debug = 0)
+    public function getRoles($data = [], $debug = 0)
     {
         $data = $this->resetQueryData($data);
 
@@ -32,15 +32,14 @@ class PermissionRepository extends Repository
             $data['filter_name'] = $data['filter_keyword'];
             unset($data['filter_keyword']);
         }
-        $permissions = $this->getRows($data, $debug);
+        $roles = $this->getRows($data, $debug);
         
 
-        foreach($permissions as $permission){
-            $permission->code = $permission->name;
-            $permission = $this->setTranslationMetasToRow($permission);
+        foreach($roles as $role){
+            $role = $this->setTranslationMetasToRow($role);
         }
         
-        return $permissions;
+        return $roles;
     }
 
     /**
@@ -48,16 +47,17 @@ class PermissionRepository extends Repository
      */
     public function save($id = null, $data)
     {
+
         $data['guard_name'] = 'web';
 
         try {
             DB::beginTransaction();
             
-            $permission = $this->saveRow($data['permission_id'], $data);
+            $role = $this->saveRow($data['role_id'], $data);
 
             DB::commit();
 
-            return ['data' => $permission];
+            return ['data' => $role];
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -73,8 +73,8 @@ class PermissionRepository extends Repository
         try {
             DB::beginTransaction();
 
-            PermissionMeta::whereIn('permission_id', $ids)->delete();
-            Permission::whereIn('id', $ids)->delete();
+            RoleMeta::whereIn('role_id', $ids)->delete();
+            Role::whereIn('id', $ids)->delete();
             
             DB::commit();
 

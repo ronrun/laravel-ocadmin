@@ -17,10 +17,6 @@ class UserRepository extends Repository
     {
         $data = $this->resetQueryData($data);
 
-        if(!empty($data['filter_keyword'])){
-            $data['filter_name'] = $data['filter_keyword'];
-            unset($data['filter_keyword']);
-        }
         $users = $this->getRows($data, $debug);
 
         return $users;
@@ -126,12 +122,12 @@ class UserRepository extends Repository
             unset($data['filter_phone']);
         }
 
-        if(!empty($data['filter_name'])){
+        if(!empty($data['filter_keyword'])){
             $data['andOrWhere'][] = [
-                'filter_name' => $data['filter_name'],
-                'filter_shipping_recipient' => $data['filter_name'],
+                'filter_name' => $data['filter_keyword'],
+                'filter_shipping_recipient' => $data['filter_keyword'],
             ];
-            unset($data['filter_name']);
+            unset($data['filter_keyword']);
         }
 
         return $data;

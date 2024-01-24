@@ -16,20 +16,11 @@ class IsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
-
-        $is_admin = 0;
-
-        if($user){
-            $is_admin = $user->metas()
-                ->where('meta_key', 'is_admin')
-                ->where('meta_value', 1)
-                ->exists();
-        }
-
-        if($is_admin){
+        
+        if(!empty($user->is_admin)){
             return $next($request);
         }else{
-            $route = route('lang.home');
+            $route = route('lang.admin.login');
             return redirect($route)->with('error_warning',"您沒有後台權限");
         }
     }

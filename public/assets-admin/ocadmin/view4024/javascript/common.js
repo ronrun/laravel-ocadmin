@@ -268,11 +268,6 @@ $(document).on('submit', 'form', function (e) {
                     location = json['redirect'];
                 }
 
-                if (json['redirectUrl']) {
-                    redirectUrl = json['redirectUrl'];
-                    window.history.pushState(null, null, redirectUrl);
-                }
-                
                 if (typeof json['error'] == 'string') {
                     $('#alert').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
                 }

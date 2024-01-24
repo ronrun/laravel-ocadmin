@@ -125,8 +125,9 @@ class PermissionController extends AdminController
         $route = route('lang.admin.user.permissions.list');
 
         $data['sort_name'] = $route . "?sort=name&order=$order" .$url;
-        $data['sort_code'] = $route . "?sort=code&order=$order" .$url;
         $data['sort_created_at'] = $route . "?sort=created_at&order=$order" .$url;
+        
+        $data['sort_trans_name'] = $route . "?sort=trans_name&order=$order" .$url;
         
         $data['list_url'] = route('lang.admin.user.permissions.list');
 
@@ -217,6 +218,7 @@ class PermissionController extends AdminController
                     'permission_id' => $result['data']['permission_id'],
                     'redirectUrl' => route('lang.admin.user.permissions.form', $result['data']['permission_id']),
                     //'redirect' => route('lang.admin.user.permissions.form', $result['data']['permission_id']),
+                    //'redirect' => route('lang.admin.user.permissions.form', $result['data']['permission_id']),
                     
                 ];
 
@@ -233,6 +235,42 @@ class PermissionController extends AdminController
         return response(json_encode($json))->header('Content-Type','application/json');
     }
 
+    public function destroy()
+    {
+        $post_data = $this->request->post();
+
+        $json = [];
+
+        if (isset($post_data['selected'])) {
+            $selected = $post_data['selected'];
+        } else {
+            $selected = [];
+        }
+
+        // Permission
+        //暫時用 admin 來判斷是否有權限刪除使用者。
+        $user = auth()->user();
+
+        if($user->username !== 'admin'){
+            $json['error'] = $this->lang->error_permission;
+        }
+        
+		if (!$json) {
+            $result = $this->PermissionService->destroy($selected);
+
+            if(empty($result['error'])){
+                $json['success'] = $this->lang->text_success;
+            }else{
+                if(config('app.debug') || auth()->user()->username == 'admin'){
+                    $json['error'] = $result['error'];
+                }else{
+                    $json['error'] = $this->lang->text_fail;
+                }
+            }
+		}
+
+        return response(json_encode($json))->header('Content-Type','application/json');
+    }
 
     public function validator($data)
     {

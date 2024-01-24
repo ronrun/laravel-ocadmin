@@ -12,9 +12,7 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="float-end">
-          {{-- <a href="javascript:void(0)" data-bs-toggle="tooltip" title="Orders" class="btn btn-warning"><i class="fas fa-receipt"></i></a> --}}
-        {{-- <button type="submit" form="form-permission" data-bs-toggle="tooltip" title="Save" class="btn btn-primary"><i class="fas fa-save"></i></button> --}}
-        <button type="submit" form="form-permission" data-bs-toggle="tooltip" title="{{ $lang->save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <button type="submit" form="form-role" data-bs-toggle="tooltip" title="{{ $lang->save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="{{ $back_url }}" data-bs-toggle="tooltip" title="Back" class="btn btn-light"><i class="fas fa-reply"></i></a>
       </div>
       <h1>{{ $lang->heading_title }}</h1>
@@ -29,7 +27,7 @@
               <li class="nav-item"><a href="#tab-data" data-bs-toggle="tab" class="nav-link active">{{ $lang->tab_data }}</a></li>
               <!--<li class="nav-item"><a href="#tab-address" data-bs-toggle="tab" class="nav-link">{{ $lang->tab_address }}</a></li>-->
           </ul>
-          <form id="form-permission" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
+          <form id="form-role" action="{{ $save_url }}" method="post" data-oc-toggle="ajax">
             @csrf
             @method('POST')
             <div class="tab-content">
@@ -39,10 +37,10 @@
                     <legend>{{ $lang->tab_data }}</legend>
 
                     <div class="row mb-3 required">
-                      <label for="input-code" class="col-sm-2 col-form-label">{{ $lang->column_code }}</label>
+                      <label for="input-name" class="col-sm-2 col-form-label">{{ $lang->column_code }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-code" name="code" value="{{ $permission->code }}" class="form-control"/>
-                        <div id="error-code" class="invalid-feedback"></div>
+                        <input type="text" id="input-name" name="name" value="{{ $role->name }}" class="form-control"/>
+                        <div id="error-name" class="invalid-feedback"></div>
                       </div>
                     </div>
 
@@ -62,7 +60,7 @@
                     <div class="row mb-3">
                       <label for="input-comment" class="col-sm-2 col-form-label">{{ $lang->column_comment }}</label>
                       <div class="col-sm-10">
-                        <input type="text" id="input-comment" name="comment" value="{{ $permission->comment }}" class="form-control"/>
+                        <input type="text" id="input-comment" name="comment" value="{{ $role->comment }}" class="form-control"/>
                         <div id="error-comment" class="invalid-feedback"></div>
                       </div>
                     </div>
@@ -71,19 +69,19 @@
                     <div class="row mb-3">
                       <label for="input-updated_date" class="col-sm-2 col-form-label">{{ $lang->column_updated_time}}</label>
                       <div class="col-sm-10">
-                        <input type="text" value="{{ $permission->updated_at }}" class="form-control" disabled/>
+                        <input type="text" value="{{ $role->updated_at }}" class="form-control" disabled/>
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="input-created_date" class="col-sm-2 col-form-label">{{ $lang->column_created_time}}</label>
                       <div class="col-sm-10">
-                        <input type="text" value="{{ $permission->created_at }}" class="form-control" disabled/>
+                        <input type="text" value="{{ $role->created_at }}" class="form-control" disabled/>
                       </div>
                     </div>
                                   </fieldset>
 
-                  <input type="hidden" name="permission_id" value="{{ $permission_id }}" id="input-permission_id"/>
+                  <input type="hidden" name="role_id" value="{{ $role_id }}" id="input-role_id"/>
               </div>
             </form>
             </div>

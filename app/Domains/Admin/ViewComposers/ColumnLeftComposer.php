@@ -5,7 +5,7 @@ namespace App\Domains\Admin\ViewComposers;
 use Illuminate\View\View;
 use App\Libraries\TranslationLibrary;
 
-class LayoutComposer
+class ColumnLeftComposer
 {
     private $lang;
     private $auth_user;
@@ -121,7 +121,7 @@ class LayoutComposer
             $userParent[] = [
                 'name'	   => $this->lang->columnleft_role,
                 'icon'	   => '',
-                'href'     => '/',
+                'href'     => route('lang.admin.user.roles.index'),
                 'children' => []
             ];
         }

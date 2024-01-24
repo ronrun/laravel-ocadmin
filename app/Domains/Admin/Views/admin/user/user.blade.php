@@ -111,12 +111,12 @@ $('#button-filter').on('click', function() {
   }
 
   var equal_is_admin = $('#input-equal_is_admin').val();
-  if (equal_is_admin) {
+  if (equal_is_admin && equal_is_admin !== '*') {
     url += '&equal_is_admin=' + encodeURIComponent(equal_is_admin);
   }
 
   var equal_is_active = $('#input-equal_is_active').val();
-  if (equal_is_active) {
+  if (equal_is_active && equal_is_active != '*') {
     url += '&equal_is_active=' + encodeURIComponent(equal_is_active);
   }
   
