@@ -130,6 +130,15 @@ trait ModelTrait
             return $this->getForeignKey();
         }
     }
+    
+    private function getTranslationColumnsValues()
+    {
+        foreach($this->translation ?? [] as $meta){
+            $result[$meta->meta_key] = $meta->meta_value ?? '';
+        }
+
+        return $this->translation_data =  $result;
+    }
 
     // 目前用在自定義的 App\Providers\SettingServiceProvider，為了在沒有 settings 表存在的時候系統也能運行;
     public function tableExists()

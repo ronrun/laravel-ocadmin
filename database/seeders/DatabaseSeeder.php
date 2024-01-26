@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,8 +32,13 @@ class DatabaseSeeder extends Seeder
             LanguageSeeder::class,
             PermissionXlsxSeeder::class,
             RoleXlsxSeeder::class,
-                  
+
+            
+            TaxonomyXlsxSeeder::class,
+            TermXlsxSeeder::class,
+
             ProductSeeder::class,           
         ]);
+
     }
 }

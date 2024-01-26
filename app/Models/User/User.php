@@ -53,7 +53,6 @@ class User extends Authenticatable
 
     public $meta_keys = [
         'is_admin',
-        'nicename',
     ];
 
     public function metas()

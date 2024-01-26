@@ -22,7 +22,7 @@ trait EloquentTrait
         $this->table = $this->model->getTable();
         $this->table_columns = $this->getTableColumns();
         $this->translation_attributes = $this->model->translation_attributes ?? [];
-        $this->zh_hant_hans_transform = true;
+        $this->zh_hant_hans_transform = false;
         $this->initialized = true;
     }
 
@@ -1127,6 +1127,10 @@ trait EloquentTrait
             }
 
             $column = str_replace('filter_', '', $key);
+
+            if(!in_array($column, $this->model->translation_attributes)){
+                continue;
+            }
 
             $basic_translation_filter_data[$column] = $value;
         }

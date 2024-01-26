@@ -8,7 +8,6 @@ use App\Repositories\User\RoleMetaRepository;
 use App\Services\Service;
 use App\Helpers\Classes\DataHelper;
 
-
 class RoleService extends Service
 {
     protected $repository;
@@ -42,30 +41,6 @@ class RoleService extends Service
     public function addRoles($data, $debug = 0)
     {
 
-    }
-
-    // public function deleteRoleById($id)
-    // {
-    //     try {
-
-    //         $result = $this->repository->deleteId($id);
-
-    //         if(!empty($result['error'])){
-    //             throw new \Exception($result['error']); 
-    //         }
-
-    //         $result['success'] = true;
-
-    //         return $result;
-
-    //     } catch (\Exception $ex) {
-    //         return ['error' => $ex->getMessage()];
-    //     }
-    // }
-
-    public function destroyRoles($data)
-    {
-        
     }
 
     public function save($post_data)

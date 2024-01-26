@@ -65,6 +65,34 @@ Route::group([
             Route::post('products/save/{product_id?}', 'Catalog\ProductController@save')->name('products.save');
             Route::post('products/destroy', 'Catalog\ProductController@destroy')->name('products.destroy');
         }); 
+    
+        Route::group([
+            'prefix' => 'system',
+            'as' => 'system.',
+        ], function ()
+        {
+    
+            Route::group([
+                'prefix' => 'term',
+                'as' => 'term.',
+            ], function ()
+            {
+                
+                Route::get('taxonomies', 'Common\TaxonomyController@index')->name('taxonomies.index');
+                Route::get('taxonomies/form/{id?}', 'Common\TaxonomyController@form')->name('taxonomies.form');
+                Route::get('taxonomies/list', 'Common\TaxonomyController@list')->name('taxonomies.list');
+                Route::get('taxonomies/autocomplete', 'Common\TaxonomyController@autocomplete')->name('taxonomies.autocomplete');
+                Route::post('taxonomies/save/{id?}', 'Common\TaxonomyController@save')->name('taxonomies.save');
+                Route::post('taxonomies/destroy', 'Common\TaxonomyController@destroy')->name('taxonomies.destroy');
+                
+                Route::get('terms', 'Common\TermController@index')->name('terms.index');
+                Route::get('terms/form/{product_id?}', 'Common\TermController@form')->name('terms.form');
+                Route::get('terms/list', 'Common\TermController@list')->name('terms.list');
+                Route::get('terms/autocomplete', 'Common\TermController@autocomplete')->name('terms.autocomplete');
+                Route::post('terms/save/{product_id?}', 'Common\TermController@save')->name('terms.save');
+                Route::post('terms/destroy', 'Common\TermController@destroy')->name('terms.destroy');
+            });
+        });
 
     });  
     

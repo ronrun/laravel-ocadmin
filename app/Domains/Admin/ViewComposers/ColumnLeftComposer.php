@@ -52,50 +52,6 @@ class ColumnLeftComposer
             'href'     => route('lang.admin.dashboard'),
             'children' => []
         ];
-
-        
-        /**
-         * 商品管理
-         */
-        if(1) {
-            $product[] = [
-                'name'	   => '屬性',
-                'icon'	   => '',
-                'href'     => 'javascript:void(0)',
-                'children' => []
-            ];
-        }
-        
-        if(1) {
-            $product[] = [
-                'name'	   => '選項',
-                'icon'	   => '',
-                'href'     => 'javascript:void(0)',
-                'children' => []
-            ];
-        }
-
-        if(1) {
-            $product[] = [
-                'name'	   => '商品',
-                'icon'	   => '',
-                'href'     => route('lang.admin.catalog.products.index', ['equal_is_active' => 1]),
-                'children' => []
-            ];
-        }
-
-        if(1){
-            $menus[] = [
-                'id'       => 'menu-product',
-                'icon'	   => 'fas fa-cog',
-                'name'	   => '商品管理',
-                'href'     => '',
-                'children' => $product
-            ];
-        }
-
-
-
         
         /**
          * 帳號權限
@@ -136,6 +92,51 @@ class ColumnLeftComposer
                 'name'	   => $this->lang->columnleft_user,
                 'href'     => '',
                 'children' => $userParent
+            ];
+        }
+
+        
+        /**
+         * 系統管理
+         */
+
+        //
+        $level_2 = [];
+
+        // Localisation Languages
+        if (1) {
+            $level_2[] = [
+                'name'	   => '詞彙分類',
+                'href'     => route('lang.admin.system.term.taxonomies.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        // L3
+        if (1) {
+            $level_2[] = [
+                'name'	   => '詞彙',
+                'href'     => route('lang.admin.system.term.terms.index'),
+                'icon'	   => ' ',
+            ];
+        }
+
+        if ($level_2) {
+            $system[] = [
+                'name'	   => '詞彙管理',
+                'icon'	   => ' ',
+                'children' => $level_2
+            ];
+        }
+
+        //if(!empty($example)) {
+        if(1){
+            $menus[] = [
+                'id'       => 'menu-example',
+                'icon'	   => 'fas fa-cog',
+                'name'	   => '系統管理',
+                'href'     => '',
+                'children' => $system
             ];
         }
 
@@ -242,7 +243,7 @@ class ColumnLeftComposer
         //if(!empty($example)) {
         if(0){
             $menus[] = [
-                'id'       => 'menu-system',
+                'id'       => 'menu-example',
                 'icon'	   => 'fas fa-cog',
                 'name'	   => 'Example',
                 'href'     => '',

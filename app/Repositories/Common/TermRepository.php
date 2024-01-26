@@ -5,15 +5,15 @@ namespace App\Repositories\Common;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\Repository;
-use App\Models\Common\Taxonomy;
-use App\Models\Common\TaxonomyMeta;
+use App\Models\Common\Term;
+use App\Models\Common\TermMeta;
 
 
-class TaxonomyRepository extends Repository
+class TermRepository extends Repository
 {
-    public $modelName = "\App\Models\Common\Taxonomy";
+    public $modelName = "\App\Models\Common\Term";
 
-    public function getTaxonomies($data = [], $debug = 0)
+    public function getTerms($data = [], $debug = 0)
     {
         $data = $this->resetQueryData($data);
         
@@ -32,11 +32,11 @@ class TaxonomyRepository extends Repository
         try {
             DB::beginTransaction();
             
-            $taxonomy = $this->saveRow($data['taxonomy_id'], $data);
+            $term = $this->saveRow($data['term_id'], $data);
 
             DB::commit();
 
-            return ['data' => $taxonomy];
+            return ['data' => $term];
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -52,8 +52,8 @@ class TaxonomyRepository extends Repository
         try {
             DB::beginTransaction();
 
-            TaxonomyMeta::whereIn('taxonomy_id', $ids)->delete();
-            Taxonomy::whereIn('id', $ids)->delete();
+            TermMeta::whereIn('term_id', $ids)->delete();
+            Term::whereIn('id', $ids)->delete();
             
             DB::commit();
 
@@ -65,6 +65,13 @@ class TaxonomyRepository extends Repository
 
     private function resetQueryData($data)
     {
+        if(!empty($data['filter_keyword'])){
+            $data['translation']['andOrWhere'][] = [
+                'name' => $data['filter_keyword'],
+            ];
+            unset($data['filter_keyword']);
+        }
+
         return $data;
     }
 

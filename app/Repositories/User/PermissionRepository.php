@@ -92,7 +92,6 @@ class PermissionRepository extends Repository
         if(!empty($data['filter_keyword'])){
             $data['translation']['andOrWhere'][] = [
                 'trans_name' => $data['filter_keyword'],
-                'nice_name' => $data['filter_keyword'],
             ];
             unset($data['filter_keyword']);
         }

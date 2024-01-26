@@ -44,30 +44,6 @@ class PermissionService extends Service
 
     }
 
-    public function deletePermissionById($id)
-    {
-        try {
-
-            $result = $this->repository->deleteId($id);
-
-            if(!empty($result['error'])){
-                throw new \Exception($result['error']); 
-            }
-
-            $result['success'] = true;
-
-            return $result;
-
-        } catch (\Exception $ex) {
-            return ['error' => $ex->getMessage()];
-        }
-    }
-
-    public function destroyPermissions($data)
-    {
-        
-    }
-
     public function save($post_data)
     {
         try {
