@@ -20,10 +20,10 @@ class TermXlsxSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
         
         
-        \App\Models\Common\TermMeta::query()->delete();
-        \App\Models\Common\Term::query()->delete();
-        Excel::import(new \App\Domains\Admin\Imports\Tables\TermImport, 'database/imports/terms.xlsx');
-        Excel::import(new \App\Domains\Admin\Imports\Tables\TermMetaImport, 'database/imports/terms.xlsx');
+        \App\Models\Post\PostMeta::query()->delete();
+        \App\Models\Post\Post::query()->delete();
+        Excel::import(new \App\Domains\Admin\Imports\Tables\PostImport, 'database/imports/posts.xlsx');
+        Excel::import(new \App\Domains\Admin\Imports\Tables\PostMetaImport, 'database/imports/posts.xlsx');
 
         Schema::enableForeignKeyConstraints();
     }

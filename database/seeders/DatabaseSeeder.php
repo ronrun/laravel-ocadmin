@@ -33,9 +33,9 @@ class DatabaseSeeder extends Seeder
             PermissionXlsxSeeder::class,
             RoleXlsxSeeder::class,
 
-            
             TaxonomyXlsxSeeder::class,
             TermXlsxSeeder::class,
+            ProductXlsxSeeder::class,
 
             ProductSeeder::class,           
         ]);

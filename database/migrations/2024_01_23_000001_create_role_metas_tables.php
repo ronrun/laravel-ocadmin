@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('locale',10);
             $table->unsignedInteger('role_id');
             $table->string('meta_key');
-            $table->longText('meta_value',30)->default('');
+            $table->longText('meta_value')->default('');
             $table->softDeletes();
             $table->unique(['role_id','locale','meta_key']);
         });

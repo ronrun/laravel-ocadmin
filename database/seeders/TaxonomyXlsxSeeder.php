@@ -18,10 +18,9 @@ class TaxonomyXlsxSeeder extends Seeder
     {
         Schema::disableForeignKeyConstraints();
 
+        \App\Models\Common\TaxonomyMeta::query()->delete();
         \App\Models\Common\Taxonomy::query()->delete();
         Excel::import(new \App\Domains\Admin\Imports\Tables\TaxonomyImport, 'database/imports/taxonomies.xlsx');
-        
-        \App\Models\Common\TaxonomyMeta::query()->delete();
         Excel::import(new \App\Domains\Admin\Imports\Tables\TaxonomyMetaImport, 'database/imports/taxonomies.xlsx');
 
         Schema::enableForeignKeyConstraints();
